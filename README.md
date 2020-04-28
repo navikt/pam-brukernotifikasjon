@@ -1,0 +1,1 @@
+Applikasjon som holder styr på brukernotifikasjoner på Ditt NAV fra CV
