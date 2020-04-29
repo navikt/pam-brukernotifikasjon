@@ -1,13 +1,10 @@
 package no.nav.cv.output
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.cv.notifikasjon.VarselPublisher
 import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,7 +14,7 @@ import javax.inject.Singleton
 
 
 private val LOG: Logger = LoggerFactory.getLogger(BesokCvOppgavePublisher::class.java)
-private val topic = "aapen-brukernotifikasjon-nyOppgave-v1-testing"
+private val topic = "aapen-brukernotifikasjon-nyOppgave-v1"
 private val systembruker = "enSystemBruker"
 private val grupperingsId = "ARBEIDSPLASSEN"
 private val tekst = "På tide å gi CVen litt kjærlighet"
@@ -25,10 +22,13 @@ private val link = "https://arbeidsplassen.nav.no/cv/registrering"
 private val sikkerhetsnivaa = 4
 
 @Singleton
-class BesokCvOppgavePublisher: VarselPublisher {
-    val props = Properties()
+class BesokCvOppgavePublisher(
+        brukernotifikasjonKafkaConfiguration: BrukernotifikasjonKafkaConfiguration
+) : VarselPublisher {
+    val props = brukernotifikasjonKafkaConfiguration.producerProps()
 
     init {
+        /*
         props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:29092"
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.getName()
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.getName()
@@ -45,11 +45,12 @@ class BesokCvOppgavePublisher: VarselPublisher {
             doneProducer.close()
             LOG.info("done!")
         }))
-
+        */
     }
 
     val oppgaveProducer: KafkaProducer<Nokkel, Oppgave> = KafkaProducer(props)
     val doneProducer: KafkaProducer<Nokkel, Done> = KafkaProducer(props)
+
 
     override fun publish(eventId: UUID, foedselsnummer: String) {
         val nokkel = Nokkel(systembruker, eventId.toString())
@@ -63,13 +64,15 @@ class BesokCvOppgavePublisher: VarselPublisher {
         )
         val record = ProducerRecord(topic, nokkel, oppgave)
 
-        oppgaveProducer.send(record) { metadata, exception ->
-            if (exception == null) {
-                // TODO lagre status
-                LOG.info("Record send to Topic: " + metadata.topic() + " Partition: " + metadata.partition() + " Offset: " + metadata.offset());
-            } else {
-                // TODO fjerne status
-                LOG.error("Failed to send record to Kafka", exception);
+        oppgaveProducer.use {
+            it.send(ProducerRecord(topic, nokkel, oppgave)) { metadata, exception ->
+                if (exception == null) {
+                    // TODO lagre status
+                    LOG.info("Record send to Topic: " + metadata.topic() + " Partition: " + metadata.partition() + " Offset: " + metadata.offset());
+                } else {
+                    // TODO fjerne status
+                    LOG.error("Failed to send record to Kafka", exception);
+                }
             }
         }
     }
@@ -82,15 +85,15 @@ class BesokCvOppgavePublisher: VarselPublisher {
                 grupperingsId
         )
 
-        val record = ProducerRecord(topic, nokkel, done)
-
-        doneProducer.send(record) { metadata, exception ->
-            if (exception == null) {
-                // TODO lagre status
-                LOG.info("Record send to Topic: " + metadata.topic() + " Partition: " + metadata.partition() + " Offset: " + metadata.offset());
-            } else {
-                // TODO fjerne status
-                LOG.error("Failed to send record to Kafka", exception);
+        doneProducer.use {
+            it.send(ProducerRecord(topic, nokkel, done)) { metadata, exception ->
+                if (exception == null) {
+                    // TODO lagre status
+                    LOG.info("Record send to Topic: " + metadata.topic() + " Partition: " + metadata.partition() + " Offset: " + metadata.offset());
+                } else {
+                    // TODO fjerne status
+                    LOG.error("Failed to send record to Kafka", exception);
+                }
             }
         }
     }

@@ -33,3 +33,12 @@ flyway:
   datasources:
     default:
       locations: classpath:databasemigrations
+
+config:
+  kafka:
+    brukernotifikasjon:
+      bootstrapServers: 10.183.160.26:8443,10.183.32.47:8443,10.183.32.48:8443
+      schemaRegistryUrl: http://kafka-schema-registry.tpa:8081
+      groupId: pam-brukernotifikasjon-fss-q0
+      systemUserName:
+      systemUserPassword: 
