@@ -25,6 +25,8 @@ spec:
     requests:
       cpu: 200m
       memory: 256Mi
+  vault:
+    enabled: true
   webproxy: false
   prometheus:
     enabled: true
