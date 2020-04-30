@@ -51,7 +51,6 @@ class BesokCvOppgavePublisher(
     val oppgaveProducer: KafkaProducer<Nokkel, Oppgave> = KafkaProducer(props)
     val doneProducer: KafkaProducer<Nokkel, Done> = KafkaProducer(props)
 
-
     override fun publish(eventId: UUID, foedselsnummer: String) {
         val nokkel = Nokkel(systembruker, eventId.toString())
         val oppgave = Oppgave(
