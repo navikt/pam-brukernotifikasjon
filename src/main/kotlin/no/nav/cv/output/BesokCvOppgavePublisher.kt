@@ -27,27 +27,6 @@ class BesokCvOppgavePublisher(
 ) : VarselPublisher {
     val props = brukernotifikasjonKafkaConfiguration.producerProps()
 
-    init {
-        /*
-        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:29092"
-        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.getName()
-        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.getName()
-        props[AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG] = "http://localhost:8081/"
-
-        // close producer on shutdown
-        // close producer on shutdown
-        Runtime.getRuntime().addShutdownHook(Thread(Runnable {
-            LOG.info("closing oppgaveProducer...")
-            oppgaveProducer.flush()
-            oppgaveProducer.close()
-            LOG.info("closing doneProducer...")
-            doneProducer.flush()
-            doneProducer.close()
-            LOG.info("done!")
-        }))
-        */
-    }
-
     val oppgaveProducer: KafkaProducer<Nokkel, Oppgave> = KafkaProducer(props)
     val doneProducer: KafkaProducer<Nokkel, Done> = KafkaProducer(props)
 

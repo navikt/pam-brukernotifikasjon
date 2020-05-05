@@ -1,1 +1,4 @@
-{}
+{
+  "servicebruker_brukernotifikasjon": "/serviceuser/dev/srvpambrukernot",
+  "servicebruker_cv": "/serviceuser/dev/srvpambrukernot"
+}

@@ -15,7 +15,7 @@ import java.net.InetSocketAddress
 import java.util.*
 
 
-@ConfigurationProperties("config.kafka.brukernotifikasjon")
+@ConfigurationProperties("config.kafka.producer.brukernotifikasjon")
 class BrukernotifikasjonKafkaConfiguration(
         val bootstrapServers: String,
         val schemaRegistryUrl: String,
