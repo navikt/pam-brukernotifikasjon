@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory
 class ApplicationStatusController {
 
     @Get("isReady")
-    fun isReady(): String {
-        LoggerFactory.getLogger(ApplicationStatusController::class.java).info("Bla!")
-        return "Ready for everything"
-    }
+    fun isReady() = "Ready for everything"
 
     @Get("isAlive")
     fun isAlive() = "Alive and kicking"
