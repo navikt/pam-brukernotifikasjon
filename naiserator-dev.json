@@ -1,4 +1,4 @@
 {
-  "servicebruker_cv": "/serviceuser/dev/srvpambrukernot",
-  "servicebruker_brukernotifikasjon": "/serviceuser/dev/srvpambrukernot"
+  "servicebruker_cv": "/serviceuser/data/dev/srvpambrukernot",
+  "servicebruker_brukernotifikasjon": "/serviceuser/data/dev/srvpambrukernot"
 }
