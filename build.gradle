@@ -26,6 +26,8 @@ dependencies {
 
     implementation "io.micronaut.configuration:micronaut-hibernate-jpa"
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
+    implementation "io.micronaut.kafka:micronaut-kafka:2.0.0"
+    implementation "joda-time:joda-time:2.10.6"
     kapt "javax.persistence:javax.persistence-api:2.2"
     implementation "io.micronaut.configuration:micronaut-flyway"
 
