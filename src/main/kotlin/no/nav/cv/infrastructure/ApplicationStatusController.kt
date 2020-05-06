@@ -2,7 +2,6 @@ package no.nav.cv.infrastructure
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import org.slf4j.LoggerFactory
 
 
 @Controller("internal")
