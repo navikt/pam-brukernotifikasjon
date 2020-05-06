@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 // This gets rather close to an integration test - maybe it should be named accordingly?
-@MicronautTest
+@MicronautTest(environments = [ "test" ] )
 class HendelseServiceTest {
 
     private val fnr = "dummy"

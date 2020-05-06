@@ -21,7 +21,6 @@ private val tekst = "På tide å gi CVen litt kjærlighet"
 private val link = "https://arbeidsplassen.nav.no/cv/registrering"
 private val sikkerhetsnivaa = 4
 
-@Singleton
 class BesokCvOppgavePublisher(
         brukernotifikasjonKafkaConfiguration: BrukernotifikasjonKafkaConfiguration
 ) : VarselPublisher {
@@ -40,7 +39,6 @@ class BesokCvOppgavePublisher(
                 link,
                 sikkerhetsnivaa
         )
-        val record = ProducerRecord(topic, nokkel, oppgave)
 
         oppgaveProducer.use {
             it.send(ProducerRecord(topic, nokkel, oppgave)) { metadata, exception ->

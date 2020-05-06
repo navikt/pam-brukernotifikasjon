@@ -1,9 +1,7 @@
 package no.nav.cv.event.oppfolgingstatus
 
 import no.nav.cv.notifikasjon.HendelseService
-import javax.inject.Singleton
 
-@Singleton
 class OppfolgingsstatusConsumer(
         private val hendelseService: HendelseService
 ) {
