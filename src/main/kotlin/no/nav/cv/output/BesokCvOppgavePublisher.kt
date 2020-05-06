@@ -23,13 +23,13 @@ private val sikkerhetsnivaa = 4
 
 class BesokCvOppgavePublisher(
         brukernotifikasjonKafkaConfiguration: BrukernotifikasjonKafkaConfiguration
-) : VarselPublisher {
+) {
     val props = brukernotifikasjonKafkaConfiguration.producerProps()
 
     val oppgaveProducer: KafkaProducer<Nokkel, Oppgave> = KafkaProducer(props)
     val doneProducer: KafkaProducer<Nokkel, Done> = KafkaProducer(props)
 
-    override fun publish(eventId: UUID, foedselsnummer: String) {
+    fun publish(eventId: UUID, foedselsnummer: String) {
         val nokkel = Nokkel(systembruker, eventId.toString())
         val oppgave = Oppgave(
                 Instant.now().toEpochMilli(),
@@ -53,7 +53,7 @@ class BesokCvOppgavePublisher(
         }
     }
 
-    override fun done(eventId: UUID, foedselsnummer: String) {
+    fun done(eventId: UUID, foedselsnummer: String) {
         val nokkel = Nokkel(systembruker, eventId.toString())
         val done = Done(
                 Instant.now().toEpochMilli(),

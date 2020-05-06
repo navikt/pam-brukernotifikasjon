@@ -5,6 +5,7 @@ import io.micronaut.test.annotation.MockBean
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.cv.output.BesokCvOppgavePublisher
+import no.nav.cv.output.BrukernotifikasjonProducer
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class HendelseServiceTest {
     @Inject
     lateinit var hendelseService: HendelseService
 
-    @MockBean(BesokCvOppgavePublisher::class)
+    @MockBean(BrukernotifikasjonProducer::class)
     fun varselPublisher(): VarselPublisher = mockk(relaxed = true)
 
     @Test
