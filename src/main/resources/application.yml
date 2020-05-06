@@ -37,8 +37,10 @@ flyway:
 kafka:
   key:
     serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    deserializer: org.apache.kafka.common.serialization.StringDeserializer
   value:
     serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    deserializer: io.confluent.kafka.serializers.KafkaAvroSerializer
   bootstrap:
     servers:
       - 10.183.160.26:8443
