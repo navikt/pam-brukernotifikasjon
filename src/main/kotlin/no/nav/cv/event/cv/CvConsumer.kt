@@ -13,14 +13,19 @@ import java.time.ZonedDateTime
 val log = LoggerFactory.getLogger(CvConsumer::class.java)
 
 @KafkaListener(
+        groupId = "pam-brukernotifikasjon",
         offsetReset = OffsetReset.EARLIEST
 )
 class CvConsumer {
 
     @Topic("arbeid-pam-cv-endret-v4-q0")
-    fun riceive(
+    fun receive(
             @KafkaKey key: String,
-            cv: Melding
+            cv: Melding,
+            offset: Long,
+            partition: Int,
+            topic: String,
+            timestamp: Long
     ) {
         log.info("Mottat CV")
 
