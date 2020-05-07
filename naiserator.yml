@@ -30,8 +30,9 @@ spec:
     paths:
       - kvPath: {{ servicebruker_brukernotifikasjon }}
         mountPath: /serviceuser/kafka/brukernotifikasjon/
-      - kvPath: {{ servicebruker_cv }}
-        mountPath: /serviceuser/kafka/cv/
+      # TODO husk å fjerne tilgang til denne for appen fra vault
+      # - kvPath: {{ servicebruker_cv }}
+      #  mountPath: /serviceuser/kafka/cv/
   webproxy: false
   prometheus:
     enabled: true

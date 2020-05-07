@@ -50,7 +50,7 @@ kafka:
     protocol: SASL_SSL
   sasl:
     jaas:
-      config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_CV_USER} password=${KAFKA_CV_PASSWORD};'
+      config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER} password=${KAFKA_SERVICE_USER};'
     mechanism: PLAIN
   ssl:
     truststore:
