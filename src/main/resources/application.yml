@@ -46,6 +46,8 @@ kafka:
       - 10.183.160.26:8443
       - 10.183.32.47:8443
       - 10.183.32.48:8443
+  health:
+    enabled: false
   security:
     protocol: SASL_SSL
   sasl:
@@ -60,12 +62,3 @@ kafka:
     registry:
       url: http://kafka-schema-registry.tpa:8081
 
-# config:
-#   kafka:
-#    producer:
-#      brukernotifikasjon:
-#        bootstrapServers: 10.183.160.26:8443,10.183.32.47:8443,10.183.32.48:8443
-#        schemaRegistryUrl: http://kafka-schema-registry.tpa:8081
-#        groupId: pam-brukernotifikasjon
-#        systemUserName: ${KAFKA_BRUKERNOTIFIKASJON_USER}
-#        systemUserPassword: ${KAFKA_BRUKERNOTIFIKASJON_PASSWORD}
