@@ -1,16 +1,16 @@
 package no.nav.cv.event.cv
 
-import io.micronaut.configuration.kafka.annotation.KafkaKey
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
 import no.nav.arbeid.cv.avro.Melding
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-val log = LoggerFactory.getLogger(CvConsumer::class.java)
+
 
 @KafkaListener(
         groupId = "pam-brukernotifikasjon",
@@ -18,22 +18,21 @@ val log = LoggerFactory.getLogger(CvConsumer::class.java)
 )
 class CvConsumer {
 
+    companion object {
+        val log = LoggerFactory.getLogger(CvConsumer::class.java)
+    }
+
     @Topic("arbeid-pam-cv-endret-v4-q0")
     fun receive(
-            @KafkaKey key: String,
-            cv: Melding,
-            offset: Long,
-            partition: Int,
-            topic: String,
-            timestamp: Long
+            record: ConsumerRecord<String, Melding>
     ) {
-        log.info("Mottat CV")
+        log.info("Mottat CV - topic: ${record.topic()} Partition ${record.partition()}, offset: ${record.offset()}, timestamp:  ${record.timestamp()}")
 
         val sistEndret = ZonedDateTime.ofInstant(
-                Instant.ofEpochMilli(cv.sistEndret.millis),
-                ZoneId.of(cv.sistEndret.zone.id, ZoneId.SHORT_IDS)
+                Instant.ofEpochMilli(record.value().sistEndret.millis),
+                ZoneId.of(record.value().sistEndret.zone.id, ZoneId.SHORT_IDS)
         )
-        log.info("CV ${key}, AktoerId: ${cv.aktoerId}, Sist endret: ${sistEndret}")
+        log.info("CV ${record.key()}, AktoerId: ${record.value().aktoerId}, Sist endret: ${sistEndret}")
     }
 
 }
