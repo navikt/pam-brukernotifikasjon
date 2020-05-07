@@ -41,6 +41,11 @@ kafka:
   value:
     serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+  consumers:
+    default:
+      specific:
+        avro:
+          reader: true
   bootstrap:
     servers:
       - 10.183.160.26:8443
