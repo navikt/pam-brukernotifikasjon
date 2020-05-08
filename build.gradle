@@ -31,10 +31,6 @@ dependencies {
     kapt "javax.persistence:javax.persistence-api:2.2"
     implementation "io.micronaut.configuration:micronaut-flyway"
 
-    implementation ("no.nav.arbeid.pam:pam-cv-avro-cvmeldinger:1.20200507-0fcd6db8") {
-        exclude group: "org.apache.avro"
-    }
-
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
