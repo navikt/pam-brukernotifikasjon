@@ -27,7 +27,10 @@ class CvConsumer {
     ) {
         log.info("Mottat CV - topic: ${record.topic()} Partition ${record.partition()}, offset: ${record.offset()}, timestamp:  ${record.timestamp()}")
 
-        val sistEndretMillis = record.value().endretCv().get("sist_endret").toString()
+        val sistEndretMillis = record.value()
+                .endretCv()
+                .cv()
+                .get("sist_endret").toString()
         val aktoerId = record.value().get("aktoerId").toString()
         log.info("${aktoerId}: ${sistEndretMillis}")
         val sistEndret = ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis.toLong()), TimeZone.getDefault().toZoneId())
@@ -37,9 +40,12 @@ class CvConsumer {
 
 }
 
-fun GenericRecord.opprettCv(): GenericRecord { return get("opprett_cv") as GenericRecord }
-fun GenericRecord.endretCv(): GenericRecord { return get("endre_cv") as GenericRecord }
-fun GenericRecord.slettCv(): GenericRecord { return get("slett_cv") as GenericRecord }
-fun GenericRecord.opprettJobbprofil(): GenericRecord { return get("opprett_jobbprofil") as GenericRecord }
-fun GenericRecord.endretJobbprofil(): GenericRecord { return get("endre_jobbprofil") as GenericRecord }
-fun GenericRecord.slettJobbprofil(): GenericRecord { return get("slett_jobbprofil") as GenericRecord }
+private fun GenericRecord.opprettCv(): GenericRecord { return get("opprett_cv") as GenericRecord }
+private fun GenericRecord.endretCv(): GenericRecord { return get("endre_cv") as GenericRecord }
+private fun GenericRecord.slettCv(): GenericRecord { return get("slett_cv") as GenericRecord }
+private fun GenericRecord.opprettJobbprofil(): GenericRecord { return get("opprett_jobbprofil") as GenericRecord }
+private fun GenericRecord.endretJobbprofil(): GenericRecord { return get("endre_jobbprofil") as GenericRecord }
+private fun GenericRecord.slettJobbprofil(): GenericRecord { return get("slett_jobbprofil") as GenericRecord }
+
+private fun GenericRecord.cv(): GenericRecord { return get("cv") as GenericRecord }
+private fun GenericRecord.jobbprofil(): GenericRecord { return get("jobbprofil") as GenericRecord }
