@@ -31,7 +31,7 @@ class CvConsumer {
                 .endretCv()
                 .cv()
                 .get("sist_endret").toString()
-        val aktoerId = record.value().get("aktoerId").toString()
+        val aktoerId = record.value().endretCv().cv().get("aktoerId").toString()
         log.info("${aktoerId}: ${sistEndretMillis}")
         val sistEndret = ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis.toLong()), TimeZone.getDefault().toZoneId())
 
