@@ -45,7 +45,7 @@ kafka:
     default:
       specific:
         avro:
-          reader: true
+          reader: false
   bootstrap:
     servers:
       - 10.183.160.26:8443
