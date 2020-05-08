@@ -3,6 +3,7 @@ package no.nav.cv.event.cv
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
+import no.nav.cv.notifikasjon.HendelseService
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
@@ -15,7 +16,9 @@ import java.util.*
         groupId = "pam-brukernotifikasjon",
         offsetReset = OffsetReset.EARLIEST
 )
-class CvConsumer {
+class CvConsumer(
+        val hendelseService: HendelseService
+) {
 
     companion object {
         val log = LoggerFactory.getLogger(CvConsumer::class.java)
@@ -27,30 +30,83 @@ class CvConsumer {
     ) {
         log.info("Mottat CV - topic: ${record.topic()} Partition ${record.partition()}, offset: ${record.offset()}, timestamp:  ${record.timestamp()}")
 
-        val sistEndretMillis = record.value()
-                .endretCv()
-                .cv()
-                .get("sist_endret")
-                .toString()
-        val aktoerId = record.value()
-                .endretCv()
-                .cv()
-                .get("aktoer_id")
-                .toString()
-        log.info("${aktoerId}: ${sistEndretMillis}")
-        val sistEndret = ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis.toLong()), TimeZone.getDefault().toZoneId())
+        val cv = CvDto(record.value())
+        log.info("${cv.aktorId()}: ${cv.sistEndret()}")
 
-        log.info("CV ${record.key()}, AktoerId: ${aktoerId}, Sist endret: ${sistEndret}")
+        hendelseService.settCv(cv.aktorId())
+        log.info("CV ${record.key()}, AktoerId: ${cv.aktorId()}, Sist endret: ${cv.sistEndret()}")
     }
 
 }
 
-private fun GenericRecord.opprettCv(): GenericRecord { return get("opprett_cv") as GenericRecord }
-private fun GenericRecord.endretCv(): GenericRecord { return get("endre_cv") as GenericRecord }
-private fun GenericRecord.slettCv(): GenericRecord { return get("slett_cv") as GenericRecord }
-private fun GenericRecord.opprettJobbprofil(): GenericRecord { return get("opprett_jobbprofil") as GenericRecord }
-private fun GenericRecord.endretJobbprofil(): GenericRecord { return get("endre_jobbprofil") as GenericRecord }
-private fun GenericRecord.slettJobbprofil(): GenericRecord { return get("slett_jobbprofil") as GenericRecord }
+private class CvDto(val record: GenericRecord) {
 
-private fun GenericRecord.cv(): GenericRecord { return get("cv") as GenericRecord }
-private fun GenericRecord.jobbprofil(): GenericRecord { return get("jobbprofil") as GenericRecord }
+    val opprett = "OPPRETT"
+    val endre = "ENDRE"
+    val slett = "SLETT"
+
+    fun aktorId(): String {
+        if (record.meldingstype() == opprett) {
+            return record.opprettCv()?.cv()?.aktoerId()
+                    ?: record.opprettJobbprofil()?.jobbprofil()?.aktoerId()
+                    ?: throw IllegalStateException("Mangler aktørid")
+        }
+        if (record.meldingstype() == endre) {
+            return record.endretCv()?.cv()?.aktoerId()
+                    ?: record.endretJobbprofil()?.jobbprofil()?.aktoerId()
+                    ?: throw IllegalStateException("Mangler aktørid")
+        }
+        if (record.meldingstype() == slett) {
+            return record.slettCv()?.cv()?.aktoerId()
+                    ?: record.slettJobbprofil()?.jobbprofil()?.aktoerId()
+                    ?: throw IllegalStateException("Mangler aktørid")
+        }
+        throw IllegalStateException("Mangler aktørid")
+    }
+
+    fun sistEndret() =
+            ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis()), TimeZone.getDefault().toZoneId())
+
+    private fun sistEndretMillis(): Long {
+        if (record.meldingstype() == opprett) {
+            return record.opprettCv()?.cv()?.sistEndret()
+                    ?: record.opprettJobbprofil()?.jobbprofil()?.sistEndret()
+                    ?: throw IllegalStateException("Mangler aktørid")
+        }
+        if (record.meldingstype() == endre) {
+            return record.endretCv()?.cv()?.sistEndret()
+                    ?: record.endretJobbprofil()?.jobbprofil()?.sistEndret()
+                    ?: throw IllegalStateException("Mangler aktørid")
+        }
+        if (record.meldingstype() == slett) {
+            return record.slettCv()?.cv()?.sistEndret()
+                    ?: record.slettJobbprofil()?.jobbprofil()?.sistEndret()
+                    ?: throw IllegalStateException("Mangler aktørid")
+        }
+        throw IllegalStateException("Mangler aktørid")
+    }
+
+}
+
+
+private fun GenericRecord.meldingstype() = get("meldingstype") as String?
+
+private fun GenericRecord.opprettCv() = get("opprett_cv") as GenericRecord?
+
+private fun GenericRecord.endretCv() = get("endre_cv") as GenericRecord?
+
+private fun GenericRecord.slettCv() = get("slett_cv") as GenericRecord?
+
+private fun GenericRecord.opprettJobbprofil() = get("opprett_jobbprofil") as GenericRecord?
+
+private fun GenericRecord.endretJobbprofil() = get("endre_jobbprofil") as GenericRecord?
+
+private fun GenericRecord.slettJobbprofil() = get("slett_jobbprofil") as GenericRecord?
+
+private fun GenericRecord.cv() = get("cv") as GenericRecord?
+
+private fun GenericRecord.jobbprofil() = get("jobbprofil") as GenericRecord?
+
+private fun GenericRecord.sistEndret(): Long? = (get("sist_endret") as String?)?.toLong()
+
+private fun GenericRecord.aktoerId() = get("aktoer_id") as String?
