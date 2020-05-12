@@ -35,17 +35,26 @@ flyway:
       locations: classpath:databasemigrations
 
 kafka:
-  key:
-    serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-    deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  value:
-    serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-    deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-  consumers:
+  producers:
     default:
+      key:
+        serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value:
+        serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+  consumers:
+    pam-brukernotifikasjon-cv:
+      key:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value:
+        deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       specific:
         avro:
           reader: false
+    pam-brukernotifikasjon-oppfolging:
+      key:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
   bootstrap:
     servers:
       - 10.183.160.26:8443

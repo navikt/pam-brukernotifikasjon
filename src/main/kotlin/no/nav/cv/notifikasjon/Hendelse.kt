@@ -1,6 +1,7 @@
 package no.nav.cv.notifikasjon
 
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 
 private val kommetUnderOppfolging = "kommet under oppfølgning"
@@ -11,19 +12,19 @@ class Hendelse private constructor(
         val uuid: UUID,
         val fnr: String,
         val eventType: String,
-        val hendelseTidspunkt: LocalDateTime,
+        val hendelseTidspunkt: ZonedDateTime,
         val nyesteStatus: Status
 ) {
 
     companion object {
-        fun kommetUnderOppfolging(fnr: String, nyesteStatus: Status): Hendelse =
-                Hendelse(nyesteStatus.uuid, fnr, kommetUnderOppfolging, LocalDateTime.now(), nyesteStatus)
+        fun kommetUnderOppfolging(fnr: String, nyesteStatus: Status, timestamp: ZonedDateTime): Hendelse =
+                Hendelse(nyesteStatus.uuid, fnr, kommetUnderOppfolging, timestamp, nyesteStatus)
 
-        fun erFulgtOpp(fnr: String, nyesteStatus: Status): Hendelse =
-                Hendelse(nyesteStatus.uuid, fnr, erFulgtOpp, LocalDateTime.now(), nyesteStatus)
+        fun erFulgtOpp(fnr: String, nyesteStatus: Status, timestamp: ZonedDateTime): Hendelse =
+                Hendelse(nyesteStatus.uuid, fnr, erFulgtOpp, timestamp, nyesteStatus)
 
-        fun settCv(fnr: String, nyesteStatus: Status): Hendelse =
-                Hendelse(nyesteStatus.uuid, fnr, settCv, LocalDateTime.now(), nyesteStatus)
+        fun settCv(fnr: String, nyesteStatus: Status, timestamp: ZonedDateTime): Hendelse =
+                Hendelse(nyesteStatus.uuid, fnr, settCv, timestamp, nyesteStatus)
 
     }
 

@@ -1,22 +1,30 @@
 package no.nav.cv.notifikasjon
 
+import java.time.ZonedDateTime
 import javax.inject.Singleton
 
+interface HendelseService {
+
+    fun kommetUnderOppfolging(fnr: String, timestamp: ZonedDateTime)
+
+    fun erFulgtOpp(fnr: String, timestamp: ZonedDateTime)
+
+    fun settCv(fnr: String, timestamp: ZonedDateTime)
+
+}
+
 @Singleton
-class HendelseService(
+class Hendelser (
     private val repository: StatusRepository,
     private val varselPublisher: VarselPublisher
-){
+) : HendelseService {
 
-
-
-
-    fun kommetUnderOppfolging(fnr: String) = behandle(
-            Hendelse.kommetUnderOppfolging(fnr, sisteStatus(fnr)))
-    fun erFulgtOpp(fnr: String) = behandle(
-            Hendelse.erFulgtOpp(fnr, sisteStatus(fnr)))
-    fun settCv(fnr: String) = behandle(
-            Hendelse.settCv(fnr, sisteStatus(fnr)))
+    override fun kommetUnderOppfolging(fnr: String, timestamp: ZonedDateTime) = behandle(
+            Hendelse.kommetUnderOppfolging(fnr, sisteStatus(fnr), timestamp))
+    override fun erFulgtOpp(fnr: String, timestamp: ZonedDateTime) = behandle(
+            Hendelse.erFulgtOpp(fnr, sisteStatus(fnr), timestamp))
+    override fun settCv(fnr: String, timestamp: ZonedDateTime) = behandle(
+            Hendelse.settCv(fnr, sisteStatus(fnr), timestamp))
 
     private fun sisteStatus(fnr: String) = repository.finnSiste(fnr)
 

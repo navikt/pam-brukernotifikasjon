@@ -1,0 +1,21 @@
+kafka:
+  bootstrap:
+    servers: localhost:${random.port}
+  embedded:
+    enabled: true
+    topics:
+    - arbeid-pam-cv-endret-v4-q0
+    - aapen-fo-endringPaaOppfolgingStatus-v1-q0
+  ssl:
+    truststore:
+      location: ''
+      password: ''
+  sasl:
+    mechanism: PLAIN
+    jaas:
+      config: ''
+  security:
+    protocol: PLAINTEXT
+  schema:
+    registry:
+      url: mock://mock:8081/

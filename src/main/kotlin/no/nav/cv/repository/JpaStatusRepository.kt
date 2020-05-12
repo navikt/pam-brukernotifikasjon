@@ -3,6 +3,7 @@ package no.nav.cv.repository
 import io.micronaut.spring.tx.annotation.Transactional
 import no.nav.cv.notifikasjon.StatusRepository
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Singleton
 import javax.persistence.*
@@ -58,7 +59,7 @@ private data class Status(
         val status: String,
 
         @Column(name = "TIDSPUNKT", nullable = false)
-        val tidspunkt: LocalDateTime
+        val tidspunkt: ZonedDateTime
 ) {
 
     fun toStatus() = no.nav.cv.notifikasjon.Status(uuid, fnr, status, tidspunkt)

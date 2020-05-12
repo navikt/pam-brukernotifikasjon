@@ -1,6 +1,7 @@
 package no.nav.cv.notifikasjon
 
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 
 
@@ -12,15 +13,15 @@ class Varsel private constructor(
         val uuid: UUID,
         val fnr: String,
         val type: String,
-        val timestamp: LocalDateTime
+        val timestamp: ZonedDateTime
 ) {
 
     companion object {
-        fun varsles(uuid: UUID, fnr: String, timestamp: LocalDateTime) =
+        fun varsles(uuid: UUID, fnr: String, timestamp: ZonedDateTime) =
                 Varsel(uuid, fnr, varsles, timestamp)
-        fun fullfortOppgave(uuid: UUID, fnr: String, timestamp: LocalDateTime) =
+        fun fullfortOppgave(uuid: UUID, fnr: String, timestamp: ZonedDateTime) =
                 Varsel(uuid, fnr, fullfortOppgave, timestamp)
-        fun ikkeVarsle(uuid: UUID, fnr: String, timestamp: LocalDateTime) =
+        fun ikkeVarsle(uuid: UUID, fnr: String, timestamp: ZonedDateTime) =
                 Varsel(uuid, fnr, ikkeVarsle, timestamp)
 
     }

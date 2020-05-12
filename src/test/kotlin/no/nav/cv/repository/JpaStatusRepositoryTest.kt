@@ -6,6 +6,7 @@ import io.micronaut.test.annotation.MicronautTest
 import no.nav.cv.notifikasjon.Status
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @MicronautTest
@@ -16,6 +17,10 @@ class JpaStatusRepositoryTest {
 
     @Inject
     lateinit var statusRepository: JpaStatusRepository
+
+    private val now = ZonedDateTime.now()
+    private val yesterday = ZonedDateTime.now().minusDays(1)
+    private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
 
     @Test
     fun `save and fetch`() {
@@ -29,8 +34,8 @@ class JpaStatusRepositoryTest {
     @Test
     fun `that fetch latest fetches last`() {
         val statusOld = Status.ukjent(fnr)
-        val statusNewer = Status.varslet(statusOld.uuid, fnr, LocalDateTime.now())
-        val statusNewest = Status.done(statusOld.uuid, fnr, LocalDateTime.now())
+        val statusNewer = Status.varslet(statusOld.uuid, fnr, yesterday)
+        val statusNewest = Status.done(statusOld.uuid, fnr, now)
         statusRepository.lagre(statusOld)
         statusRepository.lagre(statusNewer)
         statusRepository.lagre(statusNewest)
