@@ -20,9 +20,9 @@ open class JpaStatusRepository(
 
     private val sisteQuery =
             """
-        SELECT s FROM Status s 
+        SELECT s FROM StatusEntity s 
         WHERE s.fnr = :fnr AND s.tidspunkt = (
-            SELECT max(s2.tidspunkt) FROM Status s2 WHERE s2.fnr = :fnr
+            SELECT max(s2.tidspunkt) FROM StatusEntity s2 WHERE s2.fnr = :fnr
         )
         
     """.trimMargin()
