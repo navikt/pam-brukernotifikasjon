@@ -1,8 +1,6 @@
-package no.nav.cv.repository
+package no.nav.cv.notifikasjon
 
-import io.micronaut.spring.tx.annotation.Transactional
-import no.nav.cv.notifikasjon.StatusRepository
-import java.time.LocalDateTime
+import org.springframework.transaction.annotation.Transactional
 import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Singleton
@@ -15,8 +13,8 @@ open class JpaStatusRepository(
 
 
     @Transactional
-    override fun lagre(status: no.nav.cv.notifikasjon.Status) {
-        entityManager.persist(Status.fromStatus(status))
+    override fun lagre(status: Status) {
+        entityManager.persist(StatusEntity.fromStatus(status))
     }
 
 
@@ -30,19 +28,19 @@ open class JpaStatusRepository(
     """.trimMargin()
 
     @Transactional(readOnly = true)
-    override fun finnSiste(fnr: String): no.nav.cv.notifikasjon.Status {
-        return entityManager.createQuery(sisteQuery, Status::class.java)
+    override fun finnSiste(fnr: String): Status {
+        return entityManager.createQuery(sisteQuery, StatusEntity::class.java)
                 .setParameter("fnr", fnr)
                 .resultStream.findFirst()
                 .map { it.toStatus() }
-                .orElseGet { no.nav.cv.notifikasjon.Status.ukjent(fnr) }
+                .orElseGet { Status.ukjent(fnr) }
     }
 
 }
 
 @Entity
 @Table(name = "STATUS")
-private data class Status(
+private data class StatusEntity(
 
         @Id
         @Column(name = "ID")
@@ -62,15 +60,15 @@ private data class Status(
         val tidspunkt: ZonedDateTime
 ) {
 
-    fun toStatus() = no.nav.cv.notifikasjon.Status(uuid, fnr, status, tidspunkt)
+    fun toStatus() = Status(uuid, fnr, status, tidspunkt)
 
     companion object {
-        fun fromStatus(status: no.nav.cv.notifikasjon.Status) = Status(
-                    id = 0,
-                    uuid = status.uuid,
-                    fnr = status.fnr,
-                    status = status.status,
-                    tidspunkt = status.statusTidspunkt
-            )
+        fun fromStatus(status: Status) = StatusEntity(
+                id = 0,
+                uuid = status.uuid,
+                fnr = status.fnr,
+                status = status.status,
+                tidspunkt = status.statusTidspunkt
+        )
     }
 }

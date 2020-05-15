@@ -14,6 +14,10 @@ micronaut:
       prometheus:
         enabled: true
         descriptions: false
+io:
+  micronaut:
+    context:
+      condition: true
 datasources:
   default:
     url: 'jdbc:h2:mem:flywayDb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
@@ -23,7 +27,7 @@ datasources:
 jpa:
   default:
     packages-to-scan:
-      - 'no.nav.cv.repository'
+      - 'no.nav.cv'
     properties:
       hibernate:
         hbm2ddl:

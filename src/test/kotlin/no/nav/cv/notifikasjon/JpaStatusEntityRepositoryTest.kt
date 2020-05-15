@@ -1,16 +1,16 @@
-package no.nav.cv.repository
+package no.nav.cv.notifikasjon
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.micronaut.test.annotation.MicronautTest
+import no.nav.cv.notifikasjon.JpaStatusRepository
 import no.nav.cv.notifikasjon.Status
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @MicronautTest
-class JpaStatusRepositoryTest {
+class JpaStatusEntityRepositoryTest {
 
     val fnr = "dummy"
     val fnr2 = "dummy2"

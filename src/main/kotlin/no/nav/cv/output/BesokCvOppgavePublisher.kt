@@ -3,14 +3,12 @@ package no.nav.cv.output
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
-import no.nav.cv.notifikasjon.VarselPublisher
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
-import javax.inject.Singleton
 
 
 private val LOG: Logger = LoggerFactory.getLogger(BesokCvOppgavePublisher::class.java)
@@ -19,7 +17,7 @@ private val systembruker = "enSystemBruker"
 private val grupperingsId = "ARBEIDSPLASSEN"
 private val tekst = "På tide å gi CVen litt kjærlighet"
 private val link = "https://arbeidsplassen.nav.no/cv/registrering"
-private val sikkerhetsnivaa = 4
+private val sikkerhetsnivaa = 3
 
 class BesokCvOppgavePublisher(
         brukernotifikasjonKafkaConfiguration: BrukernotifikasjonKafkaConfiguration
