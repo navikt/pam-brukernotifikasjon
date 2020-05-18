@@ -3,8 +3,6 @@ package no.nav.cv.notifikasjon
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.micronaut.test.annotation.MicronautTest
-import no.nav.cv.notifikasjon.JpaStatusRepository
-import no.nav.cv.notifikasjon.Status
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 import javax.inject.Inject

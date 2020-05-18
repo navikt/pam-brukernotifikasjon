@@ -8,12 +8,15 @@ import javax.persistence.*
 
 
 interface PersonIdentRepository {
+
     fun oppdater(personIdenter: PersonIdenter)
+
     fun finnIdenter(aktorId: String): PersonIdenter
+
 }
 
 @Singleton
-open class JpaPersonIdentRepository(
+private open class JpaPersonIdentRepository(
         @PersistenceContext private val entityManager: EntityManager
 ): PersonIdentRepository {
 
@@ -48,9 +51,6 @@ open class JpaPersonIdentRepository(
             entityManager.persist(it)
         }
     }
-
-
-
 
     @Transactional(readOnly = true)
     override fun finnIdenter(aktorId: String): PersonIdenter {
@@ -101,31 +101,3 @@ private data class PersonIdentEntity(
     fun toPersonIdent() = PersonIdent(ident, type, gjeldende)
 
 }
-//
-//
-//@Entity
-//@Table(name = "PERSON_IDENT_GROUP")
-//private data class PersonIdentGroupEntity(
-//
-//        @Id
-//        @Column(name = "ID")
-//        @GeneratedValue(generator = "PERSON_SEQ")
-//        private val id: Long = 0,
-//
-//        @OneToMany(fetch = FetchType.EAGER, cascade = [ CascadeType.REMOVE ])
-//        @JoinColumn(name = )
-//        val identities: Set<PersonIdentEntity>
-//) {
-//
-//    fun toPersonIdenter(): PersonIdenter = PersonIdenter(identities.map { it.toPersonIdent() })
-//
-//    companion object {
-//        fun fromPersonIdenter(personIdenter: PersonIdenter): PersonIdentGroupEntity {
-//            val identitesSet = mutableSetOf<PersonIdentEntity>()
-//            val entity = PersonIdentGroupEntity(0, identitesSet)
-//            identitesSet.addAll(personIdenter.identer().map { PersonIdentEntity.fromPersonIdent(entity, it) }.toSet())
-//            return entity
-//        }
-//
-//    }
-//}

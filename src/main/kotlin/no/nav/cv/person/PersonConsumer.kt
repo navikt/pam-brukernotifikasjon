@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
         offsetReset = OffsetReset.EARLIEST
 )
 class PersonConsumer(
+        private val personIdentRepository: PersonIdentRepository
 ) {
 
     companion object {
@@ -25,14 +26,9 @@ class PersonConsumer(
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {
-        log.info("Mottat CV - topic: ${record.topic()} Partition ${record.partition()}, offset: ${record.offset()}, timestamp:  ${record.timestamp()}")
-
-        val identer = PersonDto(record.value()).identer()
-
-        //log.info("${cv.aktorId()}: ${cv.sistEndret()}")
-
-        //hendelseService.settCv(cv.aktorId(), cv.sistEndret())
-        //log.info("CV ${record.key()}, AktoerId: ${cv.aktorId()}, Sist endret: ${cv.sistEndret()}")
+        val identer = PersonDto(record.value())
+                .identer()
+        personIdentRepository.oppdater(identer)
     }
 
 }
@@ -57,6 +53,7 @@ class PersonDto(val record: GenericRecord) {
         }
     }
 
+    private fun GenericRecord.identifikatorer(): GenericArray<GenericRecord> =
+            get("identifikatorer") as GenericArray<GenericRecord>
 }
 
-private fun GenericRecord.identifikatorer(): GenericArray<GenericRecord> = get("identifikatorer") as GenericArray<GenericRecord>

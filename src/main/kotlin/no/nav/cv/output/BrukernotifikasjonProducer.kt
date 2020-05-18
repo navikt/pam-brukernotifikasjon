@@ -1,6 +1,5 @@
 package no.nav.cv.output
 
-import io.micronaut.configuration.kafka.annotation.KafkaClient
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave

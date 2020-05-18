@@ -1,6 +1,5 @@
 package no.nav.cv.notifikasjon
 
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
 
