@@ -1,38 +1,51 @@
 package no.nav.cv.notifikasjon
 
+import no.nav.cv.person.PersonIdentRepository
 import java.time.ZonedDateTime
 import javax.inject.Singleton
 
 interface HendelseService {
 
-    fun kommetUnderOppfolging(fnr: String, timestamp: ZonedDateTime)
+    fun kommetUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
-    fun erFulgtOpp(fnr: String, timestamp: ZonedDateTime)
+    fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
-    fun settCv(fnr: String, timestamp: ZonedDateTime)
+    fun blittFulgtOpp(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
+
+    fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
 }
 
 @Singleton
 class Hendelser (
     private val repository: StatusRepository,
-    private val varselPublisher: VarselPublisher
+    private val varselPublisher: VarselPublisher,
+    private val personIdentRepository: PersonIdentRepository
 ) : HendelseService {
 
-    override fun kommetUnderOppfolging(fnr: String, timestamp: ZonedDateTime) = behandle(
-            Hendelse.kommetUnderOppfolging(fnr, sisteStatus(fnr), timestamp))
-    override fun erFulgtOpp(fnr: String, timestamp: ZonedDateTime) = behandle(
-            Hendelse.erFulgtOpp(fnr, sisteStatus(fnr), timestamp))
-    override fun settCv(fnr: String, timestamp: ZonedDateTime) = behandle(
-            Hendelse.settCv(fnr, sisteStatus(fnr), timestamp))
-
-    private fun sisteStatus(fnr: String) = repository.finnSiste(fnr)
-
-    private fun behandle(hendelse: Hendelse) {
-
-        val nyStatus = hendelse.produserVarsel().varsle(varselPublisher)
-
-        repository.lagre(nyStatus)
+    override fun kommetUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
+        val status = repository.finnSiste(aktorId)
+        val nesteStatus = status.harKommetUnderOppfolging(hendelsesTidspunkt)
+        repository.lagre(nesteStatus)
     }
+
+    override fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
+        val status = repository.finnSiste(aktorId)
+        val nesteStatus = status.varsleBruker(hendelsesTidspunkt, personIdentRepository, varselPublisher)
+        repository.lagre(nesteStatus)
+    }
+
+    override fun blittFulgtOpp(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
+        val status = repository.finnSiste(aktorId)
+        val nesteStatus = status.blittFulgtOpp(hendelsesTidspunkt, varselPublisher)
+        repository.lagre(nesteStatus)
+    }
+
+    override fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
+        val status = repository.finnSiste(aktorId)
+        val nesteStatus = status.harSettCv(hendelsesTidspunkt, varselPublisher)
+        repository.lagre(nesteStatus)
+    }
+
 }
 

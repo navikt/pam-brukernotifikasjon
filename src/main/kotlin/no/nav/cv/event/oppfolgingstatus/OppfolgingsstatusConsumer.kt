@@ -26,7 +26,7 @@ class OppfolgingsstatusConsumer(
         if(dto.underOppfolging()) {
             hendelseService.kommetUnderOppfolging(dto.aktorId(), dto.startForSisteOppfolgningsPeriode())
         } else {
-            hendelseService.erFulgtOpp(dto.aktorId(), dto.endret())
+            hendelseService.blittFulgtOpp(dto.aktorId(), dto.endret())
         }
     }
 

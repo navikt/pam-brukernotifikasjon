@@ -33,7 +33,7 @@ class CvConsumer(
         val cv = CvDto(record.value())
         log.info("${cv.aktorId()}: ${cv.sistEndret()}")
 
-        hendelseService.settCv(cv.aktorId(), cv.sistEndret())
+        hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
         log.info("CV ${record.key()}, AktoerId: ${cv.aktorId()}, Sist endret: ${cv.sistEndret()}")
     }
 

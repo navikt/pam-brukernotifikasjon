@@ -89,7 +89,7 @@ class TestAKafkaApplication : TestPropertyProvider {
             )
             oppfolgingsstatusProducer.flush()
             adIndexerLatch.await(20L, TimeUnit.SECONDS)
-            verify { hendelseService.erFulgtOpp(aktorId, any()) }
+            verify { hendelseService.blittFulgtOpp(aktorId, any()) }
         }
 
 
@@ -101,7 +101,7 @@ class TestAKafkaApplication : TestPropertyProvider {
     @MockBean(HendelseService::class)
     fun hendelseService(): HendelseService {
         val hendelseService = mockk<HendelseService>(relaxed = true)
-        every { hendelseService.erFulgtOpp(any(), any()) } answers {
+        every { hendelseService.blittFulgtOpp(any(), any()) } answers {
             adIndexerLatch.countDown()
         }
         every { hendelseService.kommetUnderOppfolging(any(), any()) } answers {
