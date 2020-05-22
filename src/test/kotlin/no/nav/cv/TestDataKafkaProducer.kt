@@ -71,7 +71,7 @@ class TestAKafkaApplication : TestPropertyProvider {
                     )
             )
             oppfolgingsstatusProducer.flush()
-            adIndexerLatch.await(40L, TimeUnit.SECONDS)
+            adIndexerLatch.await(60L, TimeUnit.SECONDS)
             verify { hendelseService.kommetUnderOppfolging(aktorId, any()) }
         }
 
@@ -88,7 +88,7 @@ class TestAKafkaApplication : TestPropertyProvider {
                     )
             )
             oppfolgingsstatusProducer.flush()
-            adIndexerLatch.await(40L, TimeUnit.SECONDS)
+            adIndexerLatch.await(60L, TimeUnit.SECONDS)
             verify { hendelseService.blittFulgtOpp(aktorId, any()) }
         }
 
