@@ -37,3 +37,10 @@ spec:
   prometheus:
     enabled: true
     path: /pam-brukernotifikasjon/prometheus
+  env:
+    - name: JDBC_URL
+      value: {{ jdbc_url }}
+    - name: DB_VAULT_PATH
+      value: {{ db_vault_path }}
+    - name: DB_VAULT_USERNAME
+      value: {{ db_vault_username }}

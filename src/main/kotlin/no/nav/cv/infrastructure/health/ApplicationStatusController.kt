@@ -1,4 +1,4 @@
-package no.nav.cv.infrastructure
+package no.nav.cv.infrastructure.health
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
