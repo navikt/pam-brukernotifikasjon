@@ -24,7 +24,7 @@ class CvConsumer(
         val log = LoggerFactory.getLogger(CvConsumer::class.java)
     }
 
-    @Topic("arbeid-pam-cv-endret-v4-q0")
+    @Topic("\${kafka.topics.consumers.cv_endret}")
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {

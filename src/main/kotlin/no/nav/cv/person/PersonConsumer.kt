@@ -22,7 +22,7 @@ class PersonConsumer(
         val log = LoggerFactory.getLogger(PersonConsumer::class.java)
     }
 
-    @Topic("privat-person-pdl-aktor-v1")
+    @Topic("\${kafka.topics.consumers.pdl_id}")
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {

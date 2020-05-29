@@ -10,10 +10,11 @@ import no.nav.brukernotifikasjon.schemas.Oppgave
 @KafkaClient()
 interface BrukernotifikasjonClient {
 
-    @Topic("aapen-brukernotifikasjon-nyOppgave-v1")
+    @Topic("\${kafka.topics.producers.ny_oppgave}")
     fun publish(@KafkaKey nokkel: Nokkel, oppgave: Oppgave)
 
-    @Topic("aapen-brukernotifikasjon-nyOppgave-v1")
+    // TODO : Sjekk hva dette topicet egentlig heter
+    @Topic("\${kafka.topics.producers.done}")
     fun done(@KafkaKey nokkel: Nokkel, done: Done)
     
 }
