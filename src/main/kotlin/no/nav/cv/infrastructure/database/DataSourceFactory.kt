@@ -2,11 +2,16 @@ package no.nav.cv.infrastructure.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.micronaut.context.annotation.Factory
-import io.micronaut.context.annotation.Requires
-import io.micronaut.context.annotation.Value
+import io.micronaut.configuration.hibernate.jpa.EntityManagerFactoryBean
+import io.micronaut.context.annotation.*
+import io.micronaut.context.event.BeanCreatedEvent
+import io.micronaut.context.event.BeanCreatedEventListener
+import io.micronaut.context.event.BeanInitializedEventListener
+import io.micronaut.context.event.BeanInitializingEvent
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.hibernate.boot.MetadataSources
 import javax.inject.Singleton
+import javax.sql.DataSource
 
 
 @Factory
@@ -15,11 +20,11 @@ class VaultDataSource(
         @Value("\${db.vault.path}") private val vaultPath: String,
         @Value("\${db.vault.username}") private val username: String,
         @Value("\${db.vault.connection.string}") private val url: String
-) {
+) : BeanInitializedEventListener<DataSource> {
 
     @Singleton
-    fun vaultDataSource(
-    ): HikariDataSource {
+    @Primary
+    fun vaultDataSource(): HikariDataSource {
 
         val config = HikariConfig()
 
@@ -30,10 +35,13 @@ class VaultDataSource(
             maxLifetime = 30001
             connectionTestQuery = "select 1"
             jdbcUrl = url
-            
+
         }
 
         return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultPath, username)
     }
+
+    override fun onInitialized(event: BeanInitializingEvent<DataSource>?) = vaultDataSource()
+
 
 }
