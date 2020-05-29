@@ -30,6 +30,7 @@ dependencies {
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut.configuration:micronaut-hibernate-jpa"
+    implementation("io.micronaut.configuration:micronaut-hibernate-jpa-spring")
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
     implementation "io.micronaut.kafka:micronaut-kafka:2.0.0"
     implementation "io.micronaut:micronaut-runtime"
