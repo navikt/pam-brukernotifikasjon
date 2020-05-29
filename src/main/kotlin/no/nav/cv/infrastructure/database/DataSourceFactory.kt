@@ -30,8 +30,7 @@ class VaultDataSource(
             maxLifetime = 30001
             connectionTestQuery = "select 1"
             jdbcUrl = url
-
-            connectionInitSql = "SET ROLE \"$username\""
+            
         }
 
         return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultPath, username)
