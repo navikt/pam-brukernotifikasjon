@@ -72,6 +72,14 @@ kafka:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    pam-brukernotifikasjon-person:
+      key:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value:
+        deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      specific:
+        avro:
+          reader: false
   topics:
     consumers:
       cv_endret: ${KAFKA_CONSUMER_TOPIC_CV_ENDRET:`arbeid-pam-cv-endret-v4-q0`}
