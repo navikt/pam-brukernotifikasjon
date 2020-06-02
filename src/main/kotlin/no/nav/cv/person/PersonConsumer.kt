@@ -26,6 +26,7 @@ class PersonConsumer(
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {
+        log.debug("PersonConsumer record recieved: $record")
         val identer = PersonDto(record.value())
                 .identer()
         personIdentRepository.oppdater(identer)

@@ -28,7 +28,7 @@ class CvConsumer(
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {
-        log.info("Mottat CV - topic: ${record.topic()} Partition ${record.partition()}, offset: ${record.offset()}, timestamp:  ${record.timestamp()}")
+        log.debug("CvConsumer record recieved: $record")
 
         val cv = CvDto(record.value())
         log.info("${cv.aktorId()}: ${cv.sistEndret()}")

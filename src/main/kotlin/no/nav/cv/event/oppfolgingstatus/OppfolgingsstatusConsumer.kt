@@ -6,6 +6,7 @@ import io.micronaut.configuration.kafka.annotation.Topic
 import no.nav.cv.notifikasjon.HendelseService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.json.JSONObject
+import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -17,10 +18,15 @@ class OppfolgingsstatusConsumer(
         private val hendelseService: HendelseService
 ) {
 
+    companion object {
+        val log = LoggerFactory.getLogger(OppfolgingsstatusConsumer::class.java)
+    }
+
     @Topic("\${kafka.topics.consumers.endring_status_oppfolging}")
     fun receive(
             record: ConsumerRecord<String, String>
     ) {
+        log.debug("OppfolgingsstatusConsumer record recieved: $record")
         val dto = OppfolgingstatusDto(record.value().toString())
 
         if(dto.underOppfolging()) {

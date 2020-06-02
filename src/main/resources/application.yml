@@ -88,17 +88,15 @@ kafka:
   health:
     enabled: false
   security:
-    protocol: PLAINTEXT
-    #protocol: SASL_SSL
+    protocol: SASL_SSL
   sasl:
     jaas:
-      config: ''
-      #'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER} password=${KAFKA_SERVICE_PASSWORD};'
+      config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER} password=${KAFKA_SERVICE_PASSWORD};'
     mechanism: PLAIN
   ssl:
     truststore:
-      location: ${NAV_TRUSTSTORE_PATH:``}
-      password: ${NAV_TRUSTSTORE_PASSWORD:``}
+      location: ${NAV_TRUSTSTORE_PATH}
+      password: ${NAV_TRUSTSTORE_PASSWORD}
   schema:
     registry:
       url: http://kafka-schema-registry.tpa:8081
