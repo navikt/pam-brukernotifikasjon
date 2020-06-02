@@ -6,6 +6,7 @@ import io.micronaut.configuration.kafka.annotation.Topic
 import org.apache.avro.generic.GenericArray
 import org.apache.avro.generic.GenericEnumSymbol
 import org.apache.avro.generic.GenericRecord
+import org.apache.avro.util.Utf8
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 
@@ -39,7 +40,7 @@ class PersonDto(val record: GenericRecord) {
 
     fun identer(): PersonIdenter {
         val identer = record.identifikatorer().map { PersonIdent(
-                it.get("idnummer") as String,
+                it.get("idnummer").toString(),
                 convertType(it.get("type") as GenericEnumSymbol<*>),
                 it.get("gjeldende") as Boolean
         ) }
