@@ -44,3 +44,13 @@ spec:
       value: {{ db_vault_path }}
     - name: DB_VAULT_USERNAME
       value: {{ db_vault_username }}
+    - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
+      value: {{ kafka_consumer_topic_cv_endret }}
+    - name: KAFKA_CONSUMER_TOPIC_ENDRING_STATUS_OPPFOLGING
+      value: {{ kafka_consumer_topic_endring_status_oppfolging }}
+    - name: KAFKA_CONSUMER_TOPIC_PDL_ID
+      value: {{ kafka_consumer_topic_pdl_id }}
+    - name: KAFKA_PRODUCER_TOPIC_NY_OPPGAVE
+      value: {{ kafka_producer_topic_ny_oppgave }}
+    - name: KAFKA_PRODUCER_TOPIC_DONE
+      value: {{ kafka_producer_topic_done }}

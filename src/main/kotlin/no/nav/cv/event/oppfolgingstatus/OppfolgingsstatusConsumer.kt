@@ -17,7 +17,7 @@ class OppfolgingsstatusConsumer(
         private val hendelseService: HendelseService
 ) {
 
-    @Topic("aapen-fo-endringPaaOppfolgingStatus-v1-q0")
+    @Topic("\${kafka.topics.consumers.endring_status_oppfolging}")
     fun receive(
             record: ConsumerRecord<String, String>
     ) {
