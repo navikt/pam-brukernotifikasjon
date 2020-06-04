@@ -60,7 +60,6 @@ open class StatusRepository(
     @Transactional(readOnly = true)
     open fun skalVarsles(): List<Status> {
         val now = ZonedDateTime.now()
-        log.info("$now")
         return entityManager.createNativeQuery(skalVarsles, StatusEntity::class.java)
                 .setParameter("status", skalVarslesStatus)
                 .setParameter("fortsettTidspunkt", now)

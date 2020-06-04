@@ -1,0 +1,52 @@
+kafka:
+  producers:
+    default:
+      key:
+        serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value:
+        serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+  consumers:
+    pam-brukernotifikasjon-cv:
+      key:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value:
+        deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      specific:
+        avro:
+          reader: false
+    pam-brukernotifikasjon-oppfolging:
+      key:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  topics:
+    consumers:
+      cv_endret: ${KAFKA_CONSUMER_TOPIC_CV_ENDRET:`arbeid-pam-cv-endret-v4-q0`}
+      endring_status_oppfolging: ${KAFKA_CONSUMER_TOPIC_ENDRING_STATUS_OPPFOLGING:`aapen-fo-endringPaaOppfolgingStatus-v1-q0`}
+      pdl_id: ${KAFKA_CONSUMER_TOPIC_PDL_ID:`privat-person-pdl-aktor-v1`}
+    producers:
+      ny_oppgave: ${KAFKA_PRODUCER_TOPIC_NY_OPPGAVE:`aapen-brukernotifikasjon-nyOppgave-v1`}
+      done: ${KAFKA_PRODUCER_TOPIC_DONE:`aapen-brukernotifikasjon-done-v1`}
+  bootstrap:
+    servers:
+      - 10.183.160.26:8443
+      - 10.183.32.47:8443
+      - 10.183.32.48:8443
+  health:
+    enabled: false
+  security:
+    protocol: PLAINTEXT
+    #protocol: SASL_SSL
+  sasl:
+    jaas:
+      config: ''
+      #'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER} password=${KAFKA_SERVICE_PASSWORD};'
+    mechanism: PLAIN
+  ssl:
+    truststore:
+      location: ${NAV_TRUSTSTORE_PATH:``}
+      password: ${NAV_TRUSTSTORE_PASSWORD:``}
+  schema:
+    registry:
+      url: http://kafka-schema-registry.tpa:8081
+
