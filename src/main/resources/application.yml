@@ -46,8 +46,7 @@ flyway:
     default:
       locations: classpath:databasemigrations
       initSql:
-        # - 'SET ROLE "pam-brukernotifikasjon-admin"'
-        # - 'SET ROLE "pam-brukernotifikasjon-admin"'
+        - 'SET ROLE "pam-brukernotifikasjon-admin"'
 
 kafka:
   producers:
