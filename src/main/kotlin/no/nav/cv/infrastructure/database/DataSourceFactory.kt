@@ -1,47 +1,51 @@
 package no.nav.cv.infrastructure.database
 
-import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.micronaut.configuration.hibernate.jpa.EntityManagerFactoryBean
+import io.micronaut.configuration.jdbc.hikari.DatasourceConfiguration
+import io.micronaut.configuration.jdbc.hikari.DatasourceFactory
+import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.*
-import io.micronaut.context.event.BeanCreatedEvent
-import io.micronaut.context.event.BeanCreatedEventListener
-import io.micronaut.context.event.BeanInitializedEventListener
-import io.micronaut.context.event.BeanInitializingEvent
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import org.hibernate.boot.MetadataSources
-import javax.inject.Singleton
-import javax.sql.DataSource
+import org.slf4j.LoggerFactory
+import javax.annotation.PreDestroy
 
 
 @Factory
 @Requires(notEnv = [ "test" ])
-class VaultDataSource(
+@Replaces(factory = DatasourceFactory::class)
+class VaultDatasourceFactory(
         @Value("\${db.vault.path}") private val vaultPath: String,
         @Value("\${db.vault.username}") private val username: String,
-        @Value("\${db.vault.connection.string}") private val url: String
-) : BeanInitializedEventListener<DataSource> {
+        private val applicationContext: ApplicationContext
+) : AutoCloseable {
 
-    @Singleton
-    @Primary
-    fun vaultDataSource(): HikariDataSource {
-
-        val config = HikariConfig()
-
-        with(config) {
-            minimumIdle = 0
-            maximumPoolSize = 4
-            idleTimeout = 10001
-            maxLifetime = 30001
-            connectionTestQuery = "select 1"
-            jdbcUrl = url
-
-        }
-
-        return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultPath, username)
+    companion object {
+        private val LOG = LoggerFactory.getLogger(DatasourceFactory::class.java)
     }
 
-    override fun onInitialized(event: BeanInitializingEvent<DataSource>?) = vaultDataSource()
+    private val dataSources: MutableList<HikariDataSource> = mutableListOf()
 
+
+    @Context
+    @EachBean(DatasourceConfiguration::class)
+    fun vaultDataSource(datasourceConfiguration: DatasourceConfiguration ): HikariDataSource {
+        val ds = HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(datasourceConfiguration, vaultPath, username)
+        dataSources.add(ds)
+        return ds
+    }
+
+    @Override
+    @PreDestroy
+    override fun close() {
+        for (dataSource in dataSources) {
+            try {
+                dataSource.close();
+            } catch (e: Exception) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Error closing data source [" + dataSource + "]: " + e.message, e);
+                }
+            }
+        }
+    }
 
 }
