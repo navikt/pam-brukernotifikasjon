@@ -73,33 +73,32 @@ open class StatusRepository(
 
 @Entity
 @Table(name = "STATUS")
-private data class StatusEntity(
+private class StatusEntity() {
 
-        @Id
-        @Column(name = "ID")
-        @GeneratedValue(generator = "STATUS_SEQ")
-        private val id: Long,
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(generator = "STATUS_SEQ")
+    private var id: Long? = null // Kan ikke ha lateinit på primitive types
 
-        @Column(name = "UUID", nullable = false, unique = true)
-        val uuid: UUID,
+    @Column(name = "UUID", nullable = false, unique = true)
+    lateinit var uuid: UUID
 
-        @Column(name = "AKTOR_ID", nullable = false)
-        val aktorId: String,
+    @Column(name = "AKTOR_ID", nullable = false)
+    lateinit var aktorId: String
 
-        @Column(name = "FOEDSELSNUMMER", nullable = false)
-        val fnr: String,
+    @Column(name = "FOEDSELSNUMMER", nullable = false)
+    lateinit var fnr: String
 
-        @Column(name = "STATUS", nullable = false)
-        val status: String,
+    @Column(name = "STATUS", nullable = false)
+    lateinit var status: String
 
-        @Column(name = "TIDSPUNKT", nullable = false)
-        //@Convert(converter = ZonedDateTimeConverter::class)
-        val tidspunkt: ZonedDateTime,
+    @Column(name = "TIDSPUNKT", nullable = false)
+    //@Convert(converter = ZonedDateTimeConverter::class)
+    lateinit var tidspunkt: ZonedDateTime
 
-        @Column(name = "FORTSETT_TIDSPUNKT", nullable = false)
-        //@Convert(converter = ZonedDateTimeConverter::class)
-        val fortsettTidspunkt: ZonedDateTime
-) {
+    @Column(name = "FORTSETT_TIDSPUNKT", nullable = false)
+    //@Convert(converter = ZonedDateTimeConverter::class)
+    lateinit var fortsettTidspunkt: ZonedDateTime
 
     fun toStatus() = Status(
             uuid = uuid,
@@ -109,16 +108,38 @@ private data class StatusEntity(
             statusTidspunkt = tidspunkt,
             fortsettTidspunkt = fortsettTidspunkt)
 
+    fun initStatus(
+            uuid: UUID,
+            aktorId: String,
+            fnr: String,
+            status: String,
+            tidspunkt: ZonedDateTime,
+            fortsettTidspunkt: ZonedDateTime) {
+        //this.id = 0   // Gammel kode satt denne til 0, men da får jeg org.hibernate.PersistentObjectException
+                        // Når jeg ikke setter den (den er da initialisert til null), fungerer det fint,
+                        // men jeg er usikker på konsekvensene? Unit testene passer
+        this.uuid = uuid
+        this.aktorId = aktorId
+        this.fnr = fnr
+        this.status = status
+        this.tidspunkt = tidspunkt
+        this.fortsettTidspunkt = fortsettTidspunkt
+    }
+
     companion object {
-        fun fromStatus(status: Status) = StatusEntity(
-                id = 0,
-                uuid = status.uuid,
-                aktorId = status.aktorId,
-                fnr = status.fnr,
-                status = status.status,
-                tidspunkt = status.statusTidspunkt,
-                fortsettTidspunkt = status.fortsettTidspunkt
-        )
+        fun fromStatus(status: Status) : StatusEntity {
+            val entity = StatusEntity()
+            entity.initStatus(
+                    uuid = status.uuid,
+                    aktorId = status.aktorId,
+                    fnr = status.fnr,
+                    status = status.status,
+                    tidspunkt = status.statusTidspunkt,
+                    fortsettTidspunkt = status.fortsettTidspunkt
+            )
+            return entity
+        }
+
     }
 }
 
