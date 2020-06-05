@@ -20,6 +20,8 @@ private open class JpaPersonIdentRepository(
         @PersistenceContext private val entityManager: EntityManager
 ): PersonIdentRepository {
 
+    val serieMedWhitespace = Regex("(\\s+)")
+
     companion object {
         val log = LoggerFactory.getLogger(JpaPersonIdentRepository::class.java)
     }
@@ -28,14 +30,14 @@ private open class JpaPersonIdentRepository(
         DELETE PersonIdentEntity p
         WHERE p.groupId IN (
            SELECT p2.groupId FROM PersonIdentEntity p2 WHERE p2.ident IN :identVerdier)
-    """.trimIndent()
+    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     private val finnIdenter =
             """
         SELECT p FROM PersonIdentEntity p
         WHERE p.groupId IN (
             SELECT p2.groupId FROM PersonIdentEntity p2 WHERE p2.type = :type AND p2.ident = :aktorId)
-    """.trimMargin()
+    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     @Transactional
     override fun oppdater(personIdenter: PersonIdenter) {

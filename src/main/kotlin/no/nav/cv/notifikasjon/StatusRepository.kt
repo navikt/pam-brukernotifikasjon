@@ -14,6 +14,8 @@ open class StatusRepository(
         @PersistenceContext private val entityManager: EntityManager
 ) {
 
+    val serieMedWhitespace = Regex("(\\s+)")
+
     companion object {
         private val log = LoggerFactory.getLogger(StatusRepository::class.java)
     }
@@ -32,7 +34,7 @@ open class StatusRepository(
             SELECT max(s2.TIDSPUNKT) FROM STATUS s2 WHERE s2.AKTOR_ID = :aktorId
         )
         
-    """.trimMargin()
+    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     @Transactional(readOnly = true)
     open fun finnSiste(aktorId: String): Status {
@@ -55,7 +57,7 @@ open class StatusRepository(
         WHERE s.STATUS = :status 
         AND s.FORTSETT_TIDSPUNKT <:fortsettTidspunkt 
         
-    """.trimMargin()
+    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     @Transactional(readOnly = true)
     open fun skalVarsles(): List<Status> {
