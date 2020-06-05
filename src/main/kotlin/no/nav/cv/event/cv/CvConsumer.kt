@@ -51,7 +51,7 @@ private class CvDto(val record: GenericRecord) {
 
         return cv?.aktoerId()
                 ?: jobbprofil?.aktoerId()
-                 ?: throw IllegalStateException("Mangler aktørid")
+                ?: throw IllegalStateException("Mangler aktørid")
     }
 
     fun sistEndret() =
@@ -77,7 +77,6 @@ private class CvDto(val record: GenericRecord) {
 
             else -> throw IllegalStateException("Ukjent meldingstype")
         }
-
 }
 
 
