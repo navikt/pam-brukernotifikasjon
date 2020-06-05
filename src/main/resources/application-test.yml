@@ -24,5 +24,7 @@ flyway:
   datasources:
     default:
       locations: classpath:databasemigrations
+      initSql:
+        - ''
       connection-init-sqls:
         - 'SET ROLE "pam-brukernotifikasjon-admin"'
