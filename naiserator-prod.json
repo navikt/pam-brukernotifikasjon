@@ -3,5 +3,7 @@
 
   "jdbc_url": "jdbc:postgresql://A01DBVL013.adeo.no/pam-brukernotifikasjon",
   "db_vault_path": "postgresql/prod-fss/",
-  "db_vault_username": "pam-brukernotifikasjon-admin"
+  "db_vault_username": "pam-brukernotifikasjon-admin",
+
+  "ingress": "https://pam-import-api.nais.adeo.no"
 }
