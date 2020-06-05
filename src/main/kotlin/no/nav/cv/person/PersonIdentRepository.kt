@@ -81,6 +81,7 @@ private data class PersonIdentEntity(
         @Column(name = "PERSON_ID", nullable = false)
         val ident: String,
 
+        @Enumerated(EnumType.STRING)
         @Column(name = "PERSON_ID_TYPE", nullable = false, unique = true)
         val type: PersonIdent.Type,
 
