@@ -4,6 +4,7 @@ import io.micronaut.configuration.kafka.ConsumerAware
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
+import io.micronaut.context.annotation.Prototype
 import io.micronaut.context.annotation.Value
 import org.apache.avro.generic.GenericArray
 import org.apache.avro.generic.GenericEnumSymbol
@@ -14,7 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.PartitionInfo
 import org.slf4j.LoggerFactory
 
-
+@Prototype
 @KafkaListener(
         groupId = "pam-brukernotifikasjon-person",
         offsetReset = OffsetReset.EARLIEST
