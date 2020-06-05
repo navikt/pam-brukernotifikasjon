@@ -46,50 +46,41 @@ private class CvDto(val record: GenericRecord) {
     val slett = "SLETT"
 
     fun aktorId(): String {
-        if (record.meldingstype() == opprett) {
-            return record.opprettCv()?.cv()?.aktoerId()
-                    ?: record.opprettJobbprofil()?.jobbprofil()?.aktoerId()
-                    ?: throw IllegalStateException("Mangler aktørid")
-        }
-        if (record.meldingstype() == endre) {
-            return record.endretCv()?.cv()?.aktoerId()
-                    ?: record.endretJobbprofil()?.jobbprofil()?.aktoerId()
-                    ?: throw IllegalStateException("Mangler aktørid")
-        }
-        if (record.meldingstype() == slett) {
-            return record.slettCv()?.cv()?.aktoerId()
-                    ?: record.slettJobbprofil()?.jobbprofil()?.aktoerId()
-                    ?: throw IllegalStateException("Mangler aktørid")
-        }
-        throw IllegalStateException("Mangler aktørid")
+
+        val (cv, jobbprofil) = getCvJobprofil()
+
+        return cv?.aktoerId()
+                ?: jobbprofil?.aktoerId()
+                ?: throw IllegalStateException("Mangler aktørid")
     }
 
     fun sistEndret() =
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis()), TimeZone.getDefault().toZoneId())
 
     private fun sistEndretMillis(): Long {
-        if (record.meldingstype() == opprett) {
-            return record.opprettCv()?.cv()?.sistEndret()
-                    ?: record.opprettJobbprofil()?.jobbprofil()?.sistEndret()
-                    ?: throw IllegalStateException("Mangler aktørid")
-        }
-        if (record.meldingstype() == endre) {
-            return record.endretCv()?.cv()?.sistEndret()
-                    ?: record.endretJobbprofil()?.jobbprofil()?.sistEndret()
-                    ?: throw IllegalStateException("Mangler aktørid")
-        }
-        if (record.meldingstype() == slett) {
-            return record.slettCv()?.cv()?.sistEndret()
-                    ?: record.slettJobbprofil()?.jobbprofil()?.sistEndret()
-                    ?: throw IllegalStateException("Mangler aktørid")
-        }
-        throw IllegalStateException("Mangler aktørid")
+
+        val (cv, jobbprofil) = getCvJobprofil()
+
+        return cv?.sistEndret()
+                ?: jobbprofil?.sistEndret()
+                ?: throw IllegalStateException("Mangler sistEndret")
     }
 
+    private fun getCvJobprofil()
+            = when(record.meldingstype()) {
+
+            opprett -> Pair(record.opprettCv()?.cv(), record.opprettJobbprofil()?.jobbprofil())
+
+            endre -> Pair(record.endretCv()?.cv(), record.endretJobbprofil()?.jobbprofil())
+
+            slett -> Pair(record.slettCv()?.cv(), record.slettJobbprofil()?.jobbprofil())
+
+            else -> throw IllegalStateException("Ukjent meldingstype")
+        }
 }
 
 
-private fun GenericRecord.meldingstype() = get("meldingstype") as String?
+private fun GenericRecord.meldingstype() = get("meldingstype")?.toString() ?: "NULL"
 
 private fun GenericRecord.opprettCv() = get("opprett_cv") as GenericRecord?
 
