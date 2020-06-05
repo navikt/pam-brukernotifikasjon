@@ -98,6 +98,6 @@ private fun GenericRecord.cv() = get("cv") as GenericRecord?
 
 private fun GenericRecord.jobbprofil() = get("jobbprofil") as GenericRecord?
 
-private fun GenericRecord.sistEndret(): Long? = (get("sist_endret") as String?)?.toLong()
+private fun GenericRecord.sistEndret(): Long? = get("sist_endret") as Long?
 
 private fun GenericRecord.aktoerId() = get("aktoer_id") as String?
