@@ -40,43 +40,14 @@ class CvConsumer(
 }
 
 private class CvDto(val record: GenericRecord) {
-
-    val opprett = "OPPRETT"
-    val endre = "ENDRE"
-    val slett = "SLETT"
-
-    fun aktorId(): String {
-
-        val (cv, jobbprofil) = getCvJobprofil()
-
-        return cv?.aktoerId()
-                ?: jobbprofil?.aktoerId()
-                ?: throw IllegalStateException("Mangler aktørid")
-    }
+    fun aktorId() = record.aktoerId()
+            ?: throw Exception("Record mangler aktorId")
 
     fun sistEndret() =
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis()), TimeZone.getDefault().toZoneId())
 
-    private fun sistEndretMillis(): Long {
-
-        val (cv, jobbprofil) = getCvJobprofil()
-
-        return cv?.sistEndret()
-                ?: jobbprofil?.sistEndret()
-                ?: throw IllegalStateException("Mangler sistEndret")
-    }
-
-    private fun getCvJobprofil()
-            = when(record.meldingstype()) {
-
-            opprett -> Pair(record.opprettCv()?.cv(), record.opprettJobbprofil()?.jobbprofil())
-
-            endre -> Pair(record.endretCv()?.cv(), record.endretJobbprofil()?.jobbprofil())
-
-            slett -> Pair(record.slettCv()?.cv(), record.slettJobbprofil()?.jobbprofil())
-
-            else -> throw IllegalStateException("Ukjent meldingstype")
-        }
+    private fun sistEndretMillis() = record.sistEndret()
+            ?: throw Exception("Record mangler sistEndret")
 }
 
 
