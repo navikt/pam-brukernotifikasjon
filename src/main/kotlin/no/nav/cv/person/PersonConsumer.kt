@@ -1,30 +1,23 @@
 package no.nav.cv.person
 
-import io.micronaut.configuration.kafka.ConsumerAware
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
 import io.micronaut.context.annotation.Prototype
-import io.micronaut.context.annotation.Value
 import org.apache.avro.generic.GenericArray
 import org.apache.avro.generic.GenericEnumSymbol
 import org.apache.avro.generic.GenericRecord
-import org.apache.avro.util.Utf8
-import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.common.PartitionInfo
 import org.slf4j.LoggerFactory
 
 @Prototype
 @KafkaListener(
-        groupId = "pam-brukernotifikasjon-person",
+        groupId = "pam-brukernotifikasjon-person-1",
         offsetReset = OffsetReset.EARLIEST
 )
 class PersonConsumer(
         private val personIdentRepository: PersonIdentRepository
-) : ConsumerAware<Any, Any> {
-
-    lateinit var consumer: Consumer<Any, Any>
+) {
 
     companion object {
         val log = LoggerFactory.getLogger(PersonConsumer::class.java)
@@ -38,12 +31,6 @@ class PersonConsumer(
         val identer = PersonDto(record.value())
                 .identer()
         personIdentRepository.oppdater(identer)
-    }
-
-    fun reset() = consumer.seekToBeginning(consumer.assignment())
-
-    override fun setKafkaConsumer(consumer: Consumer<Any, Any>) {
-        this.consumer = consumer
     }
 
 }
