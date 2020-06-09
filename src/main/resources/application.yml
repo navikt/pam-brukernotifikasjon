@@ -69,7 +69,7 @@ kafka:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    pam-brukernotifikasjon-person:
+    pam-brukernotifikasjon-person-v1:
       key:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value:

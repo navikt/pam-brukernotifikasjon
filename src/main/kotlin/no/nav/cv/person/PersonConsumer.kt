@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 
 @Prototype
 @KafkaListener(
-        groupId = "pam-brukernotifikasjon-person-1",
+        groupId = "pam-brukernotifikasjon-person-v1",
         offsetReset = OffsetReset.EARLIEST
 )
 class PersonConsumer(
