@@ -68,39 +68,50 @@ private open class JpaPersonIdentRepository(
 
 @Entity
 @Table(name = "PERSON_IDENT")
-private data class PersonIdentEntity(
+private class PersonIdentEntity {
 
         @Id
         @Column(name = "ID")
         @GeneratedValue(generator = "PERSON_IDENT_SEQ")
-        private val id: Long = 0,
+        private val id: Long = 0
 
         @Column(name = "PERSON_ID_GROUP_ID")
-        val groupId: UUID,
+        lateinit var groupId: UUID
 
         @Column(name = "PERSON_ID", nullable = false)
-        val ident: String,
+        lateinit var ident: String
 
         @Enumerated(EnumType.STRING)
         @Column(name = "PERSON_ID_TYPE", nullable = false, unique = true)
-        val type: PersonIdent.Type,
+        lateinit var type: PersonIdent.Type
 
         @Column(name = "GJELDENDE", nullable = false)
-        val gjeldende: Boolean
+        var gjeldende: Boolean? = null  // Denne er nullable i @Column annotation. Antar det blir en excption dersom
+                                        // verdien ikke er satt, men det er vel for så vidt greit?
 
-) {
+    fun initStatus(groupId: UUID, ident: String, type: PersonIdent.Type, gjeldende: Boolean) : PersonIdentEntity {
+        this.groupId = groupId
+        this.ident = ident
+        this.type = type
+        this.gjeldende = gjeldende
+
+        return this
+    }
 
     companion object {
 
-        fun fromPersonIdent(personIdent: PersonIdent) =
-                PersonIdentEntity(0, UUID.randomUUID(), personIdent.id(), personIdent.type(), personIdent.gjeldende())
+        fun fromPersonIdent(personIdent: PersonIdent) {
+            val entity = PersonIdentEntity()
+            entity.initStatus(UUID.randomUUID(), personIdent.id(), personIdent.type(), personIdent.gjeldende())
+        }
 
         fun fromPersonIdenter(personIdenter: PersonIdenter): List<PersonIdentEntity> {
             val uuid = UUID.randomUUID()
-            return personIdenter.identer().map { PersonIdentEntity(0, uuid, it.id(), it.type(), it.gjeldende()) }
+            return personIdenter.identer().map { PersonIdentEntity().initStatus(uuid, it.id(), it.type(), it.gjeldende()) }
         }
     }
 
-    fun toPersonIdent() = PersonIdent(ident, type, gjeldende)
+    // Føles veldig skittent å bruke '!!'. Kan evt wrappe det i en get metode som kaster en exception vi har kontroll på
+    fun toPersonIdent() = PersonIdent(ident, type, gjeldende!!)
 
 }
