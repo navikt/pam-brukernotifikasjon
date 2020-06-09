@@ -11,7 +11,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @KafkaListener(
-        groupId = "pam-brukernotifikasjon-oppfolging",
+        groupId = "pam-brukernotifikasjon-oppfolging-v1",
         offsetReset = OffsetReset.EARLIEST
 )
 class OppfolgingsstatusConsumer(
