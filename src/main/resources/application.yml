@@ -56,7 +56,7 @@ kafka:
       value:
         serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
   consumers:
-    pam-brukernotifikasjon-cv:
+    pam-brukernotifikasjon-cv-v1:
       key:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value:

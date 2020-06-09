@@ -13,7 +13,7 @@ import java.util.*
 
 
 @KafkaListener(
-        groupId = "pam-brukernotifikasjon-cv",
+        groupId = "pam-brukernotifikasjon-cv-v1",
         offsetReset = OffsetReset.EARLIEST
 )
 class CvConsumer(
