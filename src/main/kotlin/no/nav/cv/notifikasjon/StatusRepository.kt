@@ -56,7 +56,8 @@ open class StatusRepository(
         ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
         WHERE s.STATUS = :status 
         AND s.FORTSETT_TIDSPUNKT <:fortsettTidspunkt 
-        
+        ORDER BY s.FORTSETT_TIDSPUNKT
+        LIMIT 10000
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     @Transactional(readOnly = true)
