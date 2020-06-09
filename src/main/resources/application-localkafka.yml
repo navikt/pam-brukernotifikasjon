@@ -14,7 +14,7 @@ kafka:
       specific:
         avro:
           reader: false
-    pam-brukernotifikasjon-oppfolging:
+    pam-brukernotifikasjon-oppfolging-v1:
       key:
         deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value:
