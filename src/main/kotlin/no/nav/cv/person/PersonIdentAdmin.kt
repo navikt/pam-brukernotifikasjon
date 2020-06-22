@@ -1,4 +1,4 @@
-package no.nav.cv.infrastructure.admin
+package no.nav.cv.person
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
