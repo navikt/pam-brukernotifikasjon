@@ -1,5 +1,6 @@
 package no.nav.cv.person
 
+import io.micronaut.context.annotation.Value
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import no.nav.cv.person.PersonIdent
@@ -8,10 +9,9 @@ import no.nav.cv.person.PersonIdenter
 
 @Controller("internal")
 class PersonIdentAdmin(
+        @Value("\${personIdent.admin.enabled}") private val personIdentAdminEnabled: String,
         private val personIdentRepository: PersonIdentRepository
 ) {
-
-    private val personIdentAdminEnabled = "\${personIdentAdminEnabled}"
 
     @Get("addIdent/{fnr}/{aktorId}")
     fun addIdent(fnr: String, aktorId: String) : String {
