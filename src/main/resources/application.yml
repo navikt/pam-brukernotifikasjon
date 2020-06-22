@@ -105,3 +105,5 @@ kafka:
   schema:
     registry:
       url: http://kafka-schema-registry.tpa:8081
+personIdent:
+  personIdentAdminEnabled: ${PERSON_IDENT_ADMIN_ENABLED:`disabled`}

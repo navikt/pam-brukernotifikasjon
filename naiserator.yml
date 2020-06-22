@@ -54,5 +54,7 @@ spec:
       value: {{ kafka_producer_topic_ny_oppgave }}
     - name: KAFKA_PRODUCER_TOPIC_DONE
       value: {{ kafka_producer_topic_done }}
+    - name: PERSON_IDENT_ADMIN_ENABLED
+      value: {{ personIdentAdminEnabled }}
   ingresses:
     - {{ ingress }}

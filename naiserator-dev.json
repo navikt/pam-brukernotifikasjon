@@ -12,5 +12,7 @@
   "db_vault_path": "postgresql/preprod-fss/",
   "db_vault_username": "pam-brukernotifikasjon-admin",
 
-  "ingress": "https://pam-brukernotifikasjon.nais.preprod.local"
+  "ingress": "https://pam-brukernotifikasjon.nais.preprod.local",
+
+  "personIdentAdminEnabled": "enabled"
 }
