@@ -13,7 +13,7 @@ class PersonIdentAdmin(
         private val personIdentRepository: PersonIdentRepository
 ) {
 
-    @Get("addIdent/{fnr}/{aktorId}")
+    @Get("addIdent/{fnr}/{aktorId}", produces = [ "text/plain" ])
     fun addIdent(fnr: String, aktorId: String) : String {
 
         check(personIdentAdminEnabled == "enabled")

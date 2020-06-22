@@ -3,6 +3,7 @@ package no.nav.cv.person
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.micronaut.context.annotation.Property
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -10,7 +11,6 @@ import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import javax.inject.Inject
 
@@ -26,9 +26,9 @@ class PersonIdentAdminTest {
     @Property(name="personIdent.admin.enabled", value="enabled")
     fun `that admin is enabled by property` () {
         assertThat(client.toBlocking()
-                    .exchange<String>("/internal/addIdent/123/321")
-                    .body()
-        ).isEqualTo("OK")
+                .exchange<String>("/internal/addIdent/123/321")
+                .status
+        ).isEqualTo(HttpStatus.OK)
     }
 
     @MockBean(bean = PersonIdentRepository::class)
