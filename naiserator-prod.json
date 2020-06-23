@@ -5,5 +5,7 @@
   "db_vault_path": "postgresql/prod-fss/",
   "db_vault_username": "pam-brukernotifikasjon-admin",
 
-  "ingress": "https://pam-brukernotifikasjon.nais.adeo.no"
+  "ingress": "https://pam-brukernotifikasjon.nais.adeo.no",
+
+  "personIdentAdminEnabled": "disabled"
 }
