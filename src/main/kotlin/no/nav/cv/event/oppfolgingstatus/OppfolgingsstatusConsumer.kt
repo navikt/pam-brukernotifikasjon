@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
         offsetReset = OffsetReset.EARLIEST
 )
 class OppfolgingsstatusConsumer(
-        private val hendelseService: HendelseService
+        private val oppfolgingsService: OppfolgingstatusService
 ) {
 
     companion object {
@@ -28,27 +28,6 @@ class OppfolgingsstatusConsumer(
     ) {
         log.debug("OppfolgingsstatusConsumer record recieved: $record")
         val dto = OppfolgingstatusDto(record.value().toString())
-
-        if(dto.underOppfolging()) {
-            hendelseService.kommetUnderOppfolging(dto.aktorId(), dto.startForSisteOppfolgningsPeriode())
-        } else {
-            hendelseService.blittFulgtOpp(dto.aktorId(), dto.endret())
-        }
+        oppfolgingsService.oppdaterStatus(dto)
     }
-
-}
-
-private class OppfolgingstatusDto(
-        json: String
-) {
-    private val json: JSONObject = JSONObject(json)
-
-    fun aktorId() = json.getString("aktoerid")
-
-    fun underOppfolging() = json.getBoolean("oppfolging")
-
-    fun startForSisteOppfolgningsPeriode() = ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(json.getString("startDato")))
-
-    fun endret() = ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(json.getString("endretTimestamp")))
-
 }
