@@ -1,7 +1,10 @@
 package no.nav.cv.event.oppfolgingstatus
 
 import io.micronaut.context.annotation.Value
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.scheduling.annotation.Scheduled
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
@@ -35,19 +38,23 @@ class OppfolgingsstatusRest (
     fun hentOppfolgingstatus() {
 
         if(oidcToken == uninitialized) refreshToken()
-            //log.error("Mangler OIDC token når vi skal hente oppfølgingsstatus")
 
+        try {
+            val response = oppfolgingsStatusFeedClient.feed(
+                    authorization = "Bearer $oidcToken",
+                    id = 1,
+                    pageSize = 20
+            )
+            log.debug(response.body()!!)
+        } catch (e: HttpClientResponseException) {
+            if(e.status == HttpStatus.UNAUTHORIZED) refreshToken() else throw e
+        }
 
-        val feed = oppfolgingsStatusFeedClient.feed(
-                authorization = "Bearer $oidcToken",
-                id = 1,
-                pageSize = 20
-        )
-        // hent nye saker fra rest og spol igjennom med oppfolgingsService.oppdaterStatus()
     }
 
     //@Scheduled(fixedDelay = "3500s")
     fun refreshToken() {
+        log.debug("Refreshing token")
         val auth = Base64.getEncoder().encodeToString("$user:$pw".toByteArray(Charsets.UTF_8))
         val response = securityTokeServiceClient.authenticate("Basic $auth")
 

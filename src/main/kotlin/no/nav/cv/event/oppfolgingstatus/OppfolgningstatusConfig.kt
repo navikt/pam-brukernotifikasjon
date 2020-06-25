@@ -3,6 +3,7 @@ package no.nav.cv.event.oppfolgingstatus
 import io.micronaut.context.annotation.ConfigurationProperties
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Value
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
@@ -43,6 +44,6 @@ interface OppfolgingsStatusFeedClient {
     fun feed(
             @Header authorization: String,
             @QueryValue("id") id: Long,
-            @QueryValue("page_size") pageSize: Long): String
+            @QueryValue("page_size") pageSize: Long): HttpResponse<String>
 
 }
