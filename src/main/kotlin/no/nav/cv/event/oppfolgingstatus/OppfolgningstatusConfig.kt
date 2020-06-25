@@ -7,6 +7,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
+import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.client.annotation.Client
 
 
@@ -39,6 +40,9 @@ interface OppfolgingsStatusFeedClient {
 
     @Consumes(MediaType.TEXT_PLAIN)
     @Get("/veilarboppfolging/api/feed/oppfolging")
-    fun feed(@Header authorization: String): String
+    fun feed(
+            @Header authorization: String,
+            @QueryValue("id") id: Long,
+            @QueryValue("page_size") pageSize: Long): String
 
 }

@@ -34,17 +34,14 @@ class OppfolgingsstatusRest (
     @Scheduled(fixedDelay = "15s")
     fun hentOppfolgingstatus() {
 
-
-        val currentOidcToken = oidcToken
-
-        if(currentOidcToken == uninitialized) {
-            log.error("Mangler OIDC token når vi skal hente oppfølgingsstatus")
-            return
-        }
+        if(oidcToken == uninitialized) refreshToken()
+            //log.error("Mangler OIDC token når vi skal hente oppfølgingsstatus")
 
 
         val feed = oppfolgingsStatusFeedClient.feed(
-                authorization = "Bearer $oidcToken"
+                authorization = "Bearer $oidcToken",
+                id = 1,
+                pageSize = 20
         )
         // hent nye saker fra rest og spol igjennom med oppfolgingsService.oppdaterStatus()
     }
