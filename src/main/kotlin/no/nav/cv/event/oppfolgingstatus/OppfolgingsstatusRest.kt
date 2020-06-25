@@ -26,12 +26,6 @@ class OppfolgingsstatusRest (
         val log = LoggerFactory.getLogger(OppfolgingsstatusRest::class.java)
     }
 
-    // /veilarboppfolging/api/feed/oppfolging
-    // /rest/v1/sts/token
-
-//    @Inject
-//    private lateinit var client: HttpClient
-
     private var oidcToken: String = uninitialized
 
     @Scheduled(fixedDelay = "15s")
@@ -40,12 +34,19 @@ class OppfolgingsstatusRest (
         if(oidcToken == uninitialized) refreshToken()
 
         try {
-            val response = oppfolgingsStatusFeedClient.feed(
+            val feed = oppfolgingsStatusFeedClient.feed(
                     authorization = "Bearer $oidcToken",
                     id = 1,
                     pageSize = 20
             )
-            log.debug(response.body()!!)
+
+            val elements = feed.extractElements().sortedWith(feedComparator)
+            log.debug("elements recieved ${elements.size}")
+            elements.forEach{ log.debug(it) }
+            elements.map { OppfolgingstatusDto(it) }.forEach {
+                oppfolgingsService.oppdaterStatus(it)
+                // TODO oppdater feedpeker
+            }
         } catch (e: HttpClientResponseException) {
             if(e.status == HttpStatus.UNAUTHORIZED) refreshToken() else throw e
         }
@@ -64,3 +65,18 @@ class OppfolgingsstatusRest (
     }
 }
 
+fun String.extractElements(): List<String> {
+    val jsonObject = JSONObject(this)
+    if(jsonObject.isNull("elements")) return listOf()
+    return jsonObject.getJSONArray("elements").map { it.toString() }.toList()
+}
+
+fun String.feedId(): Long {
+    return JSONObject(this).getJSONObject("element").getLong("feedId")
+}
+
+fun String.toDto(): String {
+    return JSONObject(this).getJSONObject("element").toString()
+}
+
+val feedComparator = Comparator { el1: String, el2: String -> el1.feedId().toInt() - el2.feedId().toInt() }

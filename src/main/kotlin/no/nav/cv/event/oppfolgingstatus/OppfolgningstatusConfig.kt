@@ -44,6 +44,6 @@ interface OppfolgingsStatusFeedClient {
     fun feed(
             @Header authorization: String,
             @QueryValue("id") id: Long,
-            @QueryValue("page_size") pageSize: Long): HttpResponse<String>
+            @QueryValue("page_size") pageSize: Long): String
 
 }
