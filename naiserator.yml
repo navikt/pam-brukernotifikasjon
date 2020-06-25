@@ -56,5 +56,9 @@ spec:
       value: {{ kafka_producer_topic_done }}
     - name: PERSON_IDENT_ADMIN_ENABLED
       value: {{ personIdentAdminEnabled }}
+    - name: OPPFOLGING_FEED
+      value: {{ oppfolging_feed }}
+    - name: SECURITY_TOKEN_SERVICE
+      value: {{ security_token_service }}
   ingresses:
     - {{ ingress }}
