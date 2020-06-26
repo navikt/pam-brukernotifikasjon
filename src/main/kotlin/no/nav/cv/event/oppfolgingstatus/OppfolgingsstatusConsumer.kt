@@ -11,7 +11,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 //@KafkaListener(
-//        groupId = "pam-brukernotifikasjon-oppfolging-v2",
+//        groupId = "pam-brukernotifikasjon-oppfolging-v3",
 //        offsetReset = OffsetReset.EARLIEST
 //)
 class OppfolgingsstatusConsumer(
@@ -22,7 +22,7 @@ class OppfolgingsstatusConsumer(
         val log = LoggerFactory.getLogger(OppfolgingsstatusConsumer::class.java)
     }
 
-    @Topic("\${kafka.topics.consumers.endring_status_oppfolging}")
+    //@Topic("\${kafka.topics.consumers.endring_status_oppfolging}")
     fun receive(
             record: ConsumerRecord<String, String>
     ) {
