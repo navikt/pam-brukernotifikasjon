@@ -117,3 +117,8 @@ oppfolgingstatus:
       password: ${PAMCVAPI_PASSWORD:dummy}
   feed:
     host: ${OPPFOLGING_FEED:`http://localhost:8902`}
+
+
+shedlock:
+  defaults:
+    lock-at-most-for: 5m

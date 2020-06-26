@@ -9,6 +9,7 @@ import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.scheduling.annotation.Scheduled
+import net.javacrumbs.shedlock.micronaut.SchedulerLock
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 private val defaultPageSize = 20L
 
 @Singleton
-class OppfolgingsstatusRest (
+open class OppfolgingsstatusRest (
         private val tokenProvider: TokenProvider,
         private val feedMetadataRepository: FeedMetadataRepository,
         private val oppfolgingsService: OppfolgingstatusService,
@@ -28,7 +29,8 @@ class OppfolgingsstatusRest (
     }
 
     @Scheduled(fixedDelay = "15s")
-    fun hentOppfolgingstatus() {
+    @SchedulerLock(name = "oppfolgingfeed")
+    open fun hentOppfolgingstatus() {
         log.debug("Siste feed id: ${feedMetadataRepository.sisteFeedId()}")
         try {
             val feed = oppfolgingsStatusFeedClient.feed(
