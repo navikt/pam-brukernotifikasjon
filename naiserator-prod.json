@@ -4,6 +4,9 @@
   "jdbc_url": "jdbc:postgresql://A01DBVL013.adeo.no/pam-brukernotifikasjon",
   "db_vault_path": "postgresql/prod-fss/",
   "db_vault_username": "pam-brukernotifikasjon-admin",
+  
+  "oppfolging_feed": "https://veilarboppfolging.nais.adeo.no",
+  "security_token_service": "https://security-token-service.nais.adeo.no",
 
   "ingress": "https://pam-brukernotifikasjon.nais.adeo.no",
 
