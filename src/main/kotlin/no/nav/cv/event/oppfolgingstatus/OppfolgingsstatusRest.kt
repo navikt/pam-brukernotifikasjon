@@ -43,7 +43,7 @@ class OppfolgingsstatusRest (
             val elements = feed.extractElements().sortedWith(feedComparator)
             log.debug("elements recieved ${elements.size}")
             elements.forEach{ log.debug(it) }
-            elements.map { OppfolgingstatusDto(it) }.forEach {
+            elements.map { OppfolgingstatusDto(it.toDto()) }.forEach {
                 oppfolgingsService.oppdaterStatus(it)
                 // TODO oppdater feedpeker
             }
