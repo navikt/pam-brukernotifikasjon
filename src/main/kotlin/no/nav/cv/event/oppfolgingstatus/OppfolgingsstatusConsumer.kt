@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-@KafkaListener(
-        groupId = "pam-brukernotifikasjon-oppfolging-v1",
-        offsetReset = OffsetReset.EARLIEST
-)
+//@KafkaListener(
+//        groupId = "pam-brukernotifikasjon-oppfolging-v2",
+//        offsetReset = OffsetReset.EARLIEST
+//)
 class OppfolgingsstatusConsumer(
         private val oppfolgingsService: OppfolgingstatusService
 ) {
