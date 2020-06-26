@@ -5,8 +5,8 @@
   "db_vault_path": "postgresql/prod-fss/",
   "db_vault_username": "pam-brukernotifikasjon-admin",
   
-  "oppfolging_feed": "https://veilarboppfolging-q0.nais.preprod.local/veilarboppfolging/api/feed/oppfolging",
-  "security_token_service": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
+  "oppfolging_feed": "https://veilarboppfolging.nais.adeo.no",
+  "security_token_service": "https://security-token-service.nais.adeo.no",
 
   "ingress": "https://pam-brukernotifikasjon.nais.adeo.no",
 
