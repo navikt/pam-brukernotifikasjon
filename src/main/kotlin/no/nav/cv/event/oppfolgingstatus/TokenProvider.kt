@@ -5,6 +5,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Consumes
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
+import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.annotation.Client
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
@@ -59,7 +60,7 @@ class TokenProvider(
 interface SecurityTokeServiceClient {
 
     @Consumes(MediaType.APPLICATION_JSON)
-    @Get("/rest/v1/sts/token")
+    @Post("/rest/v1/sts/token")
     fun authenticate(@Header("Authorization") authorization: String): String
 
 }
