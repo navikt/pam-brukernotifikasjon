@@ -77,7 +77,7 @@ private val feedComparator = Comparator { el1: String, el2: String -> el1.feedId
 interface OppfolgingsStatusFeedClient {
 
     @Consumes(MediaType.TEXT_PLAIN)
-    @Get("/veilarboppfolging/api/feed/oppfolging")
+    @Get("/veilarboppfolging/api/feed/oppfolging", consumes = [MediaType.APPLICATION_JSON])
     fun feed(
             @Header authorization: String,
             @QueryValue("id") id: Long,
