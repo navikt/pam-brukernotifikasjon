@@ -1,21 +1,20 @@
 package no.nav.cv.person
 
 import io.micronaut.scheduling.annotation.Scheduled
-import no.nav.cv.notifikasjon.HendelseService
-import no.nav.cv.notifikasjon.Status
+import net.javacrumbs.shedlock.micronaut.SchedulerLock
 import no.nav.cv.notifikasjon.StatusRepository
-import java.time.ZonedDateTime
 import javax.inject.Singleton
 
 
 @Singleton
-class FodselsnummerJobb(
+open class FodselsnummerJobb(
         private val statusRepository: StatusRepository,
         private val personIdentRepository: PersonIdentRepository
 ) {
 
+    @SchedulerLock(name = "fodselsnummerjobb")
     @Scheduled(fixedDelay = "15s")
-    fun fyllInnFnr() {
+    open fun fyllInnFnr() {
         statusRepository.manglerFodselsnummer()
                 .forEach {
                     val fnr = personIdentRepository.finnIdenter(it.aktorId)
@@ -23,13 +22,7 @@ class FodselsnummerJobb(
 
                     fnr ?: return@forEach
 
-                    val nyStatus = Status(
-                            uuid = it.uuid,
-                            aktorId = it.aktorId,
-                            fnr = fnr,
-                            status = it.status,
-                            statusTidspunkt = ZonedDateTime.now(),
-                            fortsettTidspunkt = it.fortsettTidspunkt)
+                    val nyStatus = it.funnetFodselsnummer(fnr)
 
                     statusRepository.lagre(nyStatus)
                 }

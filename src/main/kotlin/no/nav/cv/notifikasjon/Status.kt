@@ -1,12 +1,11 @@
 package no.nav.cv.notifikasjon
 
-import no.nav.cv.person.PersonIdent
-import no.nav.cv.person.PersonIdentRepository
 import java.time.ZonedDateTime
 import java.util.*
 
 val ukjentFnr = "ukjent"
 val nyBrukerStatus = "ukjent"
+val manglerFnrStatus = "manglerFnr"
 val skalVarslesStatus = "skalVarsles"
 val varsletStatus = "varslet"
 val doneStatus = "done"
@@ -18,8 +17,7 @@ class Status(
         val aktorId: String,
         val fnr: String = ukjentFnr,
         val status: String,
-        val statusTidspunkt: ZonedDateTime,
-        val fortsettTidspunkt: ZonedDateTime = statusTidspunkt
+        val statusTidspunkt: ZonedDateTime
 ) {
 
     companion object {
@@ -35,13 +33,12 @@ class Status(
                 status = nyBrukerStatus,
                 statusTidspunkt = forrigeStatus.statusTidspunkt.plusNanos(1000))
 
-        fun skalVarsles(forrigeStatus: Status, statusTidspunkt: ZonedDateTime, fortsettTidspunkt: ZonedDateTime) = Status(
+        fun skalVarsles(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
                 fnr = forrigeStatus.fnr,
                 status = skalVarslesStatus,
-                statusTidspunkt = statusTidspunkt,
-                fortsettTidspunkt = fortsettTidspunkt)
+                statusTidspunkt = statusTidspunkt)
 
         fun varslet(forrigeStatus: Status, fnr: String, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
@@ -58,13 +55,12 @@ class Status(
                 status = doneStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun retry(forrigeStatus: Status) = Status(
+        fun funnetFodselsnummer(forrigeStatus: Status, fodselsnummer: String) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
-                fnr = forrigeStatus.fnr,
+                fnr = fodselsnummer,
                 status = forrigeStatus.status,
-                statusTidspunkt = forrigeStatus.statusTidspunkt,
-                fortsettTidspunkt = forrigeStatus.fortsettTidspunkt.plusMinutes(1))
+                statusTidspunkt = ZonedDateTime.now())
 
         fun ignorert(aktorId: String) = Status(
                 uuid = UUID.randomUUID(),
@@ -78,27 +74,23 @@ class Status(
     fun erVarslet(): Boolean = status == varsletStatus
 
     fun harKommetUnderOppfolging(hendelsesTidspunkt: ZonedDateTime): Status {
-        if(status == nyBrukerStatus) return skalVarsles(this, hendelsesTidspunkt, ZonedDateTime.now())
-        if(status == doneStatus) return skalVarsles(nyttVarsel(this), hendelsesTidspunkt, ZonedDateTime.now())
-        if(status == skalVarslesStatus) return skalVarsles(nyttVarsel(this), hendelsesTidspunkt, ZonedDateTime.now())
+        if(status == nyBrukerStatus) return skalVarsles(this, hendelsesTidspunkt)
+        if(status == doneStatus) return skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
+        if(status == skalVarslesStatus) return skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
         return this
     }
 
+    fun funnetFodselsnummer(fodselsnummer: String): Status {
+        return funnetFodselsnummer(this, fodselsnummer = fodselsnummer)
+    }
+
     fun varsleBruker(
-            hendelsesTidspunkt: ZonedDateTime,
-            personIdentRepository: PersonIdentRepository,
             varselPublisher: VarselPublisher
     ): Status {
         if(status != skalVarslesStatus) return this
 
-        val fnr = personIdentRepository.finnIdenter(aktorId).gjeldende(PersonIdent.Type.FOLKEREGISTER)
-
-        return if(fnr != null) {
-            varselPublisher.publish(uuid, fnr)
-            varslet(this, fnr, ZonedDateTime.now())
-        } else {
-            retry(this)
-        }
+        varselPublisher.publish(uuid, fnr)
+        return varslet(this, fnr, ZonedDateTime.now())
     }
 
     fun blittFulgtOpp(

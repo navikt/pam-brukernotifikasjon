@@ -43,7 +43,7 @@ class Hendelser (
 
     override fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
         val status = repository.finnSiste(aktorId)
-        val nesteStatus = status.varsleBruker(hendelsesTidspunkt, personIdentRepository, varselPublisher)
+        val nesteStatus = status.varsleBruker(varselPublisher)
         repository.lagre(nesteStatus)
     }
 

@@ -1,4 +1,4 @@
-package no.nav.cv.event.oppfolgingstatus
+package no.nav.cv.infrastructure.database
 
 import io.micronaut.context.annotation.Factory
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider
