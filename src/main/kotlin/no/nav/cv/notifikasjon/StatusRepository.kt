@@ -55,10 +55,21 @@ open class StatusRepository(
             FROM STATUS s_inner GROUP BY s_inner.AKTOR_ID
         ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
         WHERE s.STATUS = :status 
-        AND s.FORTSETT_TIDSPUNKT <:fortsettTidspunkt 
-        ORDER BY s.FORTSETT_TIDSPUNKT
+        AND s.foedselsnummer != :ukjentFnr
+        ORDER BY s.TIDSPUNKT
         LIMIT 10000
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+    private val statusPerFodselsnummer =
+            """
+                SELECT * 
+                FROM STATUS s
+                WHERE s.STATUS = :status
+                AND s.foedselsnummer = :fodselsnummer
+                ORDER BY s.TIDSPUNKT DESC               
+                LIMIT 1000
+            """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
 
     @Transactional(readOnly = true)
     open fun skalVarsles(): List<Status> {
@@ -66,6 +77,17 @@ open class StatusRepository(
         return entityManager.createNativeQuery(skalVarsles, StatusEntity::class.java)
                 .setParameter("status", skalVarslesStatus)
                 .setParameter("fortsettTidspunkt", now)
+                .resultStream
+                .map { it as StatusEntity }
+                .map { it.toStatus() }
+                .toList()
+    }
+
+    @Transactional(readOnly = true)
+    open fun manglerFodselsnummer(): List<Status> {
+        return entityManager.createNativeQuery(statusPerFodselsnummer, StatusEntity::class.java)
+                .setParameter("status", skalVarslesStatus)
+                .setParameter("fodselsnummer", ukjentFnr)
                 .resultStream
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
