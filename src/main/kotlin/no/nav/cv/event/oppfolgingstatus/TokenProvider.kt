@@ -7,6 +7,7 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.client.annotation.Client
 import org.json.JSONObject
+import org.slf4j.LoggerFactory
 import java.util.*
 import javax.inject.Singleton
 
@@ -18,6 +19,11 @@ class TokenProvider(
         @Value("\${oppfolgingstatus.sts.serviceuser.username}") val user: String,
         @Value("\${oppfolgingstatus.sts.serviceuser.password}") val pw: String
 ) {
+
+
+    companion object {
+        val log = LoggerFactory.getLogger(TokenProvider::class.java)
+    }
 
     private var oidcToken: String = uninitialized
 
@@ -35,10 +41,17 @@ class TokenProvider(
     private fun fetchToken(): String {
         OppfolgingsstatusRest.log.debug("Fetching token")
         val auth = Base64.getEncoder().encodeToString("$user:$pw".toByteArray(Charsets.UTF_8))
-        val response = securityTokeServiceClient.authenticate("Basic $auth")
+        try {
 
-        JSONObject(response).query("/access_token")
-        return JSONObject(response).getString("access_token") ?: uninitialized
+            val response = securityTokeServiceClient.authenticate("Basic $auth")
+
+            JSONObject(response).query("/access_token")
+            oidcToken = JSONObject(response).getString("access_token") ?: uninitialized
+        } catch (e: Exception) {
+            oidcToken = uninitialized
+            log.error(e.message, e)
+        }
+        return oidcToken
     }
 }
 

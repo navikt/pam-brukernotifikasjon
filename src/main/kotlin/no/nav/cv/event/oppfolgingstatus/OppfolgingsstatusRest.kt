@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import javax.inject.Singleton
 
-private val defaultPageSize = 20L
+private val defaultPageSize = 500L
 
 @Singleton
 open class OppfolgingsstatusRest (
@@ -55,21 +55,21 @@ open class OppfolgingsstatusRest (
 
 }
 
-fun String.extractElements(): List<String> {
+private fun String.extractElements(): List<String> {
     val jsonObject = JSONObject(this)
     if(jsonObject.isNull("elements")) return listOf()
     return jsonObject.getJSONArray("elements").map { it.toString() }.toList()
 }
 
-fun String.feedId(): Long {
+private fun String.feedId(): Long {
     return JSONObject(this).getJSONObject("element").getLong("feedId")
 }
 
-fun String.toDto(): OppfolgingstatusDto {
+private fun String.toDto(): OppfolgingstatusDto {
     return OppfolgingstatusDto(JSONObject(this).getJSONObject("element").toString())
 }
 
-val feedComparator = Comparator { el1: String, el2: String -> el1.feedId().toInt() - el2.feedId().toInt() }
+private val feedComparator = Comparator { el1: String, el2: String -> el1.feedId().toInt() - el2.feedId().toInt() }
 
 
 

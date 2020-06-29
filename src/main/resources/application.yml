@@ -113,8 +113,8 @@ oppfolgingstatus:
   sts:
     host: ${SECURITY_TOKEN_SERVICE:`http://localhost:8901`}
     serviceuser:
-      username: ${PAMCVAPI_USERNAME:srvpam-cv-api}
-      password: ${PAMCVAPI_PASSWORD:dummy}
+      username: ${PAMCVAPI_USERNAME:`srvpam-cv-api`}
+      password: ${PAMCVAPI_PASSWORD:`dummy`}
   feed:
     host: ${OPPFOLGING_FEED:`http://localhost:8902`}
 
