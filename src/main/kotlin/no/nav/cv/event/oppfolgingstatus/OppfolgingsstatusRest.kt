@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import javax.inject.Singleton
 
-private val defaultPageSize = 500L
+private val defaultPageSize = 5000L
 
 @Singleton
 open class OppfolgingsstatusRest (
