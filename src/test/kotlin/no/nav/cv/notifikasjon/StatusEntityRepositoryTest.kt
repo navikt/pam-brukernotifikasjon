@@ -82,13 +82,17 @@ class StatusEntityRepositoryTest {
     fun `at hentSkalVarsles returnerer alle som skal varsles`() {
         val new1 = Status.nyBruker(aktorId)
         val underOppfolging1 = new1.harKommetUnderOppfolging(now)
+        val medFnr1 = underOppfolging1.funnetFodselsnummer("4321")
         val new2 = Status.nyBruker(aktorId2)
         val underOppfolging2 = new2.harKommetUnderOppfolging(now)
+        val medFnr2 = underOppfolging2.funnetFodselsnummer("1234")
 
         statusRepository.lagre(new1)
         statusRepository.lagre(new2)
         statusRepository.lagre(underOppfolging1)
         statusRepository.lagre(underOppfolging2)
+        statusRepository.lagre(medFnr1)
+        statusRepository.lagre(medFnr2)
 
         val skalVarslesListe = statusRepository.skalVarsles()
 
@@ -103,18 +107,23 @@ class StatusEntityRepositoryTest {
 
         val new1 = Status.nyBruker(aktorId)
         val underOppfolging1 = new1.harKommetUnderOppfolging(yesterday)
-        val erVarslet = underOppfolging1.varsleBruker(
-                yesterday.plusSeconds(30),
-                personIdentRepositoryMock,
+        val medFnr = underOppfolging1.funnetFodselsnummer("anything")
+        val erVarslet = medFnr.varsleBruker(
                 varselPublisherMock
         )
-        val settCv = erVarslet.harSettCv(yesterday.plusMinutes(1), varselPublisherMock)
-        val nyOppfolging = settCv.harKommetUnderOppfolging(now)
+        val settCv = erVarslet.harSettCv(ZonedDateTime.now(), varselPublisherMock)
+
+        val nyOppfolging = settCv.harKommetUnderOppfolging(ZonedDateTime.now())
+        val nyOppfolgingMedFnr = nyOppfolging.funnetFodselsnummer("anything")
 
         statusRepository.lagre(new1)
         statusRepository.lagre(underOppfolging1)
+        statusRepository.lagre(medFnr)
+        statusRepository.lagre(erVarslet)
         statusRepository.lagre(settCv)
+
         statusRepository.lagre(nyOppfolging)
+        statusRepository.lagre(nyOppfolgingMedFnr)
 
 
         val skalVarslesListe = statusRepository.skalVarsles()

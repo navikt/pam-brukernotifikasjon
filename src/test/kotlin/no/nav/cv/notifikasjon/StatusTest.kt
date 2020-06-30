@@ -41,9 +41,9 @@ internal class StatusTest {
     @Test
     fun `ny bruker - varsle bruker - gir uendret status`() {
         val ny = nyBruker()
-        val forsoktVarslet = ny.varsleBruker(twoDaysAgo, personIdentRepository,  varselPublisher)
+        val forsoktVarslet = ny.varsleBruker(varselPublisher)
 
-        verify { listOf(varselPublisher, personIdentRepository) wasNot called }
+        verify { listOf(varselPublisher) wasNot called }
         assertThat(forsoktVarslet.status).isEqualTo(ny.status)
     }
 
@@ -86,9 +86,9 @@ internal class StatusTest {
     @Test
     fun `bruker fullfort oppfolging - varsle bruker - gir uendret status`() {
         val fulgtOpp = fulgtOppStatus()
-        val forsoktVarslet = fulgtOpp.varsleBruker(twoDaysAgo, personIdentRepository,  varselPublisher)
+        val forsoktVarslet = fulgtOpp.varsleBruker(varselPublisher)
 
-        verify { listOf(varselPublisher, personIdentRepository) wasNot called }
+        verify { listOf(varselPublisher) wasNot called }
         assertThat(forsoktVarslet.status).isEqualTo(fulgtOpp.status)
     }
 
@@ -135,7 +135,7 @@ internal class StatusTest {
     @Test
     fun `bruker sett cv - varsle bruker - gir uendret status`() {
         val settCv = settCv()
-        val forsoktVarslet = settCv.varsleBruker(twoDaysAgo, personIdentRepository,  varselPublisher)
+        val forsoktVarslet = settCv.varsleBruker(varselPublisher)
 
         assertThat(forsoktVarslet.status).isEqualTo(settCv.status)
     }
@@ -184,26 +184,12 @@ internal class StatusTest {
     fun `bruker under oppfolging - varsle bruker - varsel publiseres nar det finnes fodselsnummer`() {
         every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
 
-        val kommetUnderOppfolging = kommetUnderOppfolging()
-        val forsoktVarsletSuksess = kommetUnderOppfolging.varsleBruker(twoDaysAgo, personIdentRepository, varselPublisher)
+        val kommetUnderOppfolgingMedFnr = kommetUnderOppfolgingMedFnr()
+        val forsoktVarsletSuksess = kommetUnderOppfolgingMedFnr.varsleBruker(varselPublisher)
 
 
-        verify(exactly = 1) { varselPublisher.publish(kommetUnderOppfolging.uuid, aktorFnr) }
+        verify(exactly = 1) { varselPublisher.publish(kommetUnderOppfolgingMedFnr.uuid, aktorFnr) }
         assertThat(forsoktVarsletSuksess.status).isEqualTo(varsletStatus)
-    }
-
-    @Test
-    fun `bruker under oppfolging - varsle bruker - varsel utsettes hvis det ikke finnes fodselsnummer`() {
-        every { personIdentRepository.finnIdenter(aktor) } returns PersonIdenter(listOf())
-
-        val kommetUnderOppfolging = kommetUnderOppfolging()
-        val forsoktVarsletFeilet = kommetUnderOppfolging.varsleBruker(twoDaysAgo, personIdentRepository, varselPublisher)
-
-
-        verify { varselPublisher wasNot called }
-        assertThat(forsoktVarsletFeilet.status).isEqualTo(kommetUnderOppfolging.status)
-        assertThat(forsoktVarsletFeilet.fortsettTidspunkt.isAfter(kommetUnderOppfolging.fortsettTidspunkt),
-                "Varselet skal utsettes - fortsett-tidspunkt for neste varselforsøk skal være etter opprinnelig fortsettidspunkt").isTrue()
     }
 
     @Test
@@ -249,10 +235,10 @@ internal class StatusTest {
     @Test
     fun `bruker varslet - varsle bruker - gir uendret status`() {
         val varslet = varsletStatus()
-        val nyVarslet = varslet.varsleBruker(twoDaysAgo, personIdentRepository, varselPublisher)
+        val nyVarslet = varslet.varsleBruker(varselPublisher)
 
 
-        verify { listOf(varselPublisher, personIdentRepository) wasNot called }
+        verify { listOf(varselPublisher) wasNot called }
         assertThat(nyVarslet.status).isEqualTo(varslet.status)
     }
 
@@ -297,12 +283,16 @@ internal class StatusTest {
 
     fun kommetUnderOppfolging(): Status = nyBruker().harKommetUnderOppfolging(twoDaysAgo)
 
+    fun kommetUnderOppfolgingMedFnr(): Status = nyBruker().harKommetUnderOppfolging(twoDaysAgo)
+            .funnetFodselsnummer(aktorFnr)
+
     fun varsletStatus(): Status {
         val varselPublisher = mockk<VarselPublisher>(relaxed = true)
         val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
         every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
         return nyBruker().harKommetUnderOppfolging(twoDaysAgo)
-                .varsleBruker(yesterday, personIdentRepository, varselPublisher)
+                .funnetFodselsnummer(aktorFnr)
+                .varsleBruker(varselPublisher)
     }
 
 }

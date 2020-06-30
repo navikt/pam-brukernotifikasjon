@@ -25,6 +25,8 @@ data class PersonIdenter(private val identer: List<PersonIdent>) {
 
     fun identer() = identer
 
-    fun gjeldende(type: PersonIdent.Type) = identer.filter { it.type() == type }.filter { it.gjeldende() }.firstOrNull()?.id()
+    fun gjeldende(type: PersonIdent.Type) = identer
+            .firstOrNull { it.type() == type && it.gjeldende() }
+            ?.id()
 
 }

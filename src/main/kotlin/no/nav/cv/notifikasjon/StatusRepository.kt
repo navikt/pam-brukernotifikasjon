@@ -55,8 +55,8 @@ open class StatusRepository(
             FROM STATUS s_inner GROUP BY s_inner.AKTOR_ID
         ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
         WHERE s.STATUS = :status 
-        AND s.FORTSETT_TIDSPUNKT <:fortsettTidspunkt 
-        ORDER BY s.FORTSETT_TIDSPUNKT
+        AND s.foedselsnummer != :ukjentFnr
+        ORDER BY s.TIDSPUNKT
         LIMIT 10000
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
@@ -65,7 +65,29 @@ open class StatusRepository(
         val now = ZonedDateTime.now()
         return entityManager.createNativeQuery(skalVarsles, StatusEntity::class.java)
                 .setParameter("status", skalVarslesStatus)
-                .setParameter("fortsettTidspunkt", now)
+                .setParameter("ukjentFnr", ukjentFnr)
+                .resultStream
+                .map { it as StatusEntity }
+                .map { it.toStatus() }
+                .toList()
+    }
+
+    private val statusPerFodselsnummer =
+            """
+                SELECT * 
+                FROM STATUS s
+                WHERE s.STATUS = :status
+                AND s.foedselsnummer = :fodselsnummer
+                ORDER BY s.TIDSPUNKT DESC               
+                LIMIT 1000
+            """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+
+    @Transactional(readOnly = true)
+    open fun manglerFodselsnummer(): List<Status> {
+        return entityManager.createNativeQuery(statusPerFodselsnummer, StatusEntity::class.java)
+                .setParameter("status", skalVarslesStatus)
+                .setParameter("fodselsnummer", ukjentFnr)
                 .resultStream
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
@@ -95,28 +117,22 @@ private class StatusEntity() {
     lateinit var status: String
 
     @Column(name = "TIDSPUNKT", nullable = false)
-    //@Convert(converter = ZonedDateTimeConverter::class)
     lateinit var tidspunkt: ZonedDateTime
-
-    @Column(name = "FORTSETT_TIDSPUNKT", nullable = false)
-    //@Convert(converter = ZonedDateTimeConverter::class)
-    lateinit var fortsettTidspunkt: ZonedDateTime
 
     fun toStatus() = Status(
             uuid = uuid,
             aktorId = aktorId,
             fnr = fnr,
             status = status,
-            statusTidspunkt = tidspunkt,
-            fortsettTidspunkt = fortsettTidspunkt)
+            statusTidspunkt = tidspunkt)
 
     fun initStatus(
             uuid: UUID,
             aktorId: String,
             fnr: String,
             status: String,
-            tidspunkt: ZonedDateTime,
-            fortsettTidspunkt: ZonedDateTime) {
+            tidspunkt: ZonedDateTime
+    ) {
         //this.id = 0   // Gammel kode satt denne til 0, men da får jeg org.hibernate.PersistentObjectException
                         // Når jeg ikke setter den (den er da initialisert til null), fungerer det fint,
                         // men jeg er usikker på konsekvensene? Unit testene passer
@@ -125,7 +141,6 @@ private class StatusEntity() {
         this.fnr = fnr
         this.status = status
         this.tidspunkt = tidspunkt
-        this.fortsettTidspunkt = fortsettTidspunkt
     }
 
     companion object {
@@ -136,34 +151,10 @@ private class StatusEntity() {
                     aktorId = status.aktorId,
                     fnr = status.fnr,
                     status = status.status,
-                    tidspunkt = status.statusTidspunkt,
-                    fortsettTidspunkt = status.fortsettTidspunkt
+                    tidspunkt = status.statusTidspunkt
             )
             return entity
         }
 
     }
 }
-
-
-//@Converter(autoApply = true)
-//class ZonedDateTimeConverter : AttributeConverter<ZonedDateTime?, Calendar?> {
-//    override fun convertToDatabaseColumn(entityAttribute: ZonedDateTime?): Calendar? {
-//        if (entityAttribute == null) {
-//            return null
-//        }
-//        val calendar = Calendar.getInstance()
-//        calendar.timeInMillis = entityAttribute.toInstant().toEpochMilli()
-//        calendar.timeZone = TimeZone.getTimeZone(entityAttribute.zone)
-//        return calendar
-//    }
-//
-//    override fun convertToEntityAttribute(databaseColumn: Calendar?): ZonedDateTime? {
-//        return if (databaseColumn == null) {
-//            null
-//        } else ZonedDateTime.ofInstant(databaseColumn.toInstant(),
-//                databaseColumn
-//                        .timeZone
-//                        .toZoneId())
-//    }
-//}
