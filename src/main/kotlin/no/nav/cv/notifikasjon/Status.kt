@@ -3,13 +3,12 @@ package no.nav.cv.notifikasjon
 import java.time.ZonedDateTime
 import java.util.*
 
-val ukjentFnr = "ukjent"
-val nyBrukerStatus = "ukjent"
-val manglerFnrStatus = "manglerFnr"
-val skalVarslesStatus = "skalVarsles"
-val varsletStatus = "varslet"
-val doneStatus = "done"
-val ignorertHendelseStatus = "ignorert"
+const val ukjentFnr = "ukjent"
+const val nyBrukerStatus = "ukjent"
+const val skalVarslesStatus = "skalVarsles"
+const val varsletStatus = "varslet"
+const val doneStatus = "done"
+const val ignorertHendelseStatus = "ignorert"
 private val startOfTime = ZonedDateTime.now().minusYears(40)
 
 class Status(
