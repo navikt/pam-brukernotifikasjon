@@ -45,7 +45,7 @@ open class OppfolgingsstatusRest (
             elements.forEach {
                 log.debug(it)
                 oppfolgingsService.oppdaterStatus(it.toDto())
-                feedMetadataRepository.oppdaterFeedId(it.feedId())
+                feedMetadataRepository.oppdaterFeedId(it.feedId() + 1)
             }
         } catch (e: HttpClientResponseException) {
             if(e.status == HttpStatus.UNAUTHORIZED) tokenProvider.refresh() else throw e
