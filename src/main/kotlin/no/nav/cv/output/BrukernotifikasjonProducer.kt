@@ -12,7 +12,7 @@ private val systembruker = "enSystemBruker"
 private val grupperingsId = "ARBEIDSPLASSEN"
 private val tekst = "På tide å gi CVen litt kjærlighet"
 private val link = "https://arbeidsplassen.nav.no/cv/registrering"
-private val sikkerhetsnivaa = 4
+private val sikkerhetsnivaa = 3
 
 @Singleton
 class BrukernotifikasjonProducer(
