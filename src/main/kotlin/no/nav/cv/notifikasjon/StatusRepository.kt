@@ -79,6 +79,7 @@ open class StatusRepository(
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
                 .toList()
+                // TODO: Fjern før prod
                 .onEach { log.debug("skalVarsles ($skalVarslesStatus / $ukjentFnr) : $it") }
     }
 
@@ -102,6 +103,8 @@ open class StatusRepository(
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
                 .toList()
+                // TODO: Fjern før prod
+                .onEach { log.debug("manglerFodselsnummer ($skalVarslesStatus / $ukjentFnr) : $it") }
     }
 }
 

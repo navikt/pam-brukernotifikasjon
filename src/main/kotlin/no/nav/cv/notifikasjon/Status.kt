@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -20,6 +21,8 @@ class Status(
 ) {
 
     companion object {
+        private val log = LoggerFactory.getLogger(Status::class.java)
+
         fun nyBruker(aktorId: String) = Status(
                 uuid = UUID.randomUUID(),
                 aktorId = aktorId,
@@ -73,10 +76,16 @@ class Status(
     fun erVarslet(): Boolean = status == varsletStatus
 
     fun harKommetUnderOppfolging(hendelsesTidspunkt: ZonedDateTime): Status {
-        if(status == nyBrukerStatus) return skalVarsles(this, hendelsesTidspunkt)
-        if(status == doneStatus) return skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
-        if(status == skalVarslesStatus) return skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
-        return this
+
+        val nyStatus = when(status) {
+            nyBrukerStatus -> skalVarsles(this, hendelsesTidspunkt)
+            doneStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
+            skalVarslesStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
+            else -> this
+        }
+        // TODO: Fjern før prod
+        log.debug("harKommetUnderOppfolging fra $this til $nyStatus")
+        return nyStatus
     }
 
     fun funnetFodselsnummer(fodselsnummer: String): Status {
