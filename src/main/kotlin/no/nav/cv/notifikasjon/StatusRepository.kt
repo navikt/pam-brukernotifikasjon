@@ -48,8 +48,11 @@ open class StatusRepository(
         return if(eksisterendeStatus.isEmpty) {
             log.debug("finnSiste for $aktorId gav null. Lager ny")
             Status.nyBruker(aktorId)
-        } else
-            eksisterendeStatus.get()
+        } else {
+            val status = eksisterendeStatus.get()
+            log.debug("finnSiste for $aktorId fant $status")
+            status
+        }
     }
 
     private val skalVarsles =
@@ -76,6 +79,7 @@ open class StatusRepository(
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
                 .toList()
+                .onEach { log.debug("skalVarsles ($skalVarslesStatus / $ukjentFnr) : $it") }
     }
 
     private val statusPerFodselsnummer =
