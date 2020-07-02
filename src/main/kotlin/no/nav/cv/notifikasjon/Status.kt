@@ -112,4 +112,9 @@ class Status(
 
     }
 
+    override fun toString(): String {
+        return "Status(uuid=$uuid, aktorId='$aktorId', fnr='$fnr', status='$status', statusTidspunkt=$statusTidspunkt)"
+    }
+
+
 }
