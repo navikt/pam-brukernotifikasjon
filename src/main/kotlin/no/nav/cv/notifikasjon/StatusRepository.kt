@@ -38,12 +38,18 @@ open class StatusRepository(
 
     @Transactional(readOnly = true)
     open fun finnSiste(aktorId: String): Status {
-        return entityManager.createNativeQuery(sisteQuery, StatusEntity::class.java)
+        val eksisterendeStatus =  entityManager.createNativeQuery(sisteQuery, StatusEntity::class.java)
                 .setParameter("aktorId", aktorId)
                 .resultStream.findFirst()
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
-                .orElseGet { Status.nyBruker(aktorId) }
+                //.orElseGet { Status.nyBruker(aktorId) }
+
+        return if(eksisterendeStatus.isEmpty) {
+            log.debug("finnSiste for $aktorId gav null. Lager ny")
+            Status.nyBruker(aktorId)
+        } else
+            eksisterendeStatus.get()
     }
 
     private val skalVarsles =

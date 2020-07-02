@@ -32,12 +32,16 @@ class Hendelser (
 
         val cutoffTime = ZonedDateTime.now().minus(cutoffPeriod)
         if(hendelsesTidspunkt.isBefore(cutoffTime)) {
-            OppfolgingstatusService.log.debug("Oppfølgingsperiode (${hendelsesTidspunkt} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
+            // TODO: Fjern aktorId
+            OppfolgingstatusService.log.debug("Oppfølgingsperiode for $aktorId : ${hendelsesTidspunkt} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
             return
         }
 
         val status = repository.finnSiste(aktorId)
         val nesteStatus = status.harKommetUnderOppfolging(hendelsesTidspunkt)
+        // TODO: Fjern før prod
+        OppfolgingstatusService.log.debug("kommetUnderOppfolging: $aktorId går fra $status til $nesteStatus")
+
         repository.lagre(nesteStatus)
     }
 
@@ -50,6 +54,8 @@ class Hendelser (
     override fun blittFulgtOpp(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
         val status = repository.finnSiste(aktorId)
         val nesteStatus = status.blittFulgtOpp(hendelsesTidspunkt, varselPublisher)
+        // TODO: Fjern før prod
+        OppfolgingstatusService.log.debug("blittFulgtOpp: $aktorId går fra $status til $nesteStatus")
         repository.lagre(nesteStatus)
     }
 

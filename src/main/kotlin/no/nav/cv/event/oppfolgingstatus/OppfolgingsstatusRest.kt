@@ -40,7 +40,9 @@ open class OppfolgingsstatusRest (
             )
 
             val elements = feed.extractElements().sortedWith(feedComparator)
-            log.debug("elements recieved ${elements.size}")
+            //log.debug("elements recieved from PTO REST feed ${elements.size}")
+            // TODO: Fjern før prodsetting
+            log.debug("${elements.size} elements received from PTO REST feed $elements ")
 
             elements.forEach {
                 log.debug(it)
