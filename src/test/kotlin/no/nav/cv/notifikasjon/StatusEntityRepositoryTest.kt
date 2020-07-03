@@ -81,10 +81,10 @@ class StatusEntityRepositoryTest {
     @Test
     fun `at hentSkalVarsles returnerer alle som skal varsles`() {
         val new1 = Status.nyBruker(aktorId)
-        val underOppfolging1 = new1.harKommetUnderOppfolging(now)
+        val underOppfolging1 = new1.harKommetUnderOppfolging(now, ABTest.skalVarsles)
         val medFnr1 = underOppfolging1.funnetFodselsnummer("4321")
         val new2 = Status.nyBruker(aktorId2)
-        val underOppfolging2 = new2.harKommetUnderOppfolging(now)
+        val underOppfolging2 = new2.harKommetUnderOppfolging(now, ABTest.skalVarsles)
         val medFnr2 = underOppfolging2.funnetFodselsnummer("1234")
 
         statusRepository.lagre(new1)
@@ -106,14 +106,14 @@ class StatusEntityRepositoryTest {
         every { personIdentRepositoryMock.finnIdenter(aktorId) } returns personIdenterAktorId
 
         val new1 = Status.nyBruker(aktorId)
-        val underOppfolging1 = new1.harKommetUnderOppfolging(yesterday)
+        val underOppfolging1 = new1.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
         val medFnr = underOppfolging1.funnetFodselsnummer("anything")
         val erVarslet = medFnr.varsleBruker(
                 varselPublisherMock
         )
         val settCv = erVarslet.harSettCv(ZonedDateTime.now(), varselPublisherMock)
 
-        val nyOppfolging = settCv.harKommetUnderOppfolging(ZonedDateTime.now())
+        val nyOppfolging = settCv.harKommetUnderOppfolging(ZonedDateTime.now(), ABTest.skalVarsles)
         val nyOppfolgingMedFnr = nyOppfolging.funnetFodselsnummer("anything")
 
         statusRepository.lagre(new1)

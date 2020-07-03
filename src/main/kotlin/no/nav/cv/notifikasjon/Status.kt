@@ -10,6 +10,7 @@ const val nyBrukerStatus = "ukjent"
 const val skalVarslesStatus = "skalVarsles"
 const val varsletStatus = "varslet"
 const val doneStatus = "done"
+const val abTestSkalIkkeVarsles = "abTestSkalIkkeVarsles"
 
 private val startOfTime = ZonedDateTime.now().minusYears(40)
 
@@ -50,7 +51,6 @@ class Status(
                 status = varsletStatus,
                 statusTidspunkt = statusTidspunkt)
 
-
         fun done(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
@@ -65,18 +65,26 @@ class Status(
                 status = forrigeStatus.status,
                 statusTidspunkt = ZonedDateTime.now())
 
+        fun abTestSkalIkkeVarsles(forrigeStatus: Status) = Status(
+                uuid = forrigeStatus.uuid,
+                aktorId = forrigeStatus.aktorId,
+                fnr = forrigeStatus.fnr,
+                status = abTestSkalIkkeVarsles,
+                statusTidspunkt = ZonedDateTime.now())
     }
 
     fun isAfter(tidspunkt: ZonedDateTime): Boolean = statusTidspunkt.isAfter(tidspunkt)
 
     fun erVarslet(): Boolean = status == varsletStatus
 
-    fun harKommetUnderOppfolging(hendelsesTidspunkt: ZonedDateTime): Status {
+    fun harKommetUnderOppfolging(hendelsesTidspunkt: ZonedDateTime, abTestSelector: ABTestSelector): Status {
 
         val nyStatus = when(status) {
-            nyBrukerStatus -> skalVarsles(this, hendelsesTidspunkt)
             doneStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
             skalVarslesStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
+
+            nyBrukerStatus -> if(abTestSelector.skalVarsles()) skalVarsles(this, hendelsesTidspunkt)
+                                else abTestSkalIkkeVarsles(this)
             else -> this
         }
         // TODO: Fjern før prod

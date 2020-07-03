@@ -2,7 +2,6 @@ package no.nav.cv.notifikasjon
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
@@ -30,8 +29,7 @@ internal class StatusTest {
     private val now = ZonedDateTime.now()
     private val yesterday = ZonedDateTime.now().minusDays(1)
     private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
-
-
+    
     @Test
     fun `ny bruker`() {
         val ny = nyBruker()
@@ -50,7 +48,7 @@ internal class StatusTest {
     @Test
     fun `ny bruker - kommet under oppfolging - gir status skal varsles`() {
         val ny = nyBruker()
-        val underOppfolging = ny.harKommetUnderOppfolging(twoDaysAgo)
+        val underOppfolging = ny.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
         assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
         assertThat(underOppfolging.statusTidspunkt).isEqualTo(twoDaysAgo)
@@ -95,7 +93,7 @@ internal class StatusTest {
     @Test
     fun `bruker fullfort oppfolging - kommet under oppfolging - gir status skal varsles`() {
         val fulgtOpp = fulgtOppStatus()
-        val underOppfolging = fulgtOpp.harKommetUnderOppfolging(twoDaysAgo)
+        val underOppfolging = fulgtOpp.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
         assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
         assertThat(underOppfolging.statusTidspunkt).isEqualTo(twoDaysAgo)
@@ -143,7 +141,7 @@ internal class StatusTest {
     @Test
     fun `bruker sett cv - kommet under oppfolging - gir status skal varsles`() {
         val settCv = settCv()
-        val underOppfolging = settCv.harKommetUnderOppfolging(twoDaysAgo)
+        val underOppfolging = settCv.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
         assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
         assertThat(underOppfolging.statusTidspunkt).isEqualTo(twoDaysAgo)
@@ -195,7 +193,7 @@ internal class StatusTest {
     @Test
     fun `bruker under oppfolging - kommet under oppfolging - gir status uendret men oppdaterer dato med ny dato`() {
         val kommetUnderOppfolging = kommetUnderOppfolging()
-        val underOppfolging = kommetUnderOppfolging.harKommetUnderOppfolging(yesterday)
+        val underOppfolging = kommetUnderOppfolging.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
 
         assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
         assertThat(underOppfolging.statusTidspunkt).isEqualTo(yesterday)
@@ -245,7 +243,7 @@ internal class StatusTest {
     @Test
     fun `bruker varslet - kommet under oppfolging - gir uendret status`() {
         val varslet = varsletStatus()
-        val underOppfolging = varslet.harKommetUnderOppfolging(yesterday)
+        val underOppfolging = varslet.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
 
         assertThat(underOppfolging.status).isEqualTo(varslet.status)
     }
@@ -271,26 +269,22 @@ internal class StatusTest {
     }
 
 
-
-
-
-
     private fun nyBruker() = Status.nyBruker("dummy")
 
     fun fulgtOppStatus() = nyBruker().blittFulgtOpp(twoDaysAgo, varselPublisher)
 
     fun settCv() = varsletStatus().harSettCv(twoDaysAgo, varselPublisher)
 
-    fun kommetUnderOppfolging(): Status = nyBruker().harKommetUnderOppfolging(twoDaysAgo)
+    fun kommetUnderOppfolging(): Status = nyBruker().harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
-    fun kommetUnderOppfolgingMedFnr(): Status = nyBruker().harKommetUnderOppfolging(twoDaysAgo)
+    fun kommetUnderOppfolgingMedFnr(): Status = nyBruker().harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
             .funnetFodselsnummer(aktorFnr)
 
     fun varsletStatus(): Status {
         val varselPublisher = mockk<VarselPublisher>(relaxed = true)
         val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
         every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
-        return nyBruker().harKommetUnderOppfolging(twoDaysAgo)
+        return nyBruker().harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
                 .funnetFodselsnummer(aktorFnr)
                 .varsleBruker(varselPublisher)
     }
