@@ -37,23 +37,13 @@ open class StatusRepository(
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     @Transactional(readOnly = true)
-    open fun finnSiste(aktorId: String): Status {
-        val eksisterendeStatus =  entityManager.createNativeQuery(sisteQuery, StatusEntity::class.java)
+    open fun finnSiste(aktorId: String)
+            =  entityManager.createNativeQuery(sisteQuery, StatusEntity::class.java)
                 .setParameter("aktorId", aktorId)
                 .resultStream.findFirst()
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
-                //.orElseGet { Status.nyBruker(aktorId) }
-
-        return if(eksisterendeStatus.isEmpty) {
-            log.debug("finnSiste for $aktorId gav null. Lager ny")
-            Status.nyBruker(aktorId)
-        } else {
-            val status = eksisterendeStatus.get()
-            log.debug("finnSiste for $aktorId fant $status")
-            status
-        }
-    }
+                .orElseGet { Status.nyBruker(aktorId) }
 
     private val skalVarsles =
             """
@@ -79,8 +69,6 @@ open class StatusRepository(
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
                 .toList()
-                // TODO: Fjern før prod
-                .onEach { log.debug("skalVarsles ($skalVarslesStatus / $ukjentFnr) : $it") }
     }
 
     private val statusPerFodselsnummer =
@@ -106,8 +94,6 @@ open class StatusRepository(
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
                 .toList()
-                // TODO: Fjern før prod
-                .onEach { log.debug("manglerFodselsnummer ($skalVarslesStatus / $ukjentFnr) : $it") }
     }
 }
 

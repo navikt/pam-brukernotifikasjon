@@ -87,8 +87,7 @@ class Status(
                                 else abTestSkalIkkeVarsles(this)
             else -> this
         }
-        // TODO: Fjern før prod
-        log.debug("harKommetUnderOppfolging fra $this til $nyStatus")
+
         return nyStatus
     }
 

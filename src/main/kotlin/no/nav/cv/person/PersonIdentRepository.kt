@@ -43,7 +43,6 @@ private open class JpaPersonIdentRepository(
     override fun oppdater(personIdenter: PersonIdenter) {
 
         // Sletter alle opprinnelige identer knyttet til samme person for å kunne fjerne eventuelle sletta identer
-        // TODO denne er noe sårbar for duplikater - kan kan slette identer av gal type som har samme verdi som en av de man ønsker å oppdater
         entityManager.createQuery(deleteRelatedIdents)
                 .setParameter("identVerdier", personIdenter.identerVerdier())
                 .executeUpdate()
