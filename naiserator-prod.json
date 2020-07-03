@@ -1,6 +1,13 @@
 {
   "servicebruker_brukernotifikasjon": "/serviceuser/data/prod/srvpambrukernot",
 
+  "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v4-p",
+  "kafka_consumer_topic_endring_status_oppfolging":"IKKE I BRUK aapen-fo-endringPaaOppfolgingStatus-v1-p",
+  "kafka_consumer_topic_pdl_id":"privat-person-pdl-aktor-v1",
+
+  "kafka_producer_topic_ny_oppgave":"aapen-brukernotifikasjon-nyOppgave-v1",
+  "kafka_producer_topic_done":"aapen-brukernotifikasjon-done-v1",
+
   "jdbc_url": "jdbc:postgresql://A01DBVL013.adeo.no/pam-brukernotifikasjon",
   "db_vault_path": "postgresql/prod-fss/",
   "db_vault_username": "pam-brukernotifikasjon-admin",

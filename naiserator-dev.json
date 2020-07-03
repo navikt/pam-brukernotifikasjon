@@ -8,12 +8,12 @@
   "kafka_producer_topic_ny_oppgave":"aapen-brukernotifikasjon-nyOppgave-v1",
   "kafka_producer_topic_done":"aapen-brukernotifikasjon-done-v1",
 
-  "oppfolging_feed": "https://veilarboppfolging-q0.nais.preprod.local",
-  "security_token_service": "https://security-token-service.nais.preprod.local",
-
   "jdbc_url": "jdbc:postgresql://b27dbvl015.preprod.local/pam-brukernotifikasjon",
   "db_vault_path": "postgresql/preprod-fss/",
   "db_vault_username": "pam-brukernotifikasjon-admin",
+
+  "oppfolging_feed": "https://veilarboppfolging-q0.nais.preprod.local",
+  "security_token_service": "https://security-token-service.nais.preprod.local",
 
   "ingress": "https://pam-brukernotifikasjon.nais.preprod.local",
 
