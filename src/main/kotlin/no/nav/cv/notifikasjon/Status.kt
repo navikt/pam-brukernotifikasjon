@@ -5,11 +5,12 @@ import java.time.ZonedDateTime
 import java.util.*
 
 const val ukjentFnr = "ukjent"
+
 const val nyBrukerStatus = "ukjent"
 const val skalVarslesStatus = "skalVarsles"
 const val varsletStatus = "varslet"
 const val doneStatus = "done"
-const val ignorertHendelseStatus = "ignorert"
+
 private val startOfTime = ZonedDateTime.now().minusYears(40)
 
 class Status(
@@ -64,11 +65,6 @@ class Status(
                 status = forrigeStatus.status,
                 statusTidspunkt = ZonedDateTime.now())
 
-        fun ignorert(aktorId: String) = Status(
-                uuid = UUID.randomUUID(),
-                aktorId = aktorId,
-                status = ignorertHendelseStatus,
-                statusTidspunkt = ZonedDateTime.now())
     }
 
     fun isAfter(tidspunkt: ZonedDateTime): Boolean = statusTidspunkt.isAfter(tidspunkt)
