@@ -4,6 +4,8 @@ import no.nav.cv.event.oppfolgingstatus.OppfolgingstatusService
 import no.nav.cv.person.PersonIdentRepository
 import java.time.Period
 import java.time.ZonedDateTime
+import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private val cutoffPeriod = Period.ofMonths(6)
@@ -25,7 +27,8 @@ interface HendelseService {
 class Hendelser (
     private val repository: StatusRepository,
     private val varselPublisher: VarselPublisher,
-    private val personIdentRepository: PersonIdentRepository
+    private val personIdentRepository: PersonIdentRepository,
+    private val abTestSelector: ABTestSelector
 ) : HendelseService {
 
     override fun kommetUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
@@ -38,7 +41,7 @@ class Hendelser (
         }
 
         val status = repository.finnSiste(aktorId)
-        val nesteStatus = status.harKommetUnderOppfolging(hendelsesTidspunkt)
+        val nesteStatus = status.harKommetUnderOppfolging(hendelsesTidspunkt, abTestSelector)
         // TODO: Fjern før prod
         OppfolgingstatusService.log.debug("kommetUnderOppfolging: $aktorId går fra $status til $nesteStatus")
 
