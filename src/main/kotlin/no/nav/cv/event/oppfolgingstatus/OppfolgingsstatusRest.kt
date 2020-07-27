@@ -43,7 +43,7 @@ open class OppfolgingsstatusRest (
             log.debug("elements recieved from PTO REST feed ${elements.size}")
 
             elements.forEach {
-                log.debug(it)
+                log.debug("Element fra PTO feedId: ${it.feedId()}")
                 oppfolgingsService.oppdaterStatus(it.toDto())
                 feedMetadataRepository.oppdaterFeedId(it.feedId() + 1)
             }

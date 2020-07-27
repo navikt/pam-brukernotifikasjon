@@ -26,7 +26,8 @@ class OppfolgingsstatusConsumer(
     fun receive(
             record: ConsumerRecord<String, String>
     ) {
-        log.debug("OppfolgingsstatusConsumer record recieved: $record")
+        //log.debug("OppfolgingsstatusConsumer record recieved: $record")
+        log.debug("OppfolgingsstatusConsumer record recieved.")
         val dto = OppfolgingstatusDto(record.value().toString())
         oppfolgingsService.oppdaterStatus(dto)
     }
