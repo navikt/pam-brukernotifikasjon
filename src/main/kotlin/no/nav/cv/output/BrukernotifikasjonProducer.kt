@@ -1,5 +1,6 @@
 package no.nav.cv.output
 
+import io.micronaut.context.annotation.Value
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
@@ -11,12 +12,12 @@ import javax.inject.Singleton
 private val systembruker = "enSystemBruker"
 private val grupperingsId = "ARBEIDSPLASSEN"
 private val tekst = "På tide å gi CVen litt kjærlighet"
-private val link = "https://arbeidsplassen.nav.no/cv/registrering"
 private val sikkerhetsnivaa = 3
 
 @Singleton
 class BrukernotifikasjonProducer(
-        private val brukernotifikasjonClient: BrukernotifikasjonClient
+        private val brukernotifikasjonClient: BrukernotifikasjonClient,
+        @Value("\${output.melding.link}") private val link: String
 ) : VarselPublisher {
 
     override fun publish(eventId: UUID, foedselsnummer: String) {

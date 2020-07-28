@@ -122,3 +122,5 @@ oppfolgingstatus:
 shedlock:
   defaults:
     lock-at-most-for: 5m
+
+output.melding.link: ${OUTPUT_MELDING_LINK}

@@ -60,5 +60,7 @@ spec:
       value: {{ oppfolging_feed }}
     - name: SECURITY_TOKEN_SERVICE
       value: {{ security_token_service }}
+    - name: OUTPUT_MELDING_LINK
+      value: {{ linkIMelding }}
   ingresses:
     - {{ ingress }}
