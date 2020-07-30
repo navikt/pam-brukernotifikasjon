@@ -9,7 +9,12 @@ interface ABTestSelector {
     fun skalVarsles() : Boolean
 }
 
+//@Singleton
+//class ABTestIncludeHalf : ABTestSelector {
+//    override fun skalVarsles() = random() < 0.5
+//}
+
 @Singleton
-class ABTestIncludeHalf : ABTestSelector {
-    override fun skalVarsles() = random() < 0.5
+class ABTestIncludeTwentyPercent : ABTestSelector {
+    override fun skalVarsles() = random() < 0.2
 }
