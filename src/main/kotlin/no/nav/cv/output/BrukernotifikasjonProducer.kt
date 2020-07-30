@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 private val systembruker = "enSystemBruker"
 private val grupperingsId = "ARBEIDSPLASSEN"
-private val tekst = "Oppdater din CV og Jobbprofil"
+private val tekst = "Oppdater CV-en og jobbprofilen på arbeidsplassen.no"
 private val sikkerhetsnivaa = 3
 
 @Singleton
