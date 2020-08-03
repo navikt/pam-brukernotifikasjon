@@ -1,7 +1,7 @@
 {
   "servicebruker_brukernotifikasjon": "/serviceuser/data/prod/srvpambrukernot",
 
-  "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v4-p",
+  "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v5-p",
   "kafka_consumer_topic_endring_status_oppfolging":"IKKE I BRUK aapen-fo-endringPaaOppfolgingStatus-v1-p",
   "kafka_consumer_topic_pdl_id":"privat-person-pdl-aktor-v1",
 
