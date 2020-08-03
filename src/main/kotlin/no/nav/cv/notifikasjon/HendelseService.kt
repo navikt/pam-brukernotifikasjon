@@ -8,7 +8,7 @@ import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-private val cutoffPeriod = Period.ofMonths(6)
+private val cutoffPeriod = Period.ofDays(2)
 
 interface HendelseService {
 
