@@ -86,7 +86,7 @@ kafka:
       ny_oppgave: ${KAFKA_PRODUCER_TOPIC_NY_OPPGAVE:`aapen-brukernotifikasjon-nyOppgave-v1`}
       done: ${KAFKA_PRODUCER_TOPIC_DONE:`aapen-brukernotifikasjon-done-v1`}
   bootstrap:
-    servers: "10.183.160.26:8443, 10.183.32.47:8443, 10.183.32.48:8443"
+    servers: ${KAFKA_BOOTSTRAP_SERVERS:nodefault}
   health:
     enabled: false
   security:
