@@ -47,24 +47,6 @@ class PersonIdentAdminTest {
     }
 
     @Test
-    fun `varsel blir sendt med systembruker` () {
-        val systembruker = "enSystemBruker"
-        val uuidSlot = slot<UUID>()
-        val fnrSlot = slot<String>()
-        val systembrukerSlot = slot<String>()
-
-        client.toBlocking().retrieve(
-                HttpRequest.create<String>(HttpMethod.POST, "/internal/kafka/manuell/varsel/${uuid}/${fnr}/${systembruker}"))
-
-        verify { varselPublisher.publish(capture(uuidSlot), capture(fnrSlot), capture(systembrukerSlot)) }
-
-        assertThat(uuidSlot.captured).isEqualTo(uuid)
-        assertThat(fnrSlot.captured).isEqualTo(fnr)
-        assertThat(systembrukerSlot.captured).isEqualTo(systembruker)
-
-    }
-
-    @Test
     fun `done blir sendt` () {
         val uuidSlot = slot<UUID>()
         val fnrSlot = slot<String>()
@@ -76,24 +58,6 @@ class PersonIdentAdminTest {
 
         assertThat(uuidSlot.captured).isEqualTo(uuid)
         assertThat(fnrSlot.captured).isEqualTo(fnr)
-
-    }
-
-    @Test
-    fun `done blir sendt med systembruker` () {
-        val systembruker = "enSystemBruker"
-        val uuidSlot = slot<UUID>()
-        val fnrSlot = slot<String>()
-        val systembrukerSlot = slot<String>()
-
-        client.toBlocking().retrieve(
-                HttpRequest.create<String>(HttpMethod.POST, "/internal/kafka/manuell/donemelding/${uuid}/${fnr}/${systembruker}"))
-
-        verify { varselPublisher.done(capture(uuidSlot), capture(fnrSlot), capture(systembrukerSlot)) }
-
-        assertThat(uuidSlot.captured).isEqualTo(uuid)
-        assertThat(fnrSlot.captured).isEqualTo(fnr)
-        assertThat(systembrukerSlot.captured).isEqualTo(systembruker)
 
     }
 
