@@ -1,8 +1,5 @@
 package no.nav.cv.person
 
-import assertk.assertThat
-import assertk.assertions.containsExactly
-import assertk.assertions.isEqualTo
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
@@ -13,8 +10,10 @@ import io.micronaut.test.annotation.MockBean
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.function.Executable
 import javax.inject.Inject
 
 @MicronautTest
@@ -28,10 +27,9 @@ class PersonIdentAdminTest {
     @Test
     @Property(name="personIdent.admin.enabled", value="enabled")
     fun `that admin is enabled by property` () {
-        assertThat(client.toBlocking()
-                .exchange<String>("/internal/addIdent/123/321")
-                .status
-        ).isEqualTo(HttpStatus.OK)
+        Assertions.assertEquals(
+                client.toBlocking().exchange<String>("/internal/addIdent/123/321").status,
+                HttpStatus.OK)
     }
 
     @Test
@@ -45,10 +43,12 @@ class PersonIdentAdminTest {
         verify { personIdentRepository.oppdater(capture(slot)) }
 
         val identer = slot.captured.identer()
-        assertThat(identer).containsExactly(
-                PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, true),
-                PersonIdent("333", PersonIdent.Type.AKTORID, true)
-
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(2, identer.size) },
+                Executable { Assertions.assertTrue(identer.containsAll(listOf(
+                        PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, true),
+                        PersonIdent("333", PersonIdent.Type.AKTORID, true)
+                ))) }
         )
 
     }

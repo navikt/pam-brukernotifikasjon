@@ -1,12 +1,7 @@
 package no.nav.cv.notifikasjon
 
-import assertk.assertThat
-import assertk.assertions.containsExactly
-import assertk.assertions.isEqualTo
-import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
@@ -14,6 +9,7 @@ import io.micronaut.test.annotation.MockBean
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 import javax.inject.Inject
@@ -41,8 +37,8 @@ class PersonIdentAdminTest {
 
         verify { varselPublisher.publish(capture(uuidSlot), capture(fnrSlot)) }
 
-        assertThat(uuidSlot.captured).isEqualTo(uuid)
-        assertThat(fnrSlot.captured).isEqualTo(fnr)
+        Assertions.assertEquals(uuidSlot.captured, uuid)
+        Assertions.assertEquals(fnrSlot.captured, fnr)
 
     }
 
@@ -56,8 +52,8 @@ class PersonIdentAdminTest {
 
         verify { varselPublisher.done(capture(uuidSlot), capture(fnrSlot)) }
 
-        assertThat(uuidSlot.captured).isEqualTo(uuid)
-        assertThat(fnrSlot.captured).isEqualTo(fnr)
+        Assertions.assertEquals(uuidSlot.captured, uuid)
+        Assertions.assertEquals(fnrSlot.captured, fnr)
 
     }
 

@@ -1,9 +1,6 @@
 package no.nav.cv.notifikasjon
 
-import assertk.assertThat
-import assertk.assertions.containsExactly
-import assertk.assertions.hasSize
-import assertk.assertions.isEqualTo
+import com.github.dockerjava.api.command.AuthCmd
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
 import io.mockk.every
@@ -11,7 +8,9 @@ import io.mockk.mockk
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -45,7 +44,7 @@ class StatusEntityRepositoryTest {
         statusRepository.lagre(status)
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
-        assertThat(status.uuid).isEqualTo(fetchedStatus.uuid)
+        Assertions.assertEquals(status.uuid, fetchedStatus.uuid)
     }
 
     @Test
@@ -59,9 +58,9 @@ class StatusEntityRepositoryTest {
 
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
-        assertThat(statusNewest.uuid).isEqualTo(fetchedStatus.uuid)
-        assertThat(statusNewest.status).isEqualTo(fetchedStatus.status)
-        assertThat(statusNewest.statusTidspunkt).isEqualTo(fetchedStatus.statusTidspunkt)
+        Assertions.assertEquals(statusNewest.uuid, fetchedStatus.uuid)
+        Assertions.assertEquals(statusNewest.status, fetchedStatus.status)
+        Assertions.assertEquals(statusNewest.statusTidspunkt, fetchedStatus.statusTidspunkt)
     }
 
     @Test
@@ -74,7 +73,7 @@ class StatusEntityRepositoryTest {
 
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
-        assertThat(savedFirst.uuid).isEqualTo(fetchedStatus.uuid)
+        Assertions.assertEquals(savedFirst.uuid, fetchedStatus.uuid)
     }
 
 
@@ -96,8 +95,12 @@ class StatusEntityRepositoryTest {
 
         val skalVarslesListe = statusRepository.skalVarsles()
 
-        assertThat(skalVarslesListe).hasSize(2)
-        assertThat(skalVarslesListe.map {it.aktorId} ).containsExactly(aktorId, aktorId2)
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(skalVarslesListe.size, 2)  },
+                Executable { Assertions.assertTrue(skalVarslesListe.map {it.aktorId}.contains(aktorId)) },
+                Executable { Assertions.assertTrue(skalVarslesListe.map {it.aktorId}.contains(aktorId2)) }
+        )
+
     }
 
 
@@ -128,7 +131,7 @@ class StatusEntityRepositoryTest {
 
         val skalVarslesListe = statusRepository.skalVarsles()
 
-        assertThat(skalVarslesListe).hasSize(1)
+        Assertions.assertEquals(skalVarslesListe.size, 1)
     }
 
     @MockBean(VarselPublisher::class)

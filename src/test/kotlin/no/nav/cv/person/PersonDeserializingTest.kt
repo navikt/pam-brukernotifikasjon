@@ -1,12 +1,12 @@
 package no.nav.cv.person
 
-import assertk.assertThat
-import assertk.assertions.isTrue
 import org.apache.avro.Protocol
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.avro.generic.GenericRecord
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import java.nio.file.Paths
 
 class PersonDeserializingTest {
@@ -27,7 +27,7 @@ class PersonDeserializingTest {
         ))
 
 
-        assertThat(GenericData.get().validate(aktorSchema, personIdenter)).isTrue()
+        Assertions.assertTrue(GenericData.get().validate(aktorSchema, personIdenter))
     }
 
     @Test
@@ -39,10 +39,13 @@ class PersonDeserializingTest {
         ))
         val identer = PersonDto(personIdenter).identer()
 
-        assertThat(identer.identer().containsAll(listOf(
-                PersonIdent("123", PersonIdent.Type.FOLKEREGISTER, true),
-                PersonIdent("234", PersonIdent.Type.AKTORID, true)
-        )))
+        Assertions.assertAll(
+                Executable { Assertions.assertTrue(identer.identer().containsAll(listOf(
+                        PersonIdent("123", PersonIdent.Type.FOLKEREGISTER, true),
+                        PersonIdent("234", PersonIdent.Type.AKTORID, false)
+
+                ))) }
+        )
 
     }
 

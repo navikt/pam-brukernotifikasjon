@@ -1,11 +1,9 @@
 package no.nav.cv.person
 
-import assertk.assertThat
-import assertk.assertions.contains
-import assertk.assertions.containsExactly
-import assertk.assertions.isEqualTo
 import io.micronaut.test.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import javax.inject.Inject
 
 @MicronautTest
@@ -24,11 +22,14 @@ class PersonRepositoryTest {
         )))
         val hentet = personIdentRepository.finnIdenter("123")
 
-        assertThat(hentet.identer().size).isEqualTo(2)
-        assertThat(hentet.identer()).containsExactly(
-                PersonIdent("123", PersonIdent.Type.AKTORID, false),
-                PersonIdent("234", PersonIdent.Type.FOLKEREGISTER, true)
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(hentet.identer().size, 2) },
+                Executable { Assertions.assertTrue(hentet.identer().containsAll(listOf(
+                        PersonIdent("123", PersonIdent.Type.AKTORID, false),
+                        PersonIdent("234", PersonIdent.Type.FOLKEREGISTER, true)
+                ))) }
         )
+
     }
 
     @Test
@@ -46,9 +47,11 @@ class PersonRepositoryTest {
 
         val hentet = personIdentRepository.finnIdenter("111")
 
-        assertThat(hentet.identer().size).isEqualTo(3)
-        assertThat(hentet.identer()).contains(
-                PersonIdent("333", PersonIdent.Type.FOLKEREGISTER, true)
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(hentet.identer().size, 3) },
+                Executable { Assertions.assertTrue(hentet.identer().containsAll(listOf(
+                        PersonIdent("333", PersonIdent.Type.FOLKEREGISTER, true)
+                ))) }
         )
     }
 
@@ -67,9 +70,11 @@ class PersonRepositoryTest {
 
         val hentet = personIdentRepository.finnIdenter("111")
 
-        assertThat(hentet.identer().size).isEqualTo(3)
-        assertThat(hentet.identer()).contains(
-                PersonIdent("333", PersonIdent.Type.AKTORID, true)
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(hentet.identer().size, 3) },
+                Executable { Assertions.assertTrue(hentet.identer().containsAll(listOf(
+                        PersonIdent("333", PersonIdent.Type.AKTORID, true)
+                ))) }
         )
     }
 
@@ -94,15 +99,22 @@ class PersonRepositoryTest {
         val hentetPerson1 = personIdentRepository.finnIdenter("555")
         val hentetPerson2 = personIdentRepository.finnIdenter("666")
 
-        assertThat(hentetPersonOpprinnelig.identer().size).isEqualTo(0)
+        Assertions.assertEquals(hentetPersonOpprinnelig.identer().size, 0)
 
-        assertThat(hentetPerson1.identer().size).isEqualTo(2)
-        assertThat(hentetPerson1.identer()).contains(
-                PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, true))
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(hentetPerson1.identer().size, 2) },
+                Executable { Assertions.assertTrue(hentetPerson1.identer().contains(
+                        PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, true)
+                )) }
+        )
 
-        assertThat(hentetPerson2.identer().size).isEqualTo(2)
-        assertThat(hentetPerson2.identer()).contains(
-                PersonIdent("333", PersonIdent.Type.FOLKEREGISTER, true))
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(2, hentetPerson2.identer().size) },
+                Executable { Assertions.assertTrue(hentetPerson2.identer().contains(
+                        PersonIdent("333", PersonIdent.Type.FOLKEREGISTER, true)
+                )) }
+        )
+
     }
 
 
@@ -127,19 +139,26 @@ class PersonRepositoryTest {
         val hentetSomOpprinneligPerson1 = personIdentRepository.finnIdenter("111")
         val hentetSomOpprinneligPerson2 = personIdentRepository.finnIdenter("333")
 
-        assertThat(hentetSomOpprinneligPerson1.identer().size).isEqualTo(4)
-        assertThat(hentetSomOpprinneligPerson1.identer()).containsExactly(
-                PersonIdent("111", PersonIdent.Type.AKTORID, true),
-                PersonIdent("333", PersonIdent.Type.AKTORID, false),
-                PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, false),
-                PersonIdent("444", PersonIdent.Type.FOLKEREGISTER, true))
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(hentetSomOpprinneligPerson1.identer().size, 4) },
+                Executable { Assertions.assertTrue(hentetSomOpprinneligPerson1.identer().containsAll(listOf(
+                        PersonIdent("111", PersonIdent.Type.AKTORID, true),
+                        PersonIdent("333", PersonIdent.Type.AKTORID, false),
+                        PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, false),
+                        PersonIdent("444", PersonIdent.Type.FOLKEREGISTER, true)
+                ))) }
+        )
 
-        assertThat(hentetSomOpprinneligPerson2.identer().size).isEqualTo(4)
-        assertThat(hentetSomOpprinneligPerson2.identer()).containsExactly(
-                PersonIdent("111", PersonIdent.Type.AKTORID, true),
-                PersonIdent("333", PersonIdent.Type.AKTORID, false),
-                PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, false),
-                PersonIdent("444", PersonIdent.Type.FOLKEREGISTER, true))
+        Assertions.assertAll(
+                Executable { Assertions.assertEquals(hentetSomOpprinneligPerson2.identer().size, 4) },
+                Executable { Assertions.assertTrue(hentetSomOpprinneligPerson2.identer().containsAll(listOf(
+                        PersonIdent("111", PersonIdent.Type.AKTORID, true),
+                        PersonIdent("333", PersonIdent.Type.AKTORID, false),
+                        PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, false),
+                        PersonIdent("444", PersonIdent.Type.FOLKEREGISTER, true)
+                ))) }
+        )
+
 
     }
 }

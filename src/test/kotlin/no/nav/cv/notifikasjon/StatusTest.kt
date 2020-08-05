@@ -1,7 +1,5 @@
 package no.nav.cv.notifikasjon
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
@@ -9,6 +7,7 @@ import io.mockk.verify
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 
@@ -33,7 +32,7 @@ internal class StatusTest {
     @Test
     fun `ny bruker`() {
         val ny = nyBruker()
-        assertThat(ny.status).isEqualTo(nyBrukerStatus)
+        Assertions.assertEquals(ny.status, nyBrukerStatus)
     }
 
     @Test
@@ -42,7 +41,7 @@ internal class StatusTest {
         val forsoktVarslet = ny.varsleBruker(varselPublisher)
 
         verify { listOf(varselPublisher) wasNot called }
-        assertThat(forsoktVarslet.status).isEqualTo(ny.status)
+        Assertions.assertEquals(forsoktVarslet.status, ny.status)
     }
 
     @Test
@@ -50,8 +49,8 @@ internal class StatusTest {
         val ny = nyBruker()
         val underOppfolging = ny.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
-        assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
-        assertThat(underOppfolging.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(underOppfolging.status, skalVarslesStatus)
+        Assertions.assertEquals(underOppfolging.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
@@ -60,8 +59,8 @@ internal class StatusTest {
         val settCv = ny.harSettCv(twoDaysAgo, varselPublisher)
 
         verify { varselPublisher wasNot called }
-        assertThat(settCv.status).isEqualTo(doneStatus)
-        assertThat(settCv.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(settCv.status, doneStatus)
+        Assertions.assertEquals(settCv.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
@@ -70,15 +69,15 @@ internal class StatusTest {
         val blittFulgtOpp = ny.blittFulgtOpp(twoDaysAgo, varselPublisher)
 
         verify { varselPublisher wasNot called }
-        assertThat(blittFulgtOpp.status).isEqualTo(doneStatus)
-        assertThat(blittFulgtOpp.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(blittFulgtOpp.status, doneStatus)
+        Assertions.assertEquals(blittFulgtOpp.statusTidspunkt, twoDaysAgo)
     }
 
 
     @Test
     fun `bruker fullfort oppfolging`() {
         val fulgtOpp = fulgtOppStatus()
-        assertThat(fulgtOpp.status).isEqualTo(doneStatus)
+        Assertions.assertEquals(fulgtOpp.status, doneStatus)
     }
 
     @Test
@@ -87,7 +86,7 @@ internal class StatusTest {
         val forsoktVarslet = fulgtOpp.varsleBruker(varselPublisher)
 
         verify { listOf(varselPublisher) wasNot called }
-        assertThat(forsoktVarslet.status).isEqualTo(fulgtOpp.status)
+        Assertions.assertEquals(forsoktVarslet.status, fulgtOpp.status)
     }
 
     @Test
@@ -95,8 +94,8 @@ internal class StatusTest {
         val fulgtOpp = fulgtOppStatus()
         val underOppfolging = fulgtOpp.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
-        assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
-        assertThat(underOppfolging.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(underOppfolging.status, skalVarslesStatus)
+        Assertions.assertEquals(underOppfolging.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
@@ -105,8 +104,8 @@ internal class StatusTest {
         val settCv = fulgtOpp.harSettCv(twoDaysAgo, varselPublisher)
 
         verify { varselPublisher wasNot called }
-        assertThat(settCv.status).isEqualTo(doneStatus)
-        assertThat(settCv.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(settCv.status, doneStatus)
+        Assertions.assertEquals(settCv.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
@@ -115,8 +114,8 @@ internal class StatusTest {
         val blittFulgtOpp = fulgtOpp.blittFulgtOpp(twoDaysAgo, varselPublisher)
 
         verify { varselPublisher wasNot called }
-        assertThat(blittFulgtOpp.status).isEqualTo(doneStatus)
-        assertThat(blittFulgtOpp.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(blittFulgtOpp.status, doneStatus)
+        Assertions.assertEquals(blittFulgtOpp.statusTidspunkt, twoDaysAgo)
     }
 
 
@@ -127,7 +126,7 @@ internal class StatusTest {
     @Test
     fun `bruker sett cv`() {
         val settCv = settCv()
-        assertThat(settCv.status).isEqualTo(doneStatus)
+        Assertions.assertEquals(settCv.status, doneStatus)
     }
 
     @Test
@@ -135,7 +134,7 @@ internal class StatusTest {
         val settCv = settCv()
         val forsoktVarslet = settCv.varsleBruker(varselPublisher)
 
-        assertThat(forsoktVarslet.status).isEqualTo(settCv.status)
+        Assertions.assertEquals(forsoktVarslet.status, settCv.status)
     }
 
     @Test
@@ -143,8 +142,8 @@ internal class StatusTest {
         val settCv = settCv()
         val underOppfolging = settCv.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
 
-        assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
-        assertThat(underOppfolging.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(underOppfolging.status, skalVarslesStatus)
+        Assertions.assertEquals(underOppfolging.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
@@ -152,8 +151,8 @@ internal class StatusTest {
         val settCv = settCv()
         val settCvNy = settCv.harSettCv(twoDaysAgo, varselPublisher)
 
-        assertThat(settCvNy.status).isEqualTo(doneStatus)
-        assertThat(settCvNy.statusTidspunkt).isEqualTo(settCv.statusTidspunkt)
+        Assertions.assertEquals(settCvNy.status, doneStatus)
+        Assertions.assertEquals(settCvNy.statusTidspunkt, settCv.statusTidspunkt)
     }
 
     @Test
@@ -161,8 +160,8 @@ internal class StatusTest {
         val settCv = settCv()
         val blittFulgtOpp = settCv.blittFulgtOpp(twoDaysAgo, varselPublisher)
 
-        assertThat(blittFulgtOpp.status).isEqualTo(settCv.status)
-        assertThat(blittFulgtOpp.statusTidspunkt).isEqualTo(settCv.statusTidspunkt)
+        Assertions.assertEquals(blittFulgtOpp.status, settCv.status)
+        Assertions.assertEquals(blittFulgtOpp.statusTidspunkt, settCv.statusTidspunkt)
     }
 
 
@@ -175,7 +174,7 @@ internal class StatusTest {
     @Test
     fun `bruker under oppfolging`() {
         val kommetUnderOppfolging = kommetUnderOppfolging()
-        assertThat(kommetUnderOppfolging.status).isEqualTo(skalVarslesStatus)
+        Assertions.assertEquals(kommetUnderOppfolging.status, skalVarslesStatus)
     }
 
     @Test
@@ -187,7 +186,7 @@ internal class StatusTest {
 
 
         verify(exactly = 1) { varselPublisher.publish(kommetUnderOppfolgingMedFnr.uuid, aktorFnr) }
-        assertThat(forsoktVarsletSuksess.status).isEqualTo(varsletStatus)
+        Assertions.assertEquals(forsoktVarsletSuksess.status, varsletStatus)
     }
 
     @Test
@@ -195,8 +194,8 @@ internal class StatusTest {
         val kommetUnderOppfolging = kommetUnderOppfolging()
         val underOppfolging = kommetUnderOppfolging.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
 
-        assertThat(underOppfolging.status).isEqualTo(skalVarslesStatus)
-        assertThat(underOppfolging.statusTidspunkt).isEqualTo(yesterday)
+        Assertions.assertEquals(underOppfolging.status, skalVarslesStatus)
+        Assertions.assertEquals(underOppfolging.statusTidspunkt, yesterday)
     }
 
     @Test
@@ -205,8 +204,8 @@ internal class StatusTest {
         val settCv = kommetUnderOppfolging.harSettCv(twoDaysAgo, varselPublisher)
 
         verify { varselPublisher wasNot called }
-        assertThat(settCv.status).isEqualTo(doneStatus)
-        assertThat(settCv.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(settCv.status, doneStatus)
+        Assertions.assertEquals(settCv.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
@@ -215,8 +214,8 @@ internal class StatusTest {
         val blittFulgtOpp = kommetUnderOppfolging.blittFulgtOpp(twoDaysAgo, varselPublisher)
 
         verify { varselPublisher wasNot called }
-        assertThat(blittFulgtOpp.status).isEqualTo(doneStatus)
-        assertThat(blittFulgtOpp.statusTidspunkt).isEqualTo(twoDaysAgo)
+        Assertions.assertEquals(blittFulgtOpp.status, doneStatus)
+        Assertions.assertEquals(blittFulgtOpp.statusTidspunkt, twoDaysAgo)
     }
 
 
@@ -226,7 +225,7 @@ internal class StatusTest {
     @Test
     fun `bruker varslet`() {
         val varslet = varsletStatus()
-        assertThat(varslet.status).isEqualTo(varsletStatus)
+        Assertions.assertEquals(varslet.status, varsletStatus)
     }
 
 
@@ -237,7 +236,7 @@ internal class StatusTest {
 
 
         verify { listOf(varselPublisher) wasNot called }
-        assertThat(nyVarslet.status).isEqualTo(varslet.status)
+        Assertions.assertEquals(nyVarslet.status, varslet.status)
     }
 
     @Test
@@ -245,7 +244,7 @@ internal class StatusTest {
         val varslet = varsletStatus()
         val underOppfolging = varslet.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
 
-        assertThat(underOppfolging.status).isEqualTo(varslet.status)
+        Assertions.assertEquals(underOppfolging.status, varslet.status)
     }
 
     @Test
@@ -254,8 +253,8 @@ internal class StatusTest {
         val settCv = varslet.harSettCv(now, varselPublisher)
 
         verify(exactly = 1) { varselPublisher.done(varslet.uuid, aktorFnr) }
-        assertThat(settCv.status).isEqualTo(doneStatus)
-        assertThat(settCv.statusTidspunkt).isEqualTo(now)
+        Assertions.assertEquals(settCv.status, doneStatus)
+        Assertions.assertEquals(settCv.statusTidspunkt, now)
     }
 
     @Test
@@ -264,8 +263,8 @@ internal class StatusTest {
         val blittFulgtOpp = varslet.blittFulgtOpp(now, varselPublisher)
 
         verify(exactly = 1) { varselPublisher.done(varslet.uuid, aktorFnr) }
-        assertThat(blittFulgtOpp.status).isEqualTo(doneStatus)
-        assertThat(blittFulgtOpp.statusTidspunkt).isEqualTo(now)
+        Assertions.assertEquals(blittFulgtOpp.status, doneStatus)
+        Assertions.assertEquals(blittFulgtOpp.statusTidspunkt, now)
     }
 
 
