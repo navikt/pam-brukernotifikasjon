@@ -19,6 +19,12 @@ class NotifikasjonAdmin(
         return "OK"
     }
 
+    @Post("kafka/manuell/varsel/{uuid}/{fnr}/{systembruker}", produces = [ "text/plain" ])
+    fun varsle(uuid: UUID, fnr: String, systembruker: String): String {
+        varselPublisher.publish(uuid, fnr, systembruker)
+        return "OK"
+    }
+
     @Post("kafka/manuell/donemelding/{uuid}/{fnr}", produces = [ "text/plain" ])
     fun done(uuid: UUID, fnr: String): String {
         varselPublisher.done(uuid, fnr)
@@ -26,7 +32,7 @@ class NotifikasjonAdmin(
     }
 
     @Post("kafka/manuell/donemelding/{uuid}/{fnr}/{systembruker}", produces = [ "text/plain" ])
-    fun doneMedSystembruker(uuid: UUID, fnr: String, systembruker: String): String {
+    fun done(uuid: UUID, fnr: String, systembruker: String): String {
         varselPublisher.done(uuid, fnr, systembruker)
         return "OK"
     }

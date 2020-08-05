@@ -37,6 +37,20 @@ class BrukernotifikasjonProducer(
         brukernotifikasjonClient.publish(nokkel, oppgave)
     }
 
+    override fun publish(eventId: UUID, foedselsnummer: String, systembruker: String) {
+        log.info("Publiserer varsel med eventId $eventId med systembruker $systembruker")
+        val nokkel = Nokkel(systembruker, eventId.toString())
+        val oppgave = Oppgave(
+                Instant.now().toEpochMilli(),
+                foedselsnummer,
+                grupperingsId,
+                tekst,
+                link,
+                sikkerhetsnivaa
+        )
+        brukernotifikasjonClient.publish(nokkel, oppgave)
+    }
+
     override fun done(eventId: UUID, foedselsnummer: String) {
         log.info("Publiserer donemelding for eventId $eventId")
         val nokkel = Nokkel(systembruker, eventId.toString())
