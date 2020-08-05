@@ -14,4 +14,10 @@ interface VarselPublisher {
             foedselsnummer: String
     )
 
+    fun done(
+            eventId: UUID,
+            foedselsnummer: String,
+            systembruker: String
+    )
+
 }

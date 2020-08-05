@@ -3,9 +3,6 @@ package no.nav.cv.person
 import io.micronaut.context.annotation.Value
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import no.nav.cv.person.PersonIdent
-import no.nav.cv.person.PersonIdentRepository
-import no.nav.cv.person.PersonIdenter
 
 @Controller("internal")
 class PersonIdentAdmin(
