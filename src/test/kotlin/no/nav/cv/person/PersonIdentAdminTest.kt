@@ -26,7 +26,7 @@ class PersonIdentAdminTest {
     lateinit var personIdentRepository: PersonIdentRepository
 
     @Test
-    @Property(name="personIdent.admin.enabled", value="enabled")
+    @Property(name="admin.enabled", value="enabled")
     fun `that admin is enabled by property` () {
         assertThat(client.toBlocking()
                 .exchange<String>("/internal/addIdent/123/321")
@@ -35,7 +35,7 @@ class PersonIdentAdminTest {
     }
 
     @Test
-    @Property(name="personIdent.admin.enabled", value="enabled")
+    @Property(name="admin.enabled", value="enabled")
     fun `that correct idents are set` () {
        val slot = slot<PersonIdenter>()
 
@@ -65,7 +65,7 @@ class PersonIdentAdminDisabledTest {
     @Inject @field:Client("/pam-brukernotifikasjon") lateinit var client: RxHttpClient
 
     @Test
-    @Property(name="personIdent.admin.enabled", value="disabled")
+    @Property(name="admin.enabled", value="disabled")
     fun `that admin is disabled by property` () {
         assertThrows<HttpClientResponseException> {
             client.toBlocking()
