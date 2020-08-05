@@ -13,13 +13,12 @@ Siden både CV og PTO (som leverer oppfølgingsinformasjon) primært benytter ak
 Applikasjonen orkestrer da input fra 3 kilder og produserer output til 1. Appen er bygd for å kunne gjøre dette asynkront. [CV-endringer mottas på kafka](https://github.com/navikt/pam-cv-avro-cvmeldinger), [Oppfølgingsdata fra feed](https://github.com/navikt/veilarboppfolging), [aktør-id/fødselsnummer-mapping fra PDL](https://navikt.github.io/pdl/) og det produseres [meldinger til Ditt NAV](https://github.com/navikt/brukernotifikasjon-topic-iac). 
 
 ## Bygge og starte applikasjonen lokalt
-Bygge
+### Bygge
 ```
 gradle build
 ```
 
-Starte i IntelliJ
-
+### Starte i IntelliJ
 Kjør `no.nav.cv.Application`, og legg på `-Dmicronaut.environments=test` som JVM option
 
 ## Admin-grensesnitt
