@@ -7,14 +7,14 @@ import java.time.ZonedDateTime
 import javax.inject.Singleton
 
 @Singleton
-class VarslerJobb(
+open class VarslerJobb(
         private val hendelseService: HendelseService,
         private val repository: StatusRepository
 ) {
 
     @SchedulerLock(name = "varslerjobb")
     @Scheduled(fixedDelay = "15s")
-    fun varsle() {
+    open fun varsle() {
         val skalVarsles = repository.skalVarsles()
         skalVarsles.forEach {
             hendelseService.varsleBruker(it.aktorId, ZonedDateTime.now())
