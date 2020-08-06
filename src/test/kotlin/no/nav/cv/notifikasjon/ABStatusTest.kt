@@ -1,7 +1,6 @@
 package no.nav.cv.notifikasjon
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 
@@ -14,13 +13,13 @@ internal class ABStatusTest {
     fun `nyBruker - AB Test Skal varsles - Riktig status`() {
         val nesteStatus = nyBruker().harKommetUnderOppfolging(now, ABTest.skalVarsles)
 
-        assertThat(nesteStatus.status).isEqualTo(skalVarslesStatus)
+        assertEquals(nesteStatus.status, skalVarslesStatus)
     }
 
     @Test
     fun `nyBruker - AB Test Skal ikke varsles - Riktig status`() {
         val nesteStatus = nyBruker().harKommetUnderOppfolging(now, ABTest.skalIkkeVarsles )
 
-        assertThat(nesteStatus.status).isEqualTo(abTestSkalIkkeVarsles)
+        assertEquals(nesteStatus.status, abTestSkalIkkeVarsles)
     }
 }
