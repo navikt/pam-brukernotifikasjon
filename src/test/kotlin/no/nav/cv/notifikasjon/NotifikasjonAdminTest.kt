@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
@@ -10,7 +11,6 @@ import io.micronaut.test.annotation.MockBean
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
