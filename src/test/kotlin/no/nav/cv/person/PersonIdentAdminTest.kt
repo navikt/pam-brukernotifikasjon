@@ -11,6 +11,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
@@ -27,7 +28,7 @@ class PersonIdentAdminTest {
     @Test
     @Property(name="personIdent.admin.enabled", value="enabled")
     fun `that admin is enabled by property` () {
-        Assertions.assertEquals(
+        assertEquals(
                 client.toBlocking().exchange<String>("/internal/addIdent/123/321").status,
                 HttpStatus.OK)
     }
@@ -43,9 +44,9 @@ class PersonIdentAdminTest {
         verify { personIdentRepository.oppdater(capture(slot)) }
 
         val identer = slot.captured.identer()
-        Assertions.assertAll(
-                Executable { Assertions.assertEquals(2, identer.size) },
-                Executable { Assertions.assertTrue(identer.containsAll(listOf(
+        assertAll(
+                Executable { assertEquals(2, identer.size) },
+                Executable { assertTrue(identer.containsAll(listOf(
                         PersonIdent("222", PersonIdent.Type.FOLKEREGISTER, true),
                         PersonIdent("333", PersonIdent.Type.AKTORID, true)
                 ))) }

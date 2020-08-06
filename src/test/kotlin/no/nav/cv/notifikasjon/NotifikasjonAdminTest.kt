@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.*
 import javax.inject.Inject
@@ -37,8 +38,8 @@ class PersonIdentAdminTest {
 
         verify { varselPublisher.publish(capture(uuidSlot), capture(fnrSlot)) }
 
-        Assertions.assertEquals(uuidSlot.captured, uuid)
-        Assertions.assertEquals(fnrSlot.captured, fnr)
+        assertEquals(uuidSlot.captured, uuid)
+        assertEquals(fnrSlot.captured, fnr)
 
     }
 
@@ -52,8 +53,8 @@ class PersonIdentAdminTest {
 
         verify { varselPublisher.done(capture(uuidSlot), capture(fnrSlot)) }
 
-        Assertions.assertEquals(uuidSlot.captured, uuid)
-        Assertions.assertEquals(fnrSlot.captured, fnr)
+        assertEquals(uuidSlot.captured, uuid)
+        assertEquals(fnrSlot.captured, fnr)
 
     }
 

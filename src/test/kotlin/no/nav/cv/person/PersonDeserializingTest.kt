@@ -5,6 +5,8 @@ import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.avro.generic.GenericRecord
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import java.nio.file.Paths
@@ -27,7 +29,7 @@ class PersonDeserializingTest {
         ))
 
 
-        Assertions.assertTrue(GenericData.get().validate(aktorSchema, personIdenter))
+        assertTrue(GenericData.get().validate(aktorSchema, personIdenter))
     }
 
     @Test
@@ -39,8 +41,8 @@ class PersonDeserializingTest {
         ))
         val identer = PersonDto(personIdenter).identer()
 
-        Assertions.assertAll(
-                Executable { Assertions.assertTrue(identer.identer().containsAll(listOf(
+        assertAll(
+                Executable { assertTrue(identer.identer().containsAll(listOf(
                         PersonIdent("123", PersonIdent.Type.FOLKEREGISTER, true),
                         PersonIdent("234", PersonIdent.Type.AKTORID, false)
 
