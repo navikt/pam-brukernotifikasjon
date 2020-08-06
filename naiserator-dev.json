@@ -17,7 +17,7 @@
 
   "ingress": "https://pam-brukernotifikasjon.nais.preprod.local",
 
-  "personIdentAdminEnabled": "enabled",
+  "adminEnabled": "enabled",
 
   "linkIMelding": "https://arbeidsplassen-q.nav.no/cv"
 }

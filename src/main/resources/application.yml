@@ -104,7 +104,7 @@ kafka:
       url: http://kafka-schema-registry.tpa:8081
 personIdent:
   admin:
-    enabled: ${PERSON_IDENT_ADMIN_ENABLED:`disabled`}
+    enabled: ${ADMIN_ENABLED:`disabled`}
 
 oppfolgingstatus:
   sts:

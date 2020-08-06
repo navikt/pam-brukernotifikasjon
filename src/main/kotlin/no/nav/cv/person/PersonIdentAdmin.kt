@@ -6,14 +6,14 @@ import io.micronaut.http.annotation.Get
 
 @Controller("internal")
 class PersonIdentAdmin(
-        @Value("\${personIdent.admin.enabled}") private val personIdentAdminEnabled: String,
+        @Value("\${admin.enabled}") private val adminEnabled: String,
         private val personIdentRepository: PersonIdentRepository
 ) {
 
     @Get("addIdent/{fnr}/{aktorId}", produces = [ "text/plain" ])
     fun addIdent(fnr: String, aktorId: String) : String {
 
-        check(personIdentAdminEnabled == "enabled")
+        check(adminEnabled == "enabled")
 
         val identList = listOf(
                 PersonIdent(fnr, PersonIdent.Type.FOLKEREGISTER, true),
