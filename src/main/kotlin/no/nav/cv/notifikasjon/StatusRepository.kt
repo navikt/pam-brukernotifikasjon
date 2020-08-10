@@ -23,6 +23,7 @@ open class StatusRepository(
 
     @Transactional
     open fun lagre(status: Status) {
+        log.debug("Lagrer uuid ${status.uuid} med status ${status.status} og tidspunkt ${status.statusTidspunkt}")
         entityManager.persist(StatusEntity.fromStatus(status))
     }
 
