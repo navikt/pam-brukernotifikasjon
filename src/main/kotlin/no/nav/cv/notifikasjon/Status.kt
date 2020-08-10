@@ -98,7 +98,10 @@ class Status(
     fun varsleBruker(
             varselPublisher: VarselPublisher
     ): Status {
-        if(status != skalVarslesStatus) return this
+        if(status != skalVarslesStatus) {
+            log.debug("Aktør $aktorId ($uuid) er alt varslet og har status $status")
+            return this
+        }
 
         varselPublisher.publish(uuid, fnr)
         return varslet(this, fnr, ZonedDateTime.now())
