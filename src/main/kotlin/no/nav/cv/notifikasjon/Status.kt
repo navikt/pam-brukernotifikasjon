@@ -99,7 +99,7 @@ class Status(
             varselPublisher: VarselPublisher
     ): Status {
         if(status != skalVarslesStatus) {
-            log.debug("Aktør $aktorId ($uuid) er alt varslet og har status $status")
+            log.debug("UUID ($uuid) er alt varslet og har status $status")
             return this
         }
 

@@ -21,7 +21,7 @@ open class VarslerJobb(
     open fun varsle() {
         val skalVarsles = repository.skalVarsles()
         skalVarsles.forEach {
-            log.debug("Varsler aktor ${it.aktorId} for uuid ${it.uuid} med status ${it.status} og nåværende tidspunkt ${it.statusTidspunkt}")
+            log.debug("Varsler uuid ${it.uuid} med status ${it.status} og nåværende tidspunkt ${it.statusTidspunkt}")
             hendelseService.varsleBruker(it.aktorId, ZonedDateTime.now())
         }
     }
