@@ -88,6 +88,7 @@ class Status(
             else -> this
         }
 
+        log.debug("uuid $uuid har kommet under oppfølging $hendelsesTidspunkt. Status før: $status  Status nå: $nyStatus")
         return nyStatus
     }
 
