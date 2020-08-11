@@ -88,6 +88,7 @@ class Status(
             else -> this
         }
 
+        log.debug("uuid $uuid har kommet under oppfølging $hendelsesTidspunkt. Status før: $status  Status nå: ${nyStatus.status}")
         return nyStatus
     }
 
@@ -98,7 +99,10 @@ class Status(
     fun varsleBruker(
             varselPublisher: VarselPublisher
     ): Status {
-        if(status != skalVarslesStatus) return this
+        if(status != skalVarslesStatus) {
+            log.debug("UUID ($uuid) er alt varslet og har status $status")
+            return this
+        }
 
         varselPublisher.publish(uuid, fnr)
         return varslet(this, fnr, ZonedDateTime.now())
