@@ -35,7 +35,11 @@ class Statuser(
     fun nyesteStatus() = statuser.sortedByDescending { it.statusTidspunkt }.first()
 
     fun cvOppdatertTidspunkt(): ZonedDateTime {
-        return statuser.find { it.status == cvOppdatertStatus}?.statusTidspunkt ?: startOfTime
+        return statuser
+                .filter { it.status == cvOppdatertStatus}
+                .map { it.statusTidspunkt }
+                .maxBy { it }
+                ?: startOfTime
     }
 
     val uuid = statuser[0].uuid
