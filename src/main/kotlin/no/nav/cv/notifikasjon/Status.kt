@@ -64,13 +64,7 @@ class Status(
                 status = nyBrukerStatus,
                 statusTidspunkt = tidspunkt)
 
-        fun nyttVarsel(forrigeStatus: Status) = Status(
-                uuid = UUID.randomUUID(),
-                aktorId = forrigeStatus.aktorId,
-                status = nyBrukerStatus,
-                statusTidspunkt = forrigeStatus.statusTidspunkt.plusNanos(1000))
-
-        fun skalVarlsesManglerFnr(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
+         fun skalVarlsesManglerFnr(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
                 fnr = ukjentFnr, // vi tvinger frem nytt oppslag - i tilfelle fnr kan ha endret seg
@@ -89,13 +83,6 @@ class Status(
                 aktorId = forrigeStatus.aktorId,
                 fnr = forrigeStatus.fnr,
                 status = varsletStatus,
-                statusTidspunkt = statusTidspunkt)
-
-        fun done(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
-                uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
-                fnr = forrigeStatus.fnr,
-                status = doneStatus,
                 statusTidspunkt = statusTidspunkt)
 
         fun funnetFodselsnummer(forrigeStatus: Status, fodselsnummer: String) = Status(
@@ -130,44 +117,14 @@ class Status(
         )
     }
 
-    fun isAfter(tidspunkt: ZonedDateTime): Boolean = statusTidspunkt.isAfter(tidspunkt)
-
-    fun erVarslet(): Boolean = status == varsletStatus
-
-    fun harKommetUnderOppfolging(hendelsesTidspunkt: ZonedDateTime, abTestSelector: ABTestSelector): Status {
-
-        val nyStatus = when(status) {
-            doneStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
-            skalVarslesStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
-
-            nyBrukerStatus -> skalVarsles(this, hendelsesTidspunkt)
-
-            else -> this
-        }
-
-        log.debug("uuid $uuid har kommet under oppfølging $hendelsesTidspunkt. Status før: $status  Status nå: ${nyStatus.status}")
-        return nyStatus
-    }
-
     fun funnetFodselsnummer(fodselsnummer: String): Status {
         return funnetFodselsnummer(this, fodselsnummer = fodselsnummer)
     }
 
-    fun varsleBruker(
-            varselPublisher: VarselPublisher
-    ): Status {
-        if(status != skalVarslesStatus) {
-            log.debug("UUID ($uuid) er alt varslet og har status $status")
-            return this
-        }
-
-        varselPublisher.publish(uuid, fnr)
-        return varslet(this, ZonedDateTime.now())
-    }
-
-    fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime, ): Status {
+    fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime): Status {
         return ikkeUnderOppfolging(this, hendelsesTidspunkt)
     }
+
     fun harSettCv(hendelsesTidspunkt: ZonedDateTime): Status {
         return cvOppdatert(this, hendelsesTidspunkt)
     }
@@ -179,7 +136,7 @@ class Status(
     }
 
     fun skalVarlsesManglerFnr(datoSisteOppfolging: ZonedDateTime) : Status {
-        return Status.skalVarlsesManglerFnr(
+        return skalVarlsesManglerFnr(
                 this,
                 datoSisteOppfolging)
     }
