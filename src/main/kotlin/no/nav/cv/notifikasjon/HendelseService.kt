@@ -45,7 +45,7 @@ class Hendelser (
             return
         }
 
-        when(nyesteStatus.status) {
+        val nesteStatus = when(nyesteStatus.status) {
             nyBrukerStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
             forGammelStatus -> nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
             ikkeUnderOppfølgingStatus -> nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
@@ -53,10 +53,14 @@ class Hendelser (
             cvOppdatertStatus -> {
                 if (statuser.cvOppdatertTidspunkt().isBefore(datoSisteOppfolging))
                     nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
+                else null
             }
 
-            else -> {} // ikke gjør noe hvis personen er i noen av de andre statusene
+            else -> null // ikke gjør noe hvis personen er i noen av de andre statusene
         }
+
+        if(nesteStatus != null)
+            repository.lagre(nesteStatus)
     }
 
     fun funnetFodselsnummer(aktorId: String, fnr: String) {
