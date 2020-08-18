@@ -80,8 +80,14 @@ class Hendelser (
         repository.lagre(nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging))
     }
 
-    fun settCv(aktorId: String) {
-        val statuser = repository.finnStatuser(aktorId)
+    fun settCv(aktorId: String, tidspunkt: ZonedDateTime) {
+        val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
+
+        if(nyesteStatus.status == varsletStatus)
+            varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
+
+        repository.lagre(nyesteStatus.harSettCv(tidspunkt))
+
     }
 
     fun varsleBruker(aktorId: String) {

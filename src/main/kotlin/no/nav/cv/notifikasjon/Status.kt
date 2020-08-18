@@ -120,6 +120,14 @@ class Status(
                 status = ikkeUnderOppfølgingStatus,
                 statusTidspunkt = tidspunkt
         )
+
+        fun cvOppdatert(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
+                uuid = forrigeStatus.uuid,
+                aktorId = forrigeStatus.aktorId,
+                fnr = forrigeStatus.fnr,
+                status = cvOppdatertStatus,
+                statusTidspunkt = tidspunkt
+        )
     }
 
     fun isAfter(tidspunkt: ZonedDateTime): Boolean = statusTidspunkt.isAfter(tidspunkt)
@@ -160,15 +168,8 @@ class Status(
     fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime, ): Status {
         return ikkeUnderOppfolging(this, hendelsesTidspunkt)
     }
-    fun harSettCv(
-            hendelsesTidspunkt: ZonedDateTime,
-            varselPublisher: VarselPublisher
-    ): Status {
-        if(status == varsletStatus) {
-            varselPublisher.done(uuid, fnr)
-        }
-        return done(this, hendelsesTidspunkt)
-
+    fun harSettCv(hendelsesTidspunkt: ZonedDateTime): Status {
+        return cvOppdatert(this, hendelsesTidspunkt)
     }
 
     fun forGammel(datoSisteOppfolging: ZonedDateTime) : Status {
