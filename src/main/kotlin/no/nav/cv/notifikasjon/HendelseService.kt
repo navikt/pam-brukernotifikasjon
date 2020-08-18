@@ -87,11 +87,13 @@ class Hendelser (
     fun varsleBruker(aktorId: String) {
         val statuser = repository.finnStatuser(aktorId)
 
-        require(statuser.nyesteStatus().status == skalVarslesStatus) { "Kan kun varsle når status er $skalVarslesStatus. Gjelder status $statuser.uuid" }
-        require(statuser.nyesteStatus().fnr != ukjentFnr) { "Trenger fødselsnummer når det skal varsles. Gjelder status $statuser.uuid" }
+        val nyesteStatus = statuser.nyesteStatus()
 
-        varselPublisher.publish(statuser.nyesteStatus().uuid, statuser.nyesteStatus().fnr)
-        repository.lagre(Status.varslet(statuser.nyesteStatus().fnr, ZonedDateTime.now()))
+        require(nyesteStatus.status == skalVarslesStatus) { "Kan kun varsle når status er $skalVarslesStatus. Gjelder status $statuser.uuid" }
+        require(nyesteStatus.fnr != ukjentFnr) { "Trenger fødselsnummer når det skal varsles. Gjelder status $statuser.uuid" }
+
+        varselPublisher.publish(nyesteStatus.uuid, nyesteStatus.fnr)
+        repository.lagre(Status.varslet(nyesteStatus, nyesteStatus.fnr, ZonedDateTime.now()))
     }
 }
 
