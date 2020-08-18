@@ -13,9 +13,9 @@ interface HendelseService {
 
     fun funnetFodselsnummer(aktorId: String, fnr: String)
 
-    fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
+    fun varsleBruker(aktorId: String)
 
-    fun blittFulgtOpp(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
+    fun ikkeUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
     fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
@@ -26,10 +26,10 @@ interface HendelseService {
 class Hendelser (
     private val repository: StatusRepository,
     private val varselPublisher: VarselPublisher
-) {
+) : HendelseService {
     val cutoffTime = ZonedDateTime.now().minus(cutoffPeriod)
 
-    fun harKommetUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
+    override fun harKommetUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
         val statuser = repository.finnStatuser(aktorId)
 
         val nyesteStatus = statuser.nyesteStatus()
@@ -60,25 +60,37 @@ class Hendelser (
             repository.lagre(nesteStatus)
     }
 
-    fun funnetFodselsnummer(aktorId: String, fnr: String) {
+    override fun funnetFodselsnummer(aktorId: String, fnr: String) {
         val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
 
-        if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status $statuser.uuid")
+        if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status ${nyesteStatus.uuid}")
 
         if(fnr != ukjentFnr) repository.lagre(nyesteStatus.funnetFodselsnummer(fnr))
     }
 
-    fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
+    override fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
         val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
 
         // Bør vi sende denne uansett, i tilfelle vi skulle få en race condition mellom to statuser?
-        if(nyesteStatus.status == varsletStatus)
-            varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
+        val nesteStatus = when(nyesteStatus.status) {
+            skalVarslesManglerFnrStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
+            skalVarslesStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
+
+            varsletStatus -> {
+                varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
+                nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
+            }
+
+            else -> null
+        }
 
         repository.lagre(nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging))
+
+        if(nesteStatus != null)
+            repository.lagre(nesteStatus)
     }
 
-    fun settCv(aktorId: String, tidspunkt: ZonedDateTime) {
+    override fun harSettCv(aktorId: String, tidspunkt: ZonedDateTime) {
         val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
 
         if(nyesteStatus.status == varsletStatus)
@@ -87,7 +99,7 @@ class Hendelser (
         repository.lagre(nyesteStatus.harSettCv(tidspunkt))
     }
 
-    fun varsleBruker(aktorId: String) {
+    override fun varsleBruker(aktorId: String) {
         val statuser = repository.finnStatuser(aktorId)
 
         val nyesteStatus = statuser.nyesteStatus()
