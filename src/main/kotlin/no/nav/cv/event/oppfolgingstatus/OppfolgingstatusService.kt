@@ -21,9 +21,9 @@ class OppfolgingstatusService (
 
     fun oppdaterStatus(dto: OppfolgingstatusDto) {
         if(dto.underOppfolging()) {
-            hendelseService.kommetUnderOppfolging(dto.aktorId(), dto.startForSisteOppfolgningsPeriode())
+            hendelseService.harKommetUnderOppfolging(dto.aktorId(), dto.startForSisteOppfolgningsPeriode())
         } else {
-            hendelseService.blittFulgtOpp(dto.aktorId(), dto.endret())
+            hendelseService.ikkeUnderOppfolging(dto.aktorId(), dto.endret())
         }
     }
 }

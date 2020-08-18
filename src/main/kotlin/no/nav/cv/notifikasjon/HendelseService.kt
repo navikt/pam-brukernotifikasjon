@@ -84,8 +84,6 @@ class Hendelser (
             else -> null
         }
 
-        repository.lagre(nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging))
-
         if(nesteStatus != null)
             repository.lagre(nesteStatus)
     }
