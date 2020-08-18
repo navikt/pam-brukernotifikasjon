@@ -37,7 +37,7 @@ class Hendelser (
         if(datoSisteOppfolging.isBefore(cutoffTime)) {
             OppfolgingstatusService.log.debug("Oppfølgingsperiode: ${datoSisteOppfolging} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
             if(nyesteStatus.status == nyBrukerStatus)
-                nyesteStatus.forGammel(datoSisteOppfolging)
+                repository.lagre(nyesteStatus.forGammel(datoSisteOppfolging))
 
             return
         }
