@@ -47,12 +47,12 @@ class Hendelser (
 
         when(nyesteStatus.status) {
             nyBrukerStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
-            forGammelStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
-            ikkeUnderOppfølgingStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
+            forGammelStatus -> nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
+            ikkeUnderOppfølgingStatus -> nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
 
             cvOppdatertStatus -> {
                 if (statuser.cvOppdatertTidspunkt().isBefore(datoSisteOppfolging))
-                    nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
+                    nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
             }
 
             else -> {} // ikke gjør noe hvis personen er i noen av de andre statusene

@@ -58,11 +58,11 @@ class Status(
     companion object {
         private val log = LoggerFactory.getLogger(Status::class.java)
 
-        fun nyBruker(aktorId: String) = Status(
+        fun nySession(aktorId: String, tidspunkt: ZonedDateTime = startOfTime) = Status(
                 uuid = UUID.randomUUID(),
                 aktorId = aktorId,
                 status = nyBrukerStatus,
-                statusTidspunkt = startOfTime)
+                statusTidspunkt = tidspunkt)
 
         fun nyttVarsel(forrigeStatus: Status) = Status(
                 uuid = UUID.randomUUID(),
@@ -180,6 +180,13 @@ class Status(
         return Status.skalVarlsesManglerFnr(
                 this,
                 datoSisteOppfolging)
+    }
+
+    fun nySession() : Status {
+        return nySession(
+                aktorId = this.aktorId,
+                tidspunkt = this.statusTidspunkt.plusNanos(1000)
+        )
     }
 
     override fun toString(): String {

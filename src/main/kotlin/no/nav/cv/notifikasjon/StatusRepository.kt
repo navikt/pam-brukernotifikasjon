@@ -72,7 +72,7 @@ open class StatusRepository(
                 .resultStream.findFirst()
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
-                .orElseGet { Status.nyBruker(aktorId) }
+                .orElseGet { Status.nySession(aktorId) }
 
     private val skalVarsles =
             """

@@ -7,7 +7,6 @@ import io.mockk.verify
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
@@ -269,7 +268,7 @@ internal class StatusTest {
     }
 
 
-    private fun nyBruker() = Status.nyBruker("dummy")
+    private fun nyBruker() = Status.nySession("dummy")
 
     fun fulgtOppStatus() = nyBruker().blittFulgtOpp(twoDaysAgo, varselPublisher)
 

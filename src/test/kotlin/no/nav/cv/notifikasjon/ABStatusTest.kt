@@ -7,7 +7,7 @@ import java.time.ZonedDateTime
 internal class ABStatusTest {
     private val now = ZonedDateTime.now()
 
-    private fun nyBruker() = Status.nyBruker("dummy")
+    private fun nyBruker() = Status.nySession("dummy")
 
     @Test
     fun `nyBruker - AB Test Skal varsles - Riktig status`() {
