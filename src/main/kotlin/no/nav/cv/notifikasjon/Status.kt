@@ -84,10 +84,10 @@ class Status(
                 status = skalVarslesStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun varslet(forrigeStatus: Status, fnr: String, statusTidspunkt: ZonedDateTime) = Status(
+        fun varslet(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
-                fnr = fnr,
+                fnr = forrigeStatus.fnr,
                 status = varsletStatus,
                 statusTidspunkt = statusTidspunkt)
 
@@ -147,7 +147,7 @@ class Status(
         }
 
         varselPublisher.publish(uuid, fnr)
-        return varslet(this, fnr, ZonedDateTime.now())
+        return varslet(this, ZonedDateTime.now())
     }
 
     fun blittFulgtOpp(

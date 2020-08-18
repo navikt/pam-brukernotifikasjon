@@ -50,7 +50,7 @@ class StatusEntityRepositoryTest {
     @Test
     fun `that fetch latest fetches last`() {
         val statusOld = Status.nyBruker(aktorId)
-        val statusNewer = Status.varslet(statusOld, "fnr", yesterday)
+        val statusNewer = Status.varslet(statusOld, yesterday)
         val statusNewest = Status.done(statusNewer, now)
         statusRepository.lagre(statusOld)
         statusRepository.lagre(statusNewer)
