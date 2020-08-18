@@ -66,7 +66,7 @@ internal class StatusTest {
     @Test
     fun `ny bruker - blitt fulgt opp - gir status done`() {
         val ny = nyBruker()
-        val blittFulgtOpp = ny.blittFulgtOpp(twoDaysAgo, varselPublisher)
+        val blittFulgtOpp = ny.ikkeUnderOppfølging(twoDaysAgo)
 
         verify { varselPublisher wasNot called }
         assertEquals(blittFulgtOpp.status, doneStatus)
@@ -111,7 +111,7 @@ internal class StatusTest {
     @Test
     fun `bruker fullfort oppfolging - blitt fulgt opp - gir status done`() {
         val fulgtOpp = fulgtOppStatus()
-        val blittFulgtOpp = fulgtOpp.blittFulgtOpp(twoDaysAgo, varselPublisher)
+        val blittFulgtOpp = fulgtOpp.ikkeUnderOppfølging(twoDaysAgo)
 
         verify { varselPublisher wasNot called }
         assertEquals(blittFulgtOpp.status, doneStatus)
@@ -158,7 +158,7 @@ internal class StatusTest {
     @Test
     fun `bruker sett cv - blitt fulgt opp - gir uendret status`() {
         val settCv = settCv()
-        val blittFulgtOpp = settCv.blittFulgtOpp(twoDaysAgo, varselPublisher)
+        val blittFulgtOpp = settCv.ikkeUnderOppfølging(twoDaysAgo)
 
         assertEquals(blittFulgtOpp.status, settCv.status)
         assertEquals(blittFulgtOpp.statusTidspunkt, settCv.statusTidspunkt)
@@ -211,7 +211,7 @@ internal class StatusTest {
     @Test
     fun `bruker under oppfolging - blitt fulgt opp - gir status done`() {
         val kommetUnderOppfolging = kommetUnderOppfolging()
-        val blittFulgtOpp = kommetUnderOppfolging.blittFulgtOpp(twoDaysAgo, varselPublisher)
+        val blittFulgtOpp = kommetUnderOppfolging.ikkeUnderOppfølging(twoDaysAgo)
 
         verify { varselPublisher wasNot called }
         assertEquals(blittFulgtOpp.status, doneStatus)
@@ -260,7 +260,7 @@ internal class StatusTest {
     @Test
     fun `bruker varslet - blitt fulgt opp - gir status done og done publiseres`() {
         val varslet = varsletStatus()
-        val blittFulgtOpp = varslet.blittFulgtOpp(now, varselPublisher)
+        val blittFulgtOpp = varslet.ikkeUnderOppfølging(now)
 
         verify(exactly = 1) { varselPublisher.done(varslet.uuid, aktorFnr) }
         assertEquals(blittFulgtOpp.status, doneStatus)
@@ -270,7 +270,7 @@ internal class StatusTest {
 
     private fun nyBruker() = Status.nySession("dummy")
 
-    fun fulgtOppStatus() = nyBruker().blittFulgtOpp(twoDaysAgo, varselPublisher)
+    fun fulgtOppStatus() = nyBruker().ikkeUnderOppfølging(twoDaysAgo)
 
     fun settCv() = varsletStatus().harSettCv(twoDaysAgo, varselPublisher)
 

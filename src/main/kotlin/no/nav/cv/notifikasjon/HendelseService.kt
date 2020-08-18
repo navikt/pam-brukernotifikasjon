@@ -1,11 +1,8 @@
 package no.nav.cv.notifikasjon
 
 import no.nav.cv.event.oppfolgingstatus.OppfolgingstatusService
-import no.nav.cv.person.PersonIdentRepository
 import java.time.Period
 import java.time.ZonedDateTime
-import javax.inject.Named
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private val cutoffPeriod = Period.ofDays(2)
@@ -71,8 +68,16 @@ class Hendelser (
         if(fnr != ukjentFnr) repository.lagre(statuser.nyesteStatus().funnetFodselsnummer(fnr))
     }
 
-    fun ikkeLengerUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
+    fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
         val statuser = repository.finnStatuser(aktorId)
+
+        val nyesteStatus = statuser.nyesteStatus()
+
+        // Bør vi sende denne uansett, i tilfelle vi skulle få en race condition mellom to statuser?
+        if(nyesteStatus.status == varsletStatus)
+            varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
+
+        repository.lagre(nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging))
     }
 
     fun settCv(aktorId: String) {
@@ -121,7 +126,7 @@ class HendelserLegacy (
 
      fun blittFulgtOpp(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
         val status = repository.finnSiste(aktorId)
-        val nesteStatus = status.blittFulgtOpp(hendelsesTidspunkt, varselPublisher)
+        val nesteStatus = status.ikkeUnderOppfølging(hendelsesTidspunkt, varselPublisher)
         repository.lagre(nesteStatus)
     }
 

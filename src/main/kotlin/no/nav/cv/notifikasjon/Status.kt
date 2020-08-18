@@ -111,7 +111,14 @@ class Status(
                 fnr = forrigeStatus.fnr,
                 status = forGammelStatus,
                 statusTidspunkt = tidspunkt
+        )
 
+        fun ikkeUnderOppfolging(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
+                uuid = forrigeStatus.uuid,
+                aktorId = forrigeStatus.aktorId,
+                fnr = forrigeStatus.fnr,
+                status = ikkeUnderOppfølgingStatus,
+                statusTidspunkt = tidspunkt
         )
     }
 
@@ -150,14 +157,8 @@ class Status(
         return varslet(this, ZonedDateTime.now())
     }
 
-    fun blittFulgtOpp(
-            hendelsesTidspunkt: ZonedDateTime,
-            varselPublisher: VarselPublisher
-    ): Status {
-        if(status == varsletStatus) {
-            varselPublisher.done(uuid, fnr)
-        }
-        return done(this, hendelsesTidspunkt)
+    fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime, ): Status {
+        return ikkeUnderOppfolging(this, hendelsesTidspunkt)
     }
     fun harSettCv(
             hendelsesTidspunkt: ZonedDateTime,
