@@ -61,17 +61,15 @@ class Hendelser (
     }
 
     fun funnetFodselsnummer(aktorId: String, fnr: String) {
-        val statuser = repository.finnStatuser(aktorId)
+        val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
 
-        if(statuser.nyesteStatus().status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status $statuser.uuid")
+        if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status $statuser.uuid")
 
-        if(fnr != ukjentFnr) repository.lagre(statuser.nyesteStatus().funnetFodselsnummer(fnr))
+        if(fnr != ukjentFnr) repository.lagre(nyesteStatus.funnetFodselsnummer(fnr))
     }
 
     fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
-        val statuser = repository.finnStatuser(aktorId)
-
-        val nyesteStatus = statuser.nyesteStatus()
+        val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
 
         // Bør vi sende denne uansett, i tilfelle vi skulle få en race condition mellom to statuser?
         if(nyesteStatus.status == varsletStatus)
@@ -87,7 +85,6 @@ class Hendelser (
             varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
 
         repository.lagre(nyesteStatus.harSettCv(tidspunkt))
-
     }
 
     fun varsleBruker(aktorId: String) {
