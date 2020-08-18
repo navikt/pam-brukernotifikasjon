@@ -2,12 +2,15 @@ package no.nav.cv.person
 
 import io.micronaut.scheduling.annotation.Scheduled
 import net.javacrumbs.shedlock.micronaut.SchedulerLock
+import no.nav.cv.notifikasjon.HendelseService
 import no.nav.cv.notifikasjon.StatusRepository
+import no.nav.cv.notifikasjon.ukjentFnr
 import javax.inject.Singleton
 
 
 @Singleton
 open class FodselsnummerJobb(
+        private val hendelseService: HendelseService,
         private val statusRepository: StatusRepository,
         private val personIdentRepository: PersonIdentRepository
 ) {
@@ -17,16 +20,14 @@ open class FodselsnummerJobb(
     open fun fyllInnFnr() {
         statusRepository.manglerFodselsnummer()
                 .forEach {
+
                     val fnr = personIdentRepository.finnIdenter(it.aktorId)
-                            .gjeldende(PersonIdent.Type.FOLKEREGISTER)
+                            .gjeldende(PersonIdent.Type.FOLKEREGISTER) ?: ukjentFnr
 
-                    fnr ?: return@forEach
-
-                    val nyStatus = it.funnetFodselsnummer(fnr)
-
-                    statusRepository.lagre(nyStatus)
+                    hendelseService.funnetFodselsnummer(it.aktorId, fnr)
                 }
 
 
     }
+
 }

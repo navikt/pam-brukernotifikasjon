@@ -6,13 +6,42 @@ import java.util.*
 
 const val ukjentFnr = "ukjent"
 
-const val nyBrukerStatus = "ukjent"
+
+const val nyBrukerStatus = "ukjent" // "nyBruker"
+const val skalVarslesManglerFnrStatus = "skalVarslesManglerFnr"
 const val skalVarslesStatus = "skalVarsles"
 const val varsletStatus = "varslet"
+
+const val forGammelStatus = "forGammel"
+const val cvOppdatertStatus = "cvOppdatert"
+const val ikkeUnderOppfølgingStatus = "ikkeUnderOppfølging"
+
 const val doneStatus = "done"
 const val abTestSkalIkkeVarsles = "abTestSkalIkkeVarsles"
 
 private val startOfTime = ZonedDateTime.now().minusYears(40)
+
+/**
+ * Representerer en gruppe med statuser som hører sammen
+ */
+class Statuser(
+        private val statuser : List<Status>
+) {
+    init {
+        require(statuser.isNotEmpty())
+        require(statuser.all { it.uuid == statuser[0].uuid })
+    }
+
+    fun nyesteStatus() = statuser.sortedByDescending { it.statusTidspunkt }.first()
+
+    fun cvOppdatertTidspunkt(): ZonedDateTime {
+        return statuser.find { it.status == cvOppdatertStatus}?.statusTidspunkt ?: startOfTime
+    }
+
+    val uuid = statuser[0].uuid
+}
+
+fun List<Status>.statuser() = Statuser(this)
 
 class Status(
         val uuid: UUID,
@@ -36,6 +65,13 @@ class Status(
                 aktorId = forrigeStatus.aktorId,
                 status = nyBrukerStatus,
                 statusTidspunkt = forrigeStatus.statusTidspunkt.plusNanos(1000))
+
+        fun skalVarlsesManglerFnr(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
+                uuid = forrigeStatus.uuid,
+                aktorId = forrigeStatus.aktorId,
+                fnr = ukjentFnr, // vi tvinger frem nytt oppslag - i tilfelle fnr kan ha endret seg
+                status = skalVarslesManglerFnrStatus,
+                statusTidspunkt = statusTidspunkt)
 
         fun skalVarsles(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
@@ -62,15 +98,17 @@ class Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
                 fnr = fodselsnummer,
-                status = forrigeStatus.status,
+                status = skalVarslesStatus,
                 statusTidspunkt = ZonedDateTime.now())
 
-        fun abTestSkalIkkeVarsles(forrigeStatus: Status) = Status(
-                uuid = forrigeStatus.uuid,
+        fun forGammel(forrigeStatus: Status, uuid: UUID = forrigeStatus.uuid, tidspunkt: ZonedDateTime) = Status(
+                uuid = uuid,
                 aktorId = forrigeStatus.aktorId,
                 fnr = forrigeStatus.fnr,
-                status = abTestSkalIkkeVarsles,
-                statusTidspunkt = ZonedDateTime.now())
+                status = forGammelStatus,
+                statusTidspunkt = tidspunkt
+
+        )
     }
 
     fun isAfter(tidspunkt: ZonedDateTime): Boolean = statusTidspunkt.isAfter(tidspunkt)
@@ -83,8 +121,8 @@ class Status(
             doneStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
             skalVarslesStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
 
-            nyBrukerStatus -> if(abTestSelector.skalVarsles()) skalVarsles(this, hendelsesTidspunkt)
-                                else abTestSkalIkkeVarsles(this)
+            nyBrukerStatus -> skalVarsles(this, hendelsesTidspunkt)
+
             else -> this
         }
 
@@ -126,6 +164,18 @@ class Status(
         }
         return done(this, hendelsesTidspunkt)
 
+    }
+
+    fun forGammel(datoSisteOppfolging: ZonedDateTime) : Status {
+        return forGammel(
+                forrigeStatus = this,
+                tidspunkt = datoSisteOppfolging)
+    }
+
+    fun skalVarlsesManglerFnr(datoSisteOppfolging: ZonedDateTime) : Status {
+        return Status.skalVarlsesManglerFnr(
+                this,
+                datoSisteOppfolging)
     }
 
     override fun toString(): String {

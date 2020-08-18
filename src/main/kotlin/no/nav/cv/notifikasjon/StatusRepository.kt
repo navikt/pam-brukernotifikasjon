@@ -28,6 +28,34 @@ open class StatusRepository(
     }
 
 
+    private val sisteGruppe = """
+        SELECT s.* 
+        FROM STATUS s
+        WHERE s.UUID = (
+            SELECT DISTINCT(s_inner.UUID)
+            FROM STATUS s_inner WHERE 
+            TIDSPUNKT = (
+                SELECT max(s_inner_inner.TIDSPUNKT) 
+                FROM STATUS s_inner_inner 
+                WHERE s_inner_inner.AKTOR_ID = :aktorId
+                )
+            AND s_inner.AKTOR_ID = :aktorId
+        );
+        
+    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+    // Finner gruppering av statuser med siste oppdatering for en person
+    @Transactional
+    open fun finnStatuser(aktorId: String): Statuser =  entityManager.createNativeQuery(sisteGruppe, StatusEntity::class.java)
+                .setParameter("aktorId", aktorId)
+                .resultStream
+                .map { it as StatusEntity }
+                .map { it.toStatus() }
+                .toList()
+                .statuser()
+
+
+
     private val sisteQuery =
             """
         SELECT * FROM STATUS s 
