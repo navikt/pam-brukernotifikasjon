@@ -35,37 +35,28 @@ class Hendelser (
     fun harKommetUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
         val statuser = repository.finnStatuser(aktorId)
 
-        if(statuser.nyesteStatus().status == nyBrukerStatus) {
-            if (datoSisteOppfolging.isBefore(cutoffTime)) {
-                statuser.nyesteStatus().forGammel(datoSisteOppfolging)
-            } else {
-                statuser.nyesteStatus().skalVarlsesManglerFnr(datoSisteOppfolging)
-            }
-        }
-
-        if(statuser.nyesteStatus().status == forGammelStatus) {
-            if (datoSisteOppfolging.isBefore(cutoffTime)) {
-                return
-            } else {
-                statuser.nyesteStatus().skalVarlsesManglerFnr(datoSisteOppfolging)
-            }
-        }
+        val nyesteStatus = statuser.nyesteStatus()
 
         if(datoSisteOppfolging.isBefore(cutoffTime)) {
             OppfolgingstatusService.log.debug("Oppfølgingsperiode: ${datoSisteOppfolging} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
+            if(nyesteStatus.status == nyBrukerStatus)
+                nyesteStatus.forGammel(datoSisteOppfolging)
 
-            // TODO For gammel status?
-
-            return
-        } else {
-
-        }
-
-        if(statuser.cvOppdatertTidspunkt().isAfter(datoSisteOppfolging)) {
-            // do nothing status
             return
         }
 
+        when(nyesteStatus.status) {
+            nyBrukerStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
+            forGammelStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
+            ikkeUnderOppfølgingStatus -> nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
+
+            cvOppdatertStatus -> {
+                if (statuser.cvOppdatertTidspunkt().isBefore(datoSisteOppfolging))
+                    nyesteStatus.skalVarlsesManglerFnr(datoSisteOppfolging)
+            }
+
+            else -> {} // ikke gjør noe hvis personen er i noen av de andre statusene
+        }
     }
 
     fun funnetFodselsnummer(aktorId: String, fnr: String) {
