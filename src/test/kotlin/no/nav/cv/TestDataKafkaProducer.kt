@@ -70,7 +70,7 @@ class TestAKafkaApplication : TestPropertyProvider {
             )
             oppfolgingsstatusProducer.flush()
             adIndexerLatch.await(60L, TimeUnit.SECONDS)
-            verify { hendelseService.kommetUnderOppfolging(aktorId, any()) }
+            verify { hendelseService.harKommetUnderOppfolging(aktorId, any()) }
         }
 
     @Test
@@ -87,7 +87,7 @@ class TestAKafkaApplication : TestPropertyProvider {
             )
             oppfolgingsstatusProducer.flush()
             adIndexerLatch.await(60L, TimeUnit.SECONDS)
-            verify { hendelseService.blittFulgtOpp(aktorId, any()) }
+            verify { hendelseService.ikkeUnderOppfolging(aktorId, any()) }
         }
 
 
@@ -99,10 +99,10 @@ class TestAKafkaApplication : TestPropertyProvider {
     @MockBean(HendelseService::class)
     fun hendelseService(): HendelseService {
         val hendelseService = mockk<HendelseService>(relaxed = true)
-        every { hendelseService.blittFulgtOpp(any(), any()) } answers {
+        every { hendelseService.ikkeUnderOppfolging(any(), any()) } answers {
             adIndexerLatch.countDown()
         }
-        every { hendelseService.kommetUnderOppfolging(any(), any()) } answers {
+        every { hendelseService.harKommetUnderOppfolging(any(), any()) } answers {
             adIndexerLatch.countDown()
         }
         return hendelseService

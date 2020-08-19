@@ -65,7 +65,7 @@ class Hendelser (
 
         if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status ${nyesteStatus.uuid}")
 
-        if(fnr != ukjentFnr) repository.lagre(nyesteStatus.funnetFodselsnummer(fnr))
+        if(fnr != ukjentFnr) repository.lagre(nyesteStatus.skalVarsles(fnr))
     }
 
     override fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {

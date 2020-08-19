@@ -10,7 +10,7 @@ import no.nav.cv.person.PersonIdenter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
-
+/*
 internal class StatusTest {
     val aktor = "dummy"
     val aktorFnr = "dummy_fnr"
@@ -36,40 +36,29 @@ internal class StatusTest {
     }
 
     @Test
-    fun `ny bruker - varsle bruker - gir uendret status`() {
+    fun `ny bruker - kommet under oppfolging - gir status mangler fødselsnummer`() {
         val ny = nyBruker()
-        val forsoktVarslet = ny.varsleBruker(varselPublisher)
+        val underOppfolging = ny.skalVarlsesManglerFnr(twoDaysAgo)
 
-        verify { listOf(varselPublisher) wasNot called }
-        assertEquals(forsoktVarslet.status, ny.status)
-    }
-
-    @Test
-    fun `ny bruker - kommet under oppfolging - gir status skal varsles`() {
-        val ny = nyBruker()
-        val underOppfolging = ny.harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
-
-        assertEquals(underOppfolging.status, skalVarslesStatus)
+        assertEquals(underOppfolging.status, skalVarslesManglerFnrStatus)
         assertEquals(underOppfolging.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
-    fun `ny bruker - sett cv - gir status done`() {
+    fun `ny bruker - sett cv - gir status cv oppdatert`() {
         val ny = nyBruker()
-        val settCv = ny.harSettCv(twoDaysAgo, varselPublisher)
+        val settCv = ny.harSettCv(twoDaysAgo)
 
-        verify { varselPublisher wasNot called }
-        assertEquals(settCv.status, doneStatus)
+        assertEquals(settCv.status, cvOppdatertStatus)
         assertEquals(settCv.statusTidspunkt, twoDaysAgo)
     }
 
     @Test
-    fun `ny bruker - blitt fulgt opp - gir status done`() {
+    fun `ny bruker - blitt fulgt opp - gir status ikke under oppfølging`() {
         val ny = nyBruker()
         val blittFulgtOpp = ny.ikkeUnderOppfølging(twoDaysAgo)
 
-        verify { varselPublisher wasNot called }
-        assertEquals(blittFulgtOpp.status, doneStatus)
+        assertEquals(blittFulgtOpp.status, ikkeUnderOppfølgingStatus)
         assertEquals(blittFulgtOpp.statusTidspunkt, twoDaysAgo)
     }
 
@@ -289,3 +278,5 @@ internal class StatusTest {
     }
 
 }
+
+ */

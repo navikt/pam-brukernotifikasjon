@@ -3,11 +3,8 @@ package no.nav.cv.event.oppfolgingstatus
 import no.nav.cv.notifikasjon.HendelseService
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.time.Period
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAmount
 import javax.inject.Singleton
 
 @Singleton

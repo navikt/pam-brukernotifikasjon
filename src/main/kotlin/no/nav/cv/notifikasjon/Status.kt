@@ -71,13 +71,6 @@ class Status(
                 status = skalVarslesManglerFnrStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun skalVarsles(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
-                uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
-                fnr = forrigeStatus.fnr,
-                status = skalVarslesStatus,
-                statusTidspunkt = statusTidspunkt)
-
         fun varslet(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
@@ -85,7 +78,7 @@ class Status(
                 status = varsletStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun funnetFodselsnummer(forrigeStatus: Status, fodselsnummer: String) = Status(
+        fun skalVarsles(forrigeStatus: Status, fodselsnummer: String) = Status(
                 uuid = forrigeStatus.uuid,
                 aktorId = forrigeStatus.aktorId,
                 fnr = fodselsnummer,
@@ -117,8 +110,8 @@ class Status(
         )
     }
 
-    fun funnetFodselsnummer(fodselsnummer: String): Status {
-        return funnetFodselsnummer(this, fodselsnummer = fodselsnummer)
+    fun skalVarsles(fodselsnummer: String): Status {
+        return skalVarsles(this, fodselsnummer = fodselsnummer)
     }
 
     fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime): Status {
