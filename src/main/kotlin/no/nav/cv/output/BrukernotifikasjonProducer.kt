@@ -1,5 +1,6 @@
 package no.nav.cv.output
 
+import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Value
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel

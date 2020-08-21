@@ -46,13 +46,20 @@ open class StatusRepository(
 
     // Finner gruppering av statuser med siste oppdatering for en person
     @Transactional
-    open fun finnStatuser(aktorId: String): Statuser =  entityManager.createNativeQuery(sisteGruppe, StatusEntity::class.java)
+    open fun finnStatuser(aktorId: String): Statuser {
+        val resultat = entityManager.createNativeQuery(sisteGruppe, StatusEntity::class.java)
                 .setParameter("aktorId", aktorId)
                 .resultStream
                 .map { it as StatusEntity }
                 .map { it.toStatus() }
                 .toList()
-                .statuser()
+
+        if (resultat.isEmpty()) {
+            return listOf(Status.nySession(aktorId)).statuser()
+        }
+
+        return resultat.statuser()
+    }
 
 
 

@@ -3,6 +3,8 @@ package no.nav.cv.notifikasjon
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
 import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.verifyAll
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
@@ -12,7 +14,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-@MicronautTest
+@MicronautTest(packages = ["no.nav.cv.notifikasjon"])
 internal class StatusTestNy {
     val aktor = "dummy"
     val aktorFnr = "dummy_fnr"
@@ -22,8 +24,8 @@ internal class StatusTestNy {
             PersonIdent(aktorFnr, PersonIdent.Type.FOLKEREGISTER, true)
     ))
 
-
-    val varselPublisher = mockk<VarselPublisher>(relaxed = true)
+    @Inject
+    lateinit var varselPublisher: VarselPublisher
 
     val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
 
@@ -66,10 +68,66 @@ internal class StatusTestNy {
         assertEquals(agesAgo, lagretStatus.statusTidspunkt)
     }
 
+    @Test
+    fun `ny bruker - har kommet under oppfølging - status skal varsles mangler fødselsnummer`() {
+        val nyBruker = nyBruker()
+        hendelseService.harKommetUnderOppfolging(nyBruker.aktorId, twoDaysAgo)
 
+        val lagretStatus = statusRepository.finnSiste(nyBruker().aktorId)
+
+        assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
+        assertEquals(twoDaysAgo, lagretStatus.statusTidspunkt)
+    }
+
+    @Test
+    fun `bruker under oppfølging - fnr funnet - status skal varsles`() {
+        val status = Status.skalVarlsesManglerFnr(Status.nySession("dummy2"), now)
+        statusRepository.lagre(status)
+        hendelseService.funnetFodselsnummer("dummy2", "dummy_fnr")
+
+        val lagretStatus = statusRepository.finnSiste("dummy2")
+
+        assertEquals(skalVarslesStatus, lagretStatus.status)
+    }
+
+    @Test
+    fun `bruker under oppfølging – varsle bruker – status varslet`() {
+        val status = Status.skalVarsles(statusRepository.finnSiste(aktor), aktorFnr)
+        statusRepository.lagre(status)
+        hendelseService.varsleBruker(aktor)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        verify { varselPublisher.publish(any(), aktorFnr) }
+        assertEquals (varsletStatus, lagretStatus.status)
+    }
+
+    @Test
+    fun `bruker varslet – ser cv – status sett cv`() {
+        val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
+        statusRepository.lagre(status)
+        hendelseService.harSettCv(aktor, now)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        verify { varselPublisher.done(any(), any()) }
+        assertEquals (cvOppdatertStatus, lagretStatus.status)
+    }
+
+    @Test
+    fun `bruker varslet – melding fra pto – status ikke under oppfølging`() {
+        val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
+        statusRepository.lagre(status)
+        hendelseService.ikkeUnderOppfolging(aktor, now)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        verify { varselPublisher.done(any(), any()) }
+        assertEquals (ikkeUnderOppfølgingStatus, lagretStatus.status)
+    }
 
     private fun nyBruker() = Status.nySession("dummy")
 
-    @MockBean(HendelseService::class)
-    fun hendelseService(): HendelseService = mockk(relaxed = true)
+    @MockBean(VarselPublisher::class)
+    fun varselPublisher() = mockk<VarselPublisher>(relaxed = true)
 }

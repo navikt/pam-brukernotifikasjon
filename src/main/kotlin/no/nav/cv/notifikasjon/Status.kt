@@ -28,7 +28,6 @@ class Statuser(
         private val statuser : List<Status>
 ) {
     init {
-        require(statuser.isNotEmpty())
         require(statuser.all { it.uuid == statuser[0].uuid })
     }
 

@@ -3,6 +3,7 @@ package no.nav.cv.event.cv
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
+import io.micronaut.context.annotation.Requires
 import no.nav.cv.notifikasjon.HendelseService
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.*
-
 
 @KafkaListener(
         groupId = "pam-brukernotifikasjon-cv-v4",

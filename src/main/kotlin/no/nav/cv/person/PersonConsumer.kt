@@ -4,6 +4,7 @@ import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
 import io.micronaut.context.annotation.Prototype
+import io.micronaut.context.annotation.Requires
 import org.apache.avro.generic.GenericArray
 import org.apache.avro.generic.GenericEnumSymbol
 import org.apache.avro.generic.GenericRecord
