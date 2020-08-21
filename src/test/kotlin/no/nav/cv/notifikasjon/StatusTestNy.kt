@@ -2,6 +2,7 @@ package no.nav.cv.notifikasjon
 
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
+import io.mockk.called
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
@@ -69,7 +70,32 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `ny bruker - har kommet under oppfølging - status skal varsles mangler fødselsnummer`() {
+    fun `for gammel – har sett cv – status cvOppdatert`() {
+        val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = agesAgo)
+        statusRepository.lagre(status)
+        hendelseService.harSettCv(aktor, yesterday)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        verify(exactly = 0) { varselPublisher.done(any(), any()) }
+        assertEquals(cvOppdatertStatus, lagretStatus.status)
+        assertEquals(yesterday, lagretStatus.statusTidspunkt)
+    }
+
+    @Test
+    fun `for gammel – har kommet under oppfolging – status skalVarslesManglerFoedselsnummer`() {
+        val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = agesAgo)
+        statusRepository.lagre(status)
+        hendelseService.harKommetUnderOppfolging(aktor, yesterday)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
+        assertEquals(yesterday, lagretStatus.statusTidspunkt)
+    }
+
+    @Test
+    fun `ny bruker - har kommet under oppfolging - status skalVarslesManglerFoedselsnummer`() {
         val nyBruker = nyBruker()
         hendelseService.harKommetUnderOppfolging(nyBruker.aktorId, twoDaysAgo)
 
@@ -103,7 +129,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `bruker varslet – ser cv – status sett cv`() {
+    fun `bruker varslet – ser cv – status cvOppdatert`() {
         val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
         statusRepository.lagre(status)
         hendelseService.harSettCv(aktor, now)
@@ -124,6 +150,30 @@ internal class StatusTestNy {
 
         verify { varselPublisher.done(any(), any()) }
         assertEquals (ikkeUnderOppfølgingStatus, lagretStatus.status)
+    }
+
+    @Test
+    fun `ikke under oppfolging – har kommet under oppfolging – status skalVarslesManglerFoedselsnummer`() {
+        val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = twoDaysAgo)
+        statusRepository.lagre(status)
+        hendelseService.harKommetUnderOppfolging(aktor, yesterday)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
+        assertEquals(yesterday, lagretStatus.statusTidspunkt)
+    }
+
+    @Test
+    fun `ikke under oppfolging – har sett cv – status cvOppdatert`() {
+        val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = twoDaysAgo)
+        statusRepository.lagre(status)
+        hendelseService.harSettCv(aktor, yesterday)
+
+        val lagretStatus = statusRepository.finnSiste(aktor)
+
+        assertEquals(cvOppdatertStatus, lagretStatus.status)
+        assertEquals(yesterday, lagretStatus.statusTidspunkt)
     }
 
     private fun nyBruker() = Status.nySession("dummy")
