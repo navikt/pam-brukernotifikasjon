@@ -2,10 +2,8 @@ package no.nav.cv.notifikasjon
 
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
-import io.mockk.called
 import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.verifyAll
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
@@ -20,15 +18,20 @@ internal class StatusTestNy {
     val aktor = "dummy"
     val aktorFnr = "dummy_fnr"
 
+    val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
+
     val personIdenterAktorId = PersonIdenter(listOf(
             PersonIdent(aktor, PersonIdent.Type.AKTORID, true),
             PersonIdent(aktorFnr, PersonIdent.Type.FOLKEREGISTER, true)
     ))
 
+    private val now = ZonedDateTime.now()
+    private val yesterday = ZonedDateTime.now().minusDays(1)
+    private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
+    private val agesAgo = ZonedDateTime.of(1900, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+
     @Inject
     lateinit var varselPublisher: VarselPublisher
-
-    val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
 
     @Inject
     lateinit var statusRepository: StatusRepository
@@ -37,34 +40,32 @@ internal class StatusTestNy {
     lateinit var hendelseService: HendelseService
 
 
-    private val now = ZonedDateTime.now()
-    private val yesterday = ZonedDateTime.now().minusDays(1)
-    private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
-    private val agesAgo = ZonedDateTime.of(1900, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-
     @Test
     fun `ny bruker - riktig aktørId`() {
         val nyBruker = Status.nySession(aktor)
 
+        assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(aktor, nyBruker.aktorId)
     }
 
     @Test
-    fun `ny bruker - sett cv - status cv oppdatert`() {
+    fun `ny bruker - har sett cv - status cvOppdatert`() {
         val nyBruker = nyBruker()
         val cvOppdatert = nyBruker.harSettCv(now)
 
+        assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(cvOppdatertStatus, cvOppdatert.status)
         assertEquals(now, cvOppdatert.statusTidspunkt)
     }
 
     @Test
-    fun `ny bruker - har kommet under oppfølging - status for gammel`() {
+    fun `ny bruker - har kommet under oppfoelging - status forGammel`() {
         val nyBruker = nyBruker()
         hendelseService.harKommetUnderOppfolging(nyBruker.aktorId, agesAgo)
 
         val lagretStatus = statusRepository.finnSiste(nyBruker.aktorId)
 
+        assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(forGammelStatus, lagretStatus.status)
         assertEquals(agesAgo, lagretStatus.statusTidspunkt)
     }
@@ -83,7 +84,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `for gammel – har kommet under oppfolging – status skalVarslesManglerFoedselsnummer`() {
+    fun `for gammel – har kommet under oppfoelging – status skalVarslesManglerFoedselsnummer`() {
         val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = agesAgo)
         statusRepository.lagre(status)
         hendelseService.harKommetUnderOppfolging(aktor, yesterday)
@@ -95,18 +96,19 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `ny bruker - har kommet under oppfolging - status skalVarslesManglerFoedselsnummer`() {
+    fun `ny bruker - har kommet under oppfoelging - status skalVarslesManglerFoedselsnummer`() {
         val nyBruker = nyBruker()
         hendelseService.harKommetUnderOppfolging(nyBruker.aktorId, twoDaysAgo)
 
         val lagretStatus = statusRepository.finnSiste(nyBruker().aktorId)
 
+        assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
         assertEquals(twoDaysAgo, lagretStatus.statusTidspunkt)
     }
 
     @Test
-    fun `bruker under oppfølging - fnr funnet - status skal varsles`() {
+    fun `bruker under oppfoelging - fnr funnet - status skalVarsles`() {
         val status = Status.skalVarlsesManglerFnr(Status.nySession("dummy2"), now)
         statusRepository.lagre(status)
         hendelseService.funnetFodselsnummer("dummy2", "dummy_fnr")
@@ -117,7 +119,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `bruker under oppfølging – varsle bruker – status varslet`() {
+    fun `bruker under oppfoelging – varsle bruker – status varslet`() {
         val status = Status.skalVarsles(statusRepository.finnSiste(aktor), aktorFnr)
         statusRepository.lagre(status)
         hendelseService.varsleBruker(aktor)
@@ -129,7 +131,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `bruker varslet – ser cv – status cvOppdatert`() {
+    fun `bruker varslet – har sett cv – status cvOppdatert`() {
         val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
         statusRepository.lagre(status)
         hendelseService.harSettCv(aktor, now)
@@ -141,7 +143,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `bruker varslet – melding fra pto – status ikke under oppfølging`() {
+    fun `bruker varslet – melding fra pto – status ikkeUnderOppfoelging`() {
         val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
         statusRepository.lagre(status)
         hendelseService.ikkeUnderOppfolging(aktor, now)
@@ -153,7 +155,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `ikke under oppfolging – har kommet under oppfolging – status skalVarslesManglerFoedselsnummer`() {
+    fun `ikke under oppfoelging – har kommet under oppfoelging – status skalVarslesManglerFoedselsnummer`() {
         val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = twoDaysAgo)
         statusRepository.lagre(status)
         hendelseService.harKommetUnderOppfolging(aktor, yesterday)
@@ -165,7 +167,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `ikke under oppfolging – har sett cv – status cvOppdatert`() {
+    fun `ikke under oppfoelging – har sett cv – status cvOppdatert`() {
         val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = twoDaysAgo)
         statusRepository.lagre(status)
         hendelseService.harSettCv(aktor, yesterday)
@@ -176,7 +178,7 @@ internal class StatusTestNy {
         assertEquals(yesterday, lagretStatus.statusTidspunkt)
     }
 
-    private fun nyBruker() = Status.nySession("dummy")
+    fun nyBruker() = Status.nySession("dummy")
 
     @MockBean(VarselPublisher::class)
     fun varselPublisher() = mockk<VarselPublisher>(relaxed = true)
