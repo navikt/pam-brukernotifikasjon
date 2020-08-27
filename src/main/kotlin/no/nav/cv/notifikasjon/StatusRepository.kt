@@ -160,7 +160,7 @@ private class StatusEntity() {
 
     fun toStatus() = Status(
             uuid = uuid,
-            aktorId = aktorId,
+            aktoerId = aktorId,
             fnr = fnr,
             status = status,
             statusTidspunkt = tidspunkt)
@@ -187,7 +187,7 @@ private class StatusEntity() {
             val entity = StatusEntity()
             entity.initStatus(
                     uuid = status.uuid,
-                    aktorId = status.aktorId,
+                    aktorId = status.aktoerId,
                     fnr = status.fnr,
                     status = status.status,
                     tidspunkt = status.statusTidspunkt

@@ -96,8 +96,8 @@ class StatusEntityRepositoryTest {
 
         assertAll(
                 Executable { assertEquals(skalVarslesListe.size, 2)  },
-                Executable { assertTrue(skalVarslesListe.map {it.aktorId}.contains(aktorId)) },
-                Executable { assertTrue(skalVarslesListe.map {it.aktorId}.contains(aktorId2)) }
+                Executable { assertTrue(skalVarslesListe.map {it.aktoerId}.contains(aktorId)) },
+                Executable { assertTrue(skalVarslesListe.map {it.aktoerId}.contains(aktorId2)) }
         )
 
     }

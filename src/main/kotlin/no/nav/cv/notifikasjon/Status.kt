@@ -48,7 +48,7 @@ fun List<Status>.statuser() = Statuser(this)
 
 class Status(
         val uuid: UUID,
-        val aktorId: String,
+        val aktoerId: String,
         val fnr: String = ukjentFnr,
         val status: String,
         val statusTidspunkt: ZonedDateTime
@@ -59,34 +59,34 @@ class Status(
 
         fun nySession(aktorId: String, tidspunkt: ZonedDateTime = startOfTime) = Status(
                 uuid = UUID.randomUUID(),
-                aktorId = aktorId,
+                aktoerId = aktorId,
                 status = nyBrukerStatus,
                 statusTidspunkt = tidspunkt)
 
          fun skalVarlsesManglerFnr(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = ukjentFnr, // vi tvinger frem nytt oppslag - i tilfelle fnr kan ha endret seg
                 status = skalVarslesManglerFnrStatus,
                 statusTidspunkt = statusTidspunkt)
 
         fun varslet(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
                 status = varsletStatus,
                 statusTidspunkt = statusTidspunkt)
 
         fun skalVarsles(forrigeStatus: Status, fodselsnummer: String) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = fodselsnummer,
                 status = skalVarslesStatus,
                 statusTidspunkt = ZonedDateTime.now())
 
         fun forGammel(forrigeStatus: Status, uuid: UUID = forrigeStatus.uuid, tidspunkt: ZonedDateTime) = Status(
                 uuid = uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
                 status = forGammelStatus,
                 statusTidspunkt = tidspunkt
@@ -94,7 +94,7 @@ class Status(
 
         fun ikkeUnderOppfolging(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
                 status = ikkeUnderOppfølgingStatus,
                 statusTidspunkt = tidspunkt
@@ -102,7 +102,7 @@ class Status(
 
         fun cvOppdatert(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
                 status = cvOppdatertStatus,
                 statusTidspunkt = tidspunkt
@@ -135,13 +135,13 @@ class Status(
 
     fun nySession() : Status {
         return nySession(
-                aktorId = this.aktorId,
+                aktorId = this.aktoerId,
                 tidspunkt = this.statusTidspunkt.plusNanos(1000)
         )
     }
 
     override fun toString(): String {
-        return "Status(uuid=$uuid, aktorId='$aktorId', fnr='$fnr', status='$status', statusTidspunkt=$statusTidspunkt)"
+        return "Status(uuid=$uuid, aktorId='$aktoerId', fnr='$fnr', status='$status', statusTidspunkt=$statusTidspunkt)"
     }
 
 

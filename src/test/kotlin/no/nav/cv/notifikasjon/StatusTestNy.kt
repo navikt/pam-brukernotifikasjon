@@ -8,6 +8,7 @@ import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -15,14 +16,14 @@ import javax.inject.Inject
 
 @MicronautTest(packages = ["no.nav.cv.notifikasjon"])
 internal class StatusTestNy {
-    val aktor = "dummy"
-    val aktorFnr = "dummy_fnr"
+    val aktoer = "dummy"
+    val aktoerFnr = "dummy_fnr"
 
     val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
 
     val personIdenterAktorId = PersonIdenter(listOf(
-            PersonIdent(aktor, PersonIdent.Type.AKTORID, true),
-            PersonIdent(aktorFnr, PersonIdent.Type.FOLKEREGISTER, true)
+            PersonIdent(aktoer, PersonIdent.Type.AKTORID, true),
+            PersonIdent(aktoerFnr, PersonIdent.Type.FOLKEREGISTER, true)
     ))
 
     private val now = ZonedDateTime.now()
@@ -41,29 +42,29 @@ internal class StatusTestNy {
 
 
     @Test
-    fun `ny bruker - riktig aktørId`() {
-        val nyBruker = Status.nySession(aktor)
+    fun `ny bruker - riktig aktoerId`() {
+        val nyBruker = Status.nySession(aktoer)
 
-        assertEquals(nyBrukerStatus, nyBruker.status)
-        assertEquals(aktor, nyBruker.aktorId)
+        assertEquals(aktoer, nyBruker.aktoerId)
     }
 
     @Test
     fun `ny bruker - har sett cv - status cvOppdatert`() {
         val nyBruker = nyBruker()
-        val cvOppdatert = nyBruker.harSettCv(now)
+        hendelseService.harSettCv(nyBruker.aktoerId, now)
 
-        assertEquals(nyBrukerStatus, nyBruker.status)
-        assertEquals(cvOppdatertStatus, cvOppdatert.status)
-        assertEquals(now, cvOppdatert.statusTidspunkt)
+        val lagretStatus = statusRepository.finnSiste(nyBruker.aktoerId)
+
+        assertEquals(cvOppdatertStatus, lagretStatus.status)
+        assertEquals(now, lagretStatus.statusTidspunkt)
     }
 
     @Test
     fun `ny bruker - har kommet under oppfoelging - status forGammel`() {
         val nyBruker = nyBruker()
-        hendelseService.harKommetUnderOppfolging(nyBruker.aktorId, agesAgo)
+        hendelseService.harKommetUnderOppfolging(nyBruker.aktoerId, agesAgo)
 
-        val lagretStatus = statusRepository.finnSiste(nyBruker.aktorId)
+        val lagretStatus = statusRepository.finnSiste(nyBruker.aktoerId)
 
         assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(forGammelStatus, lagretStatus.status)
@@ -72,11 +73,11 @@ internal class StatusTestNy {
 
     @Test
     fun `for gammel – har sett cv – status cvOppdatert`() {
-        val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = agesAgo)
+        val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktoer), tidspunkt = agesAgo)
         statusRepository.lagre(status)
-        hendelseService.harSettCv(aktor, yesterday)
+        hendelseService.harSettCv(aktoer, yesterday)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
         verify(exactly = 0) { varselPublisher.done(any(), any()) }
         assertEquals(cvOppdatertStatus, lagretStatus.status)
@@ -85,11 +86,11 @@ internal class StatusTestNy {
 
     @Test
     fun `for gammel – har kommet under oppfoelging – status skalVarslesManglerFoedselsnummer`() {
-        val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = agesAgo)
+        val status = Status.forGammel(forrigeStatus = statusRepository.finnSiste(aktoer), tidspunkt = agesAgo)
         statusRepository.lagre(status)
-        hendelseService.harKommetUnderOppfolging(aktor, yesterday)
+        hendelseService.harKommetUnderOppfolging(aktoer, yesterday)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
         assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
         assertEquals(yesterday, lagretStatus.statusTidspunkt)
@@ -98,11 +99,10 @@ internal class StatusTestNy {
     @Test
     fun `ny bruker - har kommet under oppfoelging - status skalVarslesManglerFoedselsnummer`() {
         val nyBruker = nyBruker()
-        hendelseService.harKommetUnderOppfolging(nyBruker.aktorId, twoDaysAgo)
+        hendelseService.harKommetUnderOppfolging(nyBruker.aktoerId, twoDaysAgo)
 
-        val lagretStatus = statusRepository.finnSiste(nyBruker().aktorId)
+        val lagretStatus = statusRepository.finnSiste(nyBruker().aktoerId)
 
-        assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
         assertEquals(twoDaysAgo, lagretStatus.statusTidspunkt)
     }
@@ -120,23 +120,23 @@ internal class StatusTestNy {
 
     @Test
     fun `bruker under oppfoelging – varsle bruker – status varslet`() {
-        val status = Status.skalVarsles(statusRepository.finnSiste(aktor), aktorFnr)
+        val status = Status.skalVarsles(statusRepository.finnSiste(aktoer), aktoerFnr)
         statusRepository.lagre(status)
-        hendelseService.varsleBruker(aktor)
+        hendelseService.varsleBruker(aktoer)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
-        verify { varselPublisher.publish(any(), aktorFnr) }
+        verify { varselPublisher.publish(any(), aktoerFnr) }
         assertEquals (varsletStatus, lagretStatus.status)
     }
 
     @Test
     fun `bruker varslet – har sett cv – status cvOppdatert`() {
-        val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
+        val status = Status.varslet(statusRepository.finnSiste(aktoer), twoDaysAgo)
         statusRepository.lagre(status)
-        hendelseService.harSettCv(aktor, now)
+        hendelseService.harSettCv(aktoer, now)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
         verify { varselPublisher.done(any(), any()) }
         assertEquals (cvOppdatertStatus, lagretStatus.status)
@@ -144,11 +144,11 @@ internal class StatusTestNy {
 
     @Test
     fun `bruker varslet – melding fra pto – status ikkeUnderOppfoelging`() {
-        val status = Status.varslet(statusRepository.finnSiste(aktor), twoDaysAgo)
+        val status = Status.varslet(statusRepository.finnSiste(aktoer), twoDaysAgo)
         statusRepository.lagre(status)
-        hendelseService.ikkeUnderOppfolging(aktor, now)
+        hendelseService.ikkeUnderOppfolging(aktoer, now)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
         verify { varselPublisher.done(any(), any()) }
         assertEquals (ikkeUnderOppfølgingStatus, lagretStatus.status)
@@ -156,23 +156,25 @@ internal class StatusTestNy {
 
     @Test
     fun `ikke under oppfoelging – har kommet under oppfoelging – status skalVarslesManglerFoedselsnummer`() {
-        val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = twoDaysAgo)
+        val status = Status.ikkeUnderOppfolging(statusRepository.finnSiste(aktoer), twoDaysAgo)
+        val prevUUID = status.uuid
         statusRepository.lagre(status)
-        hendelseService.harKommetUnderOppfolging(aktor, yesterday)
+        hendelseService.harKommetUnderOppfolging(aktoer, yesterday)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
+        assertNotEquals(prevUUID, lagretStatus.uuid)
         assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
         assertEquals(yesterday, lagretStatus.statusTidspunkt)
     }
 
     @Test
     fun `ikke under oppfoelging – har sett cv – status cvOppdatert`() {
-        val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktor), tidspunkt = twoDaysAgo)
+        val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktoer), tidspunkt = twoDaysAgo)
         statusRepository.lagre(status)
-        hendelseService.harSettCv(aktor, yesterday)
+        hendelseService.harSettCv(aktoer, yesterday)
 
-        val lagretStatus = statusRepository.finnSiste(aktor)
+        val lagretStatus = statusRepository.finnSiste(aktoer)
 
         assertEquals(cvOppdatertStatus, lagretStatus.status)
         assertEquals(yesterday, lagretStatus.statusTidspunkt)

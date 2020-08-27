@@ -21,10 +21,10 @@ open class FodselsnummerJobb(
         statusRepository.manglerFodselsnummer()
                 .forEach {
 
-                    val fnr = personIdentRepository.finnIdenter(it.aktorId)
+                    val fnr = personIdentRepository.finnIdenter(it.aktoerId)
                             .gjeldende(PersonIdent.Type.FOLKEREGISTER) ?: ukjentFnr
 
-                    hendelseService.funnetFodselsnummer(it.aktorId, fnr)
+                    hendelseService.funnetFodselsnummer(it.aktoerId, fnr)
                 }
 
 
