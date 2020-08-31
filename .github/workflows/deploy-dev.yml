@@ -16,7 +16,8 @@ jobs:
       - uses:  snyk/actions/gradle@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with: monitor
+        with: 
+          command: monitor
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
