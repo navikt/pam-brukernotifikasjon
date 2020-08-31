@@ -18,6 +18,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with: 
           command: monitor
+          args: --org=teampam
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
