@@ -28,6 +28,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5'
 
+    // SNYK fixes
+    implementation "org.dom4j:dom4j:2.1.3"
+    implementation "org.postgresql:postgresql:42.2.13"
+    implementation "org.hibernate:hibernate-core:5.4.18.Final"
+
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut.sql:micronaut-hibernate-jpa"
     implementation "io.micronaut.sql:micronaut-hibernate-jpa-spring"
