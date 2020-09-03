@@ -15,7 +15,7 @@
   "oppfolging_feed": "https://veilarboppfolging-q0.nais.preprod.local",
   "security_token_service": "https://security-token-service.nais.preprod.local",
 
-  "ingress": "https://pam-brukernotifikasjon.nais.preprod.local",
+  "ingress": "https://pam-brukernotifikasjon.dev.adeo.no",
 
   "adminEnabled": "enabled",
 
