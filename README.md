@@ -22,6 +22,8 @@ gradle build
 Kjør `no.nav.cv.Application`, og legg på `-Dmicronaut.environments=test` som JVM option
 
 ## Admin-grensesnitt
+`curl -X POST  https://pam-brukernotifikasjon.nais.adeo.no/pam-brukernotifikasjon/internal/`
+
 Applikasjonen kan i teorien kjøre helt uten noe rest grensesnitt - kanskje uten readyness og liveness-probene til kubernetes/nais. Det finnes likevel et admin-grensesnitt for å kunne gjøre noen nytte operasjoner. Disse grensesnittene er feature-togglet av i prod ved harkodet verdi. Det kreves altså deploy å aktivere dem.
 
 Siden testing er vanskelig - på grunn av at det er såpass mange integrasjoner (PTO og CV henger ikke nødvendigvis sammen, PDL ligger i et helt annet testmiljø), så er det en fordel å enkelt kunne legge inn fødselsnummer/aktør-id mapping. Det kan gjøres på `http://host:port/pam-brukernotifikasjon/internal/addIdent/{fnr}/{aktørid}`
@@ -29,3 +31,14 @@ Siden testing er vanskelig - på grunn av at det er såpass mange integrasjoner 
 Dersom det skulle være nødvendig å publisere noe på Ditt NAV manuelt er det også åpnet for å kunne gjøre det. En oppgave kan markeres som løst ved å sende en done-melding til Ditt NAV brukernotifikasjon `/internal/kafka/manuell/donemelding/${eventId}/${fødselsnummer}`
 
 Dersom det har blitt sendt noen Done-meldinger uten varsler, så vil disse kunne forstyrre Ditt NAV ved at man til evig tid forsøker å finne oppgaven tilknyttet Done-meldingen. Det kan da sendes en manuelt ved å kalle endepunktet `/internal/kafka/manuell/varsel/{eventId}/{fødselsnummer}`
+
+For å finne `eventId` logg på databasen og kjør disse statementene:
+
+Finne aktør id:
+`select person_id_group_id from person_ident where person_id = '<fnr>';`
+`select * from person_ident where person_id_group_id = '<uuid fra forrige>';`
+
+Finne event id:
+`select * from status where aktor_id = '<aktør id for forrige>';`
+
+
