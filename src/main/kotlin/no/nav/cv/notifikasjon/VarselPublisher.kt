@@ -13,5 +13,4 @@ interface VarselPublisher {
             eventId: UUID,
             foedselsnummer: String
     )
-
 }
