@@ -1,5 +1,6 @@
 package no.nav.cv.output
 
+import io.micrometer.core.instrument.MeterRegistry
 import io.micronaut.context.annotation.Value
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
@@ -25,13 +26,15 @@ private val log = LoggerFactory.getLogger(BrukernotifikasjonProducer::class.java
 
 @Singleton
 class BrukernotifikasjonProducer(
-       private val brukernotifikasjonClient: BrukernotifikasjonClient,
-       @Value("\${output.melding.link}") private val link: String
+        private val meterRegistry: MeterRegistry,
+        private val brukernotifikasjonClient: BrukernotifikasjonClient,
+        @Value("\${output.melding.link}") private val link: String
 
 ) : VarselPublisher {
 
     override fun publish(eventId: UUID, foedselsnummer: String) {
         log.info("Publiserer varsel med eventId $eventId")
+
         val nokkel = NokkelBuilder()
                 .withSystembruker(systembruker)
                 .withEventId(eventId.toString())
@@ -46,6 +49,7 @@ class BrukernotifikasjonProducer(
                 .build()
 
         brukernotifikasjonClient.publish(nokkel, oppgave)
+        meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
     }
 
     override fun done(eventId: UUID, foedselsnummer: String) {
@@ -61,5 +65,7 @@ class BrukernotifikasjonProducer(
                 .build()
 
         brukernotifikasjonClient.done(nokkel, done)
+        meterRegistry.counter("cv.brukernotifikasjon.varsel.fjernet").increment(1.0)
+
     }
 }

@@ -2,6 +2,7 @@ package no.nav.cv.notifikasjon
 
 import io.micronaut.spring.tx.annotation.Transactional
 import org.slf4j.LoggerFactory
+import java.math.BigInteger
 import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Singleton
@@ -97,6 +98,23 @@ open class StatusRepository(
                 .map { it.toStatus() }
                 .toList()
     }
+
+    private val antallAvStatusQuery =
+            """
+                SELECT COUNT(*)
+                FROM STATUS s INNER JOIN 
+                 (
+                    SELECT max(s_inner.TIDSPUNKT) tidspunkt, s_inner.AKTOR_ID
+                    FROM STATUS s_inner GROUP BY s_inner.AKTOR_ID
+                ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
+                WHERE s.STATUS = :status             
+            """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+
+    open fun antallAvStatus(status: String): Long
+        = (entityManager.createNativeQuery(antallAvStatusQuery)
+            .setParameter("status", status)
+            .singleResult as BigInteger).toLong()
 }
 
 @Entity
