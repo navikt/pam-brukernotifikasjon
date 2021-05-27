@@ -2,7 +2,8 @@
   "servicebruker_brukernotifikasjon": "/serviceuser/data/dev/srvpambrukernot",
 
   "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v6",
-  "kafka_consumer_topic_endring_status_oppfolging":"aapen-fo-endringPaaOppfolgingStatus-v1-q0",
+  "kafka_consumer_topic_oppfolging_startet":"aapen-arbeidsrettetOppfolging-oppfolgingStartet-v1-q1",
+  "kafka_consumer_topic_oppfolging_avsluttet":"aapen-arbeidsrettetOppfolging-oppfolgingAvsluttet-v1-q1",
   "kafka_consumer_topic_pdl_id":"privat-person-pdl-aktor-v1",
 
   "kafka_producer_topic_ny_oppgave":"aapen-brukernotifikasjon-nyOppgave-v1",
