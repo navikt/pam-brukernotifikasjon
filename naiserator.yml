@@ -46,8 +46,10 @@ spec:
       value: {{ db_vault_username }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
       value: {{ kafka_consumer_topic_cv_endret }}
-    - name: KAFKA_CONSUMER_TOPIC_ENDRING_STATUS_OPPFOLGING
-      value: {{ kafka_consumer_topic_endring_status_oppfolging }}
+    - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET
+      value: {{ kafka_consumer_topic_oppfolging_startet }}
+    - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_AVSLUTTET
+      value: {{ kafka_consumer_topic_oppfolging_avsluttet }}
     - name: KAFKA_CONSUMER_TOPIC_PDL_ID
       value: {{ kafka_consumer_topic_pdl_id }}
     - name: KAFKA_PRODUCER_TOPIC_NY_OPPGAVE
