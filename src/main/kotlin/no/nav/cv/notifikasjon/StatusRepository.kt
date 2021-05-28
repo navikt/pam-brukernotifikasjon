@@ -7,12 +7,13 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Singleton
 import javax.persistence.*
+import kotlin.streams.asSequence
 import kotlin.streams.toList
 
 
 @Singleton
 open class StatusRepository(
-        @PersistenceContext private val entityManager: EntityManager
+    @PersistenceContext private val entityManager: EntityManager
 ) {
 
     val serieMedWhitespace = Regex("(\\s+)")
@@ -39,13 +40,15 @@ open class StatusRepository(
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     @Transactional(readOnly = true)
-    open fun finnSiste(aktorId: String)
-            =  entityManager.createNativeQuery(sisteQuery, StatusEntity::class.java)
-                .setParameter("aktorId", aktorId)
-                .resultStream.findFirst()
-                .map { it as StatusEntity }
-                .map { it.toStatus() }
-                .orElseGet { Status.nyBruker(aktorId) }
+    open fun finnSiste(aktorId: String) = entityManager.createNativeQuery(sisteQuery, StatusEntity::class.java)
+        .setParameter("aktorId", aktorId)
+        .resultStream
+        .asSequence()
+        .map { it as StatusEntity }
+        .map { it.toStatus() }
+        .firstOrNull()
+        ?: Status.nyBruker(aktorId)
+
 
     private val skalVarsles =
             """
@@ -65,12 +68,13 @@ open class StatusRepository(
     open fun skalVarsles(): List<Status> {
         val now = ZonedDateTime.now()
         return entityManager.createNativeQuery(skalVarsles, StatusEntity::class.java)
-                .setParameter("status", skalVarslesStatus)
-                .setParameter("ukjentFnr", ukjentFnr)
-                .resultStream
-                .map { it as StatusEntity }
-                .map { it.toStatus() }
-                .toList()
+            .setParameter("status", skalVarslesStatus)
+            .setParameter("ukjentFnr", ukjentFnr)
+            .resultStream
+            .asSequence()
+            .map { it as StatusEntity }
+            .map { it.toStatus() }
+            .toList()
     }
 
     private val statusPerFodselsnummer =
@@ -91,12 +95,13 @@ open class StatusRepository(
     @Transactional(readOnly = true)
     open fun manglerFodselsnummer(): List<Status> {
         return entityManager.createNativeQuery(statusPerFodselsnummer, StatusEntity::class.java)
-                .setParameter("status", skalVarslesStatus)
-                .setParameter("fodselsnummer", ukjentFnr)
-                .resultStream
-                .map { it as StatusEntity }
-                .map { it.toStatus() }
-                .toList()
+            .setParameter("status", skalVarslesStatus)
+            .setParameter("fodselsnummer", ukjentFnr)
+            .resultStream
+            .asSequence()
+            .map { it as StatusEntity }
+            .map { it.toStatus() }
+            .toList()
     }
 
     private val antallAvStatusQuery =
