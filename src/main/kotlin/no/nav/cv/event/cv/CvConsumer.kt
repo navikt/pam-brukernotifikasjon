@@ -31,7 +31,7 @@ class CvConsumer(
         val cv = CvDto(record.value())
 
         hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
-        log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
+        log.info("CV Kafka offset ${record.offset()}, Sist endret: ${cv.sistEndret()}")
     }
 
 }
