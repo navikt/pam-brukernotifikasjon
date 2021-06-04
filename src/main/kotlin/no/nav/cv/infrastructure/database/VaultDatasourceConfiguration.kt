@@ -14,38 +14,34 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConditionalOnProperty(value = ["NAIS_CLUSTER_NAME"])
-class VaultDatasourceFactory(
+class VaultDatasourceConfiguration(
         @Value("\${db.vault.path}") private val vaultPath: String,
         @Value("\${db.vault.username}") private val username: String,
         @Value("\${datasources.default.jdbcUrl}") private val jdbcUrl: String,
 ) {
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(VaultDatasourceFactory::class.java)
+        private val LOG = LoggerFactory.getLogger(VaultDatasourceConfiguration::class.java)
     }
 
     @Bean
-    fun flywayConfig(
-            dataSourceProperties: DataSourceProperties,
-    ): FlywayConfigurationCustomizer {
+    fun flywayConfig(): FlywayConfigurationCustomizer {
         return FlywayConfigurationCustomizer {
             it.initSql("SET ROLE pam-brukernotifikasjon-admin")
                     .dataSource(HikariCPVaultUtil
-                            .createHikariDataSourceWithVaultIntegration(hikariConfig(dataSourceProperties), vaultPath, username))
+                            .createHikariDataSourceWithVaultIntegration(hikariConfig(), vaultPath, username))
 
         }
     }
 
     @Bean
-    fun navHikariDatasource(
-            dataSourceProperties: DataSourceProperties,
-    ): HikariDataSource {
+    fun navHikariDatasource(): HikariDataSource {
         return HikariCPVaultUtil
-                .createHikariDataSourceWithVaultIntegration(hikariConfig(dataSourceProperties), vaultPath, username)
+                .createHikariDataSourceWithVaultIntegration(hikariConfig(), vaultPath, username)
 
     }
 
-    private fun hikariConfig(dataSourceProperties: DataSourceProperties): HikariConfig {
+    private fun hikariConfig(): HikariConfig {
         val config = HikariConfig()
         config.minimumIdle = 0
         config.maximumPoolSize = 4

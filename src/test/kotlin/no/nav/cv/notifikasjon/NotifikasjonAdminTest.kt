@@ -1,43 +1,39 @@
 package no.nav.cv.notifikasjon
 
-import io.micronaut.context.annotation.Property
-import io.micronaut.http.HttpMethod
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.test.annotation.MicronautTest
-import io.micronaut.test.annotation.MockBean
-import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.util.*
-import javax.inject.Inject
 
 private val uuid = UUID.randomUUID()
 private val fnr = "123dummy123"
 
-@MicronautTest
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestPropertySource(properties = ["admin.enabled:enabled"])
 class NotifikasjonAdminTest {
 
+    @Autowired
+    private lateinit var mvc: MockMvc
 
-    @Inject
-    @field:Client("/pam-brukernotifikasjon") lateinit var client: RxHttpClient
-
-    @Inject
-    lateinit var varselPublisher: VarselPublisher
+    @MockBean
+    private lateinit var varselPublisher : VarselPublisher
 
     @Test
-    @Property(name="admin.enabled", value="enabled")
     fun `varsel blir sendt` () {
         val uuidSlot = slot<UUID>()
         val fnrSlot = slot<String>()
-
-        client.toBlocking().retrieve(
-                HttpRequest.create<String>(HttpMethod.POST, "/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
 
         verify { varselPublisher.publish(capture(uuidSlot), capture(fnrSlot)) }
 
@@ -47,13 +43,12 @@ class NotifikasjonAdminTest {
     }
 
     @Test
-    @Property(name="admin.enabled", value="enabled")
     fun `done blir sendt` () {
         val uuidSlot = slot<UUID>()
         val fnrSlot = slot<String>()
 
-        client.toBlocking().retrieve(
-                HttpRequest.create<String>(HttpMethod.POST, "/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
 
         verify { varselPublisher.done(capture(uuidSlot), capture(fnrSlot)) }
 
@@ -62,35 +57,29 @@ class NotifikasjonAdminTest {
 
     }
 
-    @MockBean(bean = VarselPublisher::class)
-    fun varselPublisher() = mockk<VarselPublisher>(relaxed = true)
-
 }
 
 
-@MicronautTest
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestPropertySource(properties = ["admin.enabled:disabled"])
 class NotifikasjonAdminDisabledTest {
 
-    @Inject @field:Client("/pam-brukernotifikasjon") lateinit var client: RxHttpClient
+    @Autowired
+    private lateinit var mvc: MockMvc
 
     @Test
-    @Property(name="admin.enabled", value="disabled")
     fun `that admin is disabled by property for done messages` () {
-        assertThrows<HttpClientResponseException> {
 
-            client.toBlocking().retrieve(
-                    HttpRequest.create<String>(HttpMethod.POST, "/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
-        }
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
     @Test
-    @Property(name="admin.enabled", value="disabled")
     fun `that admin is disabled by property for publish messages` () {
-        assertThrows<HttpClientResponseException> {
 
-            client.toBlocking().retrieve(
-                    HttpRequest.create<String>(HttpMethod.POST, "/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
-        }
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
 }

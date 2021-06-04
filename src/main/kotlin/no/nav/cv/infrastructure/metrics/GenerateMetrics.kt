@@ -12,7 +12,7 @@ class GenerateMetrics(
     private val statusRepository: StatusRepository
 ) {
 
-    val gauges = mutableMapOf<String, AtomicLong>()
+    val gauges = mutableMapOf<String, AtomicLong?>()
 
     private fun addOrUpdateGauge(name: String, value: Long) {
         gauges[name]?.set(value)

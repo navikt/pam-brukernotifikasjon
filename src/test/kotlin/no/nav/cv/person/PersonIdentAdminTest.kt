@@ -1,45 +1,43 @@
 package no.nav.cv.person
 
-import io.micronaut.context.annotation.Property
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.test.annotation.MicronautTest
-import io.micronaut.test.annotation.MockBean
-import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-@MicronautTest
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestPropertySource(properties = ["admin.enabled:enabled"])
 class PersonIdentAdminTest {
 
-    @Inject @field:Client("/pam-brukernotifikasjon") lateinit var client: RxHttpClient
+    @Autowired
+    private lateinit var mvc: MockMvc
 
-    @Inject
-    lateinit var personIdentRepository: PersonIdentRepository
+    @MockBean
+    private lateinit var personIdentRepository: PersonIdentRepository
 
     @Test
-    @Property(name="admin.enabled", value="enabled")
     fun `that admin is enabled by property` () {
-        assertEquals(
-                client.toBlocking().exchange<String>("/internal/addIdent/123/321").status,
-                HttpStatus.OK)
+
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/addIdent/123/321"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
-    @Property(name="admin.enabled", value="enabled")
     fun `that correct idents are set` () {
        val slot = slot<PersonIdenter>()
 
-        client.toBlocking()
-                .exchange<String>("/internal/addIdent/222/333")
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/addIdent/222/333"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
 
         verify { personIdentRepository.oppdater(capture(slot)) }
 
@@ -54,28 +52,23 @@ class PersonIdentAdminTest {
 
     }
 
-    @MockBean(bean = PersonIdentRepository::class)
-    fun personIdentRepository()
-        = mockk<PersonIdentRepository>(relaxed = true)
-
 }
 
-@MicronautTest
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestPropertySource(properties = ["admin.enabled:disabled"])
 class PersonIdentAdminDisabledTest {
 
-    @Inject @field:Client("/pam-brukernotifikasjon") lateinit var client: RxHttpClient
+    @Autowired
+    private lateinit var mvc: MockMvc
+
+    @MockBean
+    private lateinit var personIdentRepository: PersonIdentRepository
 
     @Test
-    @Property(name="admin.enabled", value="disabled")
     fun `that admin is disabled by property` () {
-        assertThrows<HttpClientResponseException> {
-            client.toBlocking()
-                    .exchange<Any>("/internal/addIdent/123/321")
-        }
+        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/addIdent/123/321"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
-
-    @MockBean(bean = PersonIdentRepository::class)
-    fun personIdentRepository()
-        = mockk<PersonIdentRepository>(relaxed = true)
 
 }

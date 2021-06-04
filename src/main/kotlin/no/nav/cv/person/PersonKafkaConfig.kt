@@ -1,4 +1,4 @@
-package no.nav.cv.event.cv
+package no.nav.cv.person
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import no.nav.cv.infrastructure.kafka.Consumer
@@ -16,37 +16,37 @@ import org.springframework.context.event.EventListener
 import java.util.*
 
 @Configuration
-class CvKafkaConfig {
+class PersonConfig {
 
-    private val log = LoggerFactory.getLogger(CvKafkaConfig::class.java)
+    private val log = LoggerFactory.getLogger(PersonConfig::class.java)
 
 
     @Bean
-    fun cvEndretConsumer(
+    fun personConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.topics.consumers.cv_endret}") topic: String,
-            eventProcessor: CvEndretProcessor,
+            @Value("\${kafka.topics.consumers.pdl_id}") topic: String,
+            eventProcessor: PersonEndretProcessor,
     ) : Consumer<String, GenericRecord> {
 
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java.canonicalName
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-cv-v4"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-person-v1"
 
         return Consumer(topic, KafkaConsumer<String, GenericRecord>(props), eventProcessor)
     }
 
     @Bean
-    fun kafkaCvConsumerStartupService(
-            @Qualifier("cvEndretConsumer") cvEndretConsumer: Consumer<String, GenericRecord>
-    ): KafkaCvConsumerStartupService {
-        return KafkaCvConsumerStartupService(listOf(cvEndretConsumer))
+    fun kafkaPersonConsumerStartupService(
+            @Qualifier("personConsumer") personConsumer: Consumer<String, GenericRecord>
+    ): KafkaPersonConsumerStartupService {
+        return KafkaPersonConsumerStartupService(listOf(personConsumer))
     }
 
 
 }
 
 
-class KafkaCvConsumerStartupService(
+class KafkaPersonConsumerStartupService(
         private val consumers: List<Consumer<String, GenericRecord>>
 ) {
 

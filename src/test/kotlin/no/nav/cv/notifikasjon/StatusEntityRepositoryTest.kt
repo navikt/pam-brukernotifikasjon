@@ -1,20 +1,21 @@
 package no.nav.cv.notifikasjon
 
-import io.micronaut.test.annotation.MicronautTest
-import io.micronaut.test.annotation.MockBean
 import io.mockk.every
-import io.mockk.mockk
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
 import no.nav.cv.person.PersonIdenter
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.FilterType
+import org.springframework.stereotype.Repository
 import java.time.ZonedDateTime
-import javax.inject.Inject
 
-@MicronautTest
+@DataJpaTest(includeFilters = [ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [Repository::class])])
 class StatusEntityRepositoryTest {
 
     val aktorId = "dummy"
@@ -25,13 +26,13 @@ class StatusEntityRepositoryTest {
             PersonIdent("dummy_fnr", PersonIdent.Type.FOLKEREGISTER, true)
     ))
 
-    @Inject
+    @Autowired
     lateinit var statusRepository: StatusRepository
 
-    @Inject
+    @MockBean
     lateinit var personIdentRepositoryMock: PersonIdentRepository
 
-    @Inject
+    @MockBean
     lateinit var varselPublisherMock: VarselPublisher
 
     private val now = ZonedDateTime.now()
@@ -133,11 +134,5 @@ class StatusEntityRepositoryTest {
 
         assertEquals(skalVarslesListe.size, 1)
     }
-
-    @MockBean(VarselPublisher::class)
-    fun varselPublisher(): VarselPublisher = mockk(relaxed = true)
-
-    @MockBean(PersonIdentRepository::class)
-    fun personIdentRepository(): PersonIdentRepository = mockk(relaxed = true)
 
 }

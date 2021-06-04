@@ -1,19 +1,28 @@
 package no.nav.cv.output
 
-import io.micronaut.configuration.kafka.annotation.KafkaClient
-import io.micronaut.configuration.kafka.annotation.KafkaKey
-import io.micronaut.configuration.kafka.annotation.Topic
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 
-@KafkaClient()
-interface BrukernotifikasjonClient {
+@Service
+class BrukernotifikasjonClient(
+        @Qualifier("oppgaveKafkaProducer") private val oppgaveKafkaProducer: KafkaProducer<Nokkel, Oppgave>,
+        @Qualifier("doneKafkaProducer") private val doneKafkaProducer: KafkaProducer<Nokkel, Done>,
+        @Value("\${kafka.topics.producers.ny_oppgave}") private val oppgaveTopic: String,
+        @Value("\${kafka.topics.producers.done}") private val doneTopic: String
+) {
 
-    @Topic("\${kafka.topics.producers.ny_oppgave}")
-    fun publish(@KafkaKey nokkel: Nokkel, oppgave: Oppgave)
+    fun publish(nokkel: Nokkel, oppgave: Oppgave) {
+        oppgaveKafkaProducer.send(ProducerRecord(oppgaveTopic, nokkel, oppgave))
+    }
 
-    @Topic("\${kafka.topics.producers.done}")
-    fun done(@KafkaKey nokkel: Nokkel, done: Done)
-    
+    fun done(nokkel: Nokkel, done: Done) {
+        doneKafkaProducer.send(ProducerRecord(oppgaveTopic, nokkel, done))
+    }
+
 }
