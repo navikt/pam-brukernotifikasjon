@@ -1,21 +1,16 @@
 package no.nav.cv.output
 
 import io.micrometer.core.instrument.MeterRegistry
-import io.micronaut.context.annotation.Value
-import no.nav.brukernotifikasjon.schemas.Done
-import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.brukernotifikasjon.schemas.builders.DoneBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveBuilder
 import no.nav.cv.notifikasjon.VarselPublisher
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 import java.net.URL
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.util.*
-import javax.inject.Singleton
 
 private val systembruker = "srvpambrukernot"
 private val grupperingsId = "ARBEIDSPLASSEN"
@@ -24,7 +19,7 @@ private val sikkerhetsnivaa = 3
 
 private val log = LoggerFactory.getLogger(BrukernotifikasjonProducer::class.java)
 
-@Singleton
+@Service
 class BrukernotifikasjonProducer(
         private val meterRegistry: MeterRegistry,
         private val brukernotifikasjonClient: BrukernotifikasjonClient,

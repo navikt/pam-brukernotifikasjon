@@ -1,30 +1,25 @@
 package no.nav.cv.event.cv
 
-import io.micronaut.configuration.kafka.annotation.KafkaListener
-import io.micronaut.configuration.kafka.annotation.OffsetReset
-import io.micronaut.configuration.kafka.annotation.Topic
+import no.nav.cv.infrastructure.kafka.EventProcessor
 import no.nav.cv.notifikasjon.HendelseService
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.*
 
-
-@KafkaListener(
-        groupId = "pam-brukernotifikasjon-cv-v4",
-        offsetReset = OffsetReset.EARLIEST
-)
-class CvConsumer(
+@Service
+class CvEndretProcessor (
         val hendelseService: HendelseService
-) {
+) : EventProcessor<String, GenericRecord> {
 
     companion object {
-        val log = LoggerFactory.getLogger(CvConsumer::class.java)
+        val log = LoggerFactory.getLogger(CvEndretProcessor::class.java)
     }
 
-    @Topic("\${kafka.topics.consumers.cv_endret}")
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {
@@ -32,6 +27,10 @@ class CvConsumer(
 
         hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
         log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
+    }
+
+    override suspend fun process(records: ConsumerRecords<String, GenericRecord>) {
+        records.forEach { receive(it) }
     }
 
 }

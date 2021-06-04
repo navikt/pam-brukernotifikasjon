@@ -1,18 +1,17 @@
 package no.nav.cv.notifikasjon
 
-import io.micronaut.spring.tx.annotation.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.math.BigInteger
 import java.time.ZonedDateTime
 import java.util.*
-import javax.inject.Singleton
 import javax.persistence.*
 import kotlin.streams.asSequence
-import kotlin.streams.toList
 
 
-@Singleton
-open class StatusRepository(
+@Repository
+class StatusRepository(
     @PersistenceContext private val entityManager: EntityManager
 ) {
 

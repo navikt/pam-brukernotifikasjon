@@ -1,14 +1,15 @@
 package no.nav.cv
 
-import io.micronaut.runtime.Micronaut
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 
-object Application {
+@SpringBootApplication
+@EnableSchedulerLock(defaultLockAtMostFor = "5m")
+@EnableScheduling
+class PamBrukernotifikasjonApplication
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        Micronaut.build()
-                .packages("no.nav.cv")
-                .mainClass(Application.javaClass)
-                .start()
-    }
+fun main(args: Array<String>) {
+    runApplication<PamBrukernotifikasjonApplication>(*args)
 }

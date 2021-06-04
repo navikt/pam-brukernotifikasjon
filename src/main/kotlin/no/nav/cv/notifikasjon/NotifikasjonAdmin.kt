@@ -1,13 +1,13 @@
 package no.nav.cv.notifikasjon
 
-import io.micronaut.context.annotation.Value
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Post
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 
-@Controller("internal")
+@RestController("internal")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: String,
         private val statusRepository: StatusRepository,
@@ -19,7 +19,7 @@ class NotifikasjonAdmin(
     }
 
 
-    @Post("kafka/manuell/varsel/{uuid}/{fnr}", produces = [ "text/plain" ])
+    @PostMapping("kafka/manuell/varsel/{uuid}/{fnr}", produces = [ "text/plain" ])
     fun varsle(uuid: UUID, fnr: String): String {
 
         check(adminEnabled == "enabled")
@@ -30,7 +30,7 @@ class NotifikasjonAdmin(
         return "OK"
     }
 
-    @Post("kafka/manuell/donemelding/{uuid}/{fnr}", produces = [ "text/plain" ])
+    @PostMapping("kafka/manuell/donemelding/{uuid}/{fnr}", produces = [ "text/plain" ])
     fun done(uuid: UUID, fnr: String): String {
 
         check(adminEnabled == "enabled")

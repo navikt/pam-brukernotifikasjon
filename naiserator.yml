@@ -36,7 +36,7 @@ spec:
   webproxy: false
   prometheus:
     enabled: true
-    path: /pam-brukernotifikasjon/prometheus
+    path: /pam-brukernotifikasjon/actuator/prometheus
   env:
     - name: JDBC_URL
       value: {{ jdbc_url }}

@@ -1,51 +1,60 @@
 package no.nav.cv.infrastructure.database
 
+import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.micronaut.configuration.jdbc.hikari.DatasourceConfiguration
-import io.micronaut.configuration.jdbc.hikari.DatasourceFactory
-import io.micronaut.context.ApplicationContext
-import io.micronaut.context.annotation.*
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.slf4j.LoggerFactory
-import javax.annotation.PreDestroy
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 
-@Factory
-@Requires(notEnv = [ "test" ])
-@Replaces(factory = DatasourceFactory::class)
+@Configuration
+@ConditionalOnProperty(value = ["NAIS_CLUSTER_NAME"])
 class VaultDatasourceFactory(
         @Value("\${db.vault.path}") private val vaultPath: String,
         @Value("\${db.vault.username}") private val username: String,
-        private val applicationContext: ApplicationContext
-) : AutoCloseable {
+        @Value("\${datasources.default.jdbcUrl}") private val jdbcUrl: String,
+) {
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(DatasourceFactory::class.java)
+        private val LOG = LoggerFactory.getLogger(VaultDatasourceFactory::class.java)
     }
 
-    private val dataSources: MutableList<HikariDataSource> = mutableListOf()
+    @Bean
+    fun flywayConfig(
+            dataSourceProperties: DataSourceProperties,
+    ): FlywayConfigurationCustomizer {
+        return FlywayConfigurationCustomizer {
+            it.initSql("SET ROLE pam-brukernotifikasjon-admin")
+                    .dataSource(HikariCPVaultUtil
+                            .createHikariDataSourceWithVaultIntegration(hikariConfig(dataSourceProperties), vaultPath, username))
 
-
-    @Context
-    @EachBean(DatasourceConfiguration::class)
-    fun vaultDataSource(datasourceConfiguration: DatasourceConfiguration ): HikariDataSource {
-        val ds = HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(datasourceConfiguration, vaultPath, username)
-        dataSources.add(ds)
-        return ds
-    }
-
-    @Override
-    @PreDestroy
-    override fun close() {
-        for (dataSource in dataSources) {
-            try {
-                dataSource.close();
-            } catch (e: Exception) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Error closing data source [" + dataSource + "]: " + e.message, e);
-                }
-            }
         }
+    }
+
+    @Bean
+    fun navHikariDatasource(
+            dataSourceProperties: DataSourceProperties,
+    ): HikariDataSource {
+        return HikariCPVaultUtil
+                .createHikariDataSourceWithVaultIntegration(hikariConfig(dataSourceProperties), vaultPath, username)
+
+    }
+
+    private fun hikariConfig(dataSourceProperties: DataSourceProperties): HikariConfig {
+        val config = HikariConfig()
+        config.minimumIdle = 0
+        config.maximumPoolSize = 4
+        config.idleTimeout = 10001
+        config.maxLifetime = 30001
+        config.connectionTestQuery = "select 1"
+        config.driverClassName = "org.postgresql.Driver"
+        config.jdbcUrl = jdbcUrl
+        return config
     }
 
 }

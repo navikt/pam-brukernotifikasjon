@@ -1,16 +1,15 @@
 package no.nav.cv.infrastructure.health
 
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
 
 @Controller("internal")
 class ApplicationStatusController {
 
-    @Get("isReady")
+    @GetMapping("isReady")
     fun isReady() = "Ready for everything"
 
-    @Get("isAlive")
+    @GetMapping("isAlive")
     fun isAlive() = "Alive and kicking"
 
 }

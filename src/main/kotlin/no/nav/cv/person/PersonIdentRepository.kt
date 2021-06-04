@@ -1,9 +1,9 @@
 package no.nav.cv.person
 
-import io.micronaut.spring.tx.annotation.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
-import javax.inject.Singleton
 import javax.persistence.*
 
 
@@ -15,8 +15,8 @@ interface PersonIdentRepository {
 
 }
 
-@Singleton
-private open class JpaPersonIdentRepository(
+@Repository
+private class JpaPersonIdentRepository(
         @PersistenceContext private val entityManager: EntityManager
 ): PersonIdentRepository {
 
