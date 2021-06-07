@@ -9,9 +9,11 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Scope
 import org.springframework.context.event.EventListener
 import java.util.*
 
@@ -22,6 +24,7 @@ class CvKafkaConfig {
 
 
     @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     fun cvEndretConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
             @Value("\${kafka.topics.consumers.cv_endret}") topic: String,
@@ -36,6 +39,7 @@ class CvKafkaConfig {
     }
 
     @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     fun kafkaCvConsumerStartupService(
             @Qualifier("cvEndretConsumer") cvEndretConsumer: Consumer<String, GenericRecord>
     ): KafkaCvConsumerStartupService {
