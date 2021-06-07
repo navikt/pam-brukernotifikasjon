@@ -35,13 +35,11 @@ datasources:
 
 
 kafka:
-  bootstrap.servers: ${KAFKA_BOOTSTRAP_SERVERS:nodefault}
-  security.protocol: SASL_SSL
+  bootstrap.servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   sasl:
-    jaas.config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER} password=${KAFKA_SERVICE_PASSWORD};'
-    mechanism: PLAIN
-  ssl.truststore.location: ${NAV_TRUSTSTORE_PATH}
-  ssl.truststore.password: ${NAV_TRUSTSTORE_PASSWORD}
+    jaas.config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER:dummy} password=${KAFKA_SERVICE_PASSWORD:ymmud};'
+  ssl.truststore.location: ${NAV_TRUSTSTORE_PATH:}
+  ssl.truststore.password: ${NAV_TRUSTSTORE_PASSWORD:}
   schema.registry.url: http://kafka-schema-registry.tpa:8081
 
   producers:
@@ -84,9 +82,9 @@ kafka:
   health:
     enabled: false
 
-personIdent:
-  admin:
-    enabled: ${ADMIN_ENABLED:`disabled`}
+
+admin:
+  enabled: ${ADMIN_ENABLED:`disabled`}
 
 
 

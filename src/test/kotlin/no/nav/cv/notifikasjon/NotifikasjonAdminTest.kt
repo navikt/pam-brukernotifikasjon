@@ -1,13 +1,15 @@
 package no.nav.cv.notifikasjon
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -17,25 +19,27 @@ import java.util.*
 private val uuid = UUID.randomUUID()
 private val fnr = "123dummy123"
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(NotifikasjonAdmin::class)
 @TestPropertySource(properties = ["admin.enabled:enabled"])
 class NotifikasjonAdminTest {
 
     @Autowired
     private lateinit var mvc: MockMvc
 
-    @MockBean
+    @MockkBean
     private lateinit var varselPublisher : VarselPublisher
 
     @Test
     fun `varsel blir sendt` () {
+
         val uuidSlot = slot<UUID>()
         val fnrSlot = slot<String>()
-        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
+
+        every { varselPublisher.publish(capture(uuidSlot), capture(fnrSlot)) } returns Unit
+
+        mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
 
-        verify { varselPublisher.publish(capture(uuidSlot), capture(fnrSlot)) }
 
         assertEquals(uuidSlot.captured, uuid)
         assertEquals(fnrSlot.captured, fnr)
@@ -47,10 +51,10 @@ class NotifikasjonAdminTest {
         val uuidSlot = slot<UUID>()
         val fnrSlot = slot<String>()
 
-        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
-                .andExpect(MockMvcResultMatchers.status().isOk)
+        every { varselPublisher.done(capture(uuidSlot), capture(fnrSlot)) } returns Unit
 
-        verify { varselPublisher.done(capture(uuidSlot), capture(fnrSlot)) }
+        mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
 
         assertEquals(uuidSlot.captured, uuid)
         assertEquals(fnrSlot.captured, fnr)
@@ -68,17 +72,20 @@ class NotifikasjonAdminDisabledTest {
     @Autowired
     private lateinit var mvc: MockMvc
 
+    @MockkBean
+    private lateinit var varselPublisher : VarselPublisher
+
     @Test
     fun `that admin is disabled by property for done messages` () {
 
-        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
+        mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/donemelding/${uuid}/${fnr}"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
     @Test
     fun `that admin is disabled by property for publish messages` () {
 
-        mvc.perform(MockMvcRequestBuilders.get("/pam-brukernotifikasjon/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
+        mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/varsel/${uuid}/${fnr}"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 

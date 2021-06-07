@@ -18,9 +18,9 @@ import org.springframework.context.event.EventListener
 import java.util.*
 
 @Configuration
-class OppfolgingstatusKafkaConfig {
+class BrukernotifikasjonKafkaConfig {
 
-    private val log = LoggerFactory.getLogger(OppfolgingstatusKafkaConfig::class.java)
+    private val log = LoggerFactory.getLogger(BrukernotifikasjonKafkaConfig::class.java)
 
 
     @Bean
@@ -36,8 +36,6 @@ class OppfolgingstatusKafkaConfig {
     ) : KafkaProducer<Nokkel, Oppgave> {
         return KafkaProducer<Nokkel, Oppgave>(props)
     }
-
-
 
     @Bean("producerProperties")
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -59,25 +57,7 @@ class OppfolgingstatusKafkaConfig {
         return props;
     }
 
-    @Bean
-    fun kafkaConsumerStartupService(
-            @Qualifier("oppfolgingStartetConsumer") oppfolgingStartetConsumer: Consumer<String, String>,
-            @Qualifier("oppfolgingAvsluttetConsumer") oppfolgingAvsluttetConsumer: Consumer<String, String>,
-    ): KafkaConsumerStartupService {
-        return KafkaConsumerStartupService(listOf(oppfolgingStartetConsumer, oppfolgingAvsluttetConsumer))
-    }
 
 
 }
 
-
-class KafkaConsumerStartupService(
-        private val consumers: List<Consumer<String, String>>
-) {
-
-    @EventListener(ApplicationReadyEvent::class)
-    fun startUp() {
-        consumers.forEach { it.startPolling() }
-    }
-
-}

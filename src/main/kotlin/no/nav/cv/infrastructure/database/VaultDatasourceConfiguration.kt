@@ -34,7 +34,7 @@ class VaultDatasourceConfiguration(
         }
     }
 
-    @Bean
+    @Bean("navHikariDatasource")
     fun navHikariDatasource(): HikariDataSource {
         return HikariCPVaultUtil
                 .createHikariDataSourceWithVaultIntegration(hikariConfig(), vaultPath, username)

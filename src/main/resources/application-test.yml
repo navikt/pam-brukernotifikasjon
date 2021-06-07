@@ -1,19 +1,7 @@
-kafka:
-  bootstrap:
-    servers: localhost:9092
-  ssl:
-    truststore:
-      location: ''
-      password: ''
-  sasl:
-    mechanism: PLAIN
-    jaas:
-      config: ''
-  security:
-    protocol: PLAINTEXT
-  schema:
-    registry:
-      url: http://mock:8081/
+#kafka:
+#  schema:
+#    registry:
+#      url: http://mock:8081/
 datasources:
   default:
     url: 'jdbc:h2:mem:pam-brukernotifikasjon;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
@@ -28,3 +16,5 @@ flyway:
         - ''
       connection-init-sqls:
         - 'SET ROLE "pam-brukernotifikasjon-admin"'
+
+data.

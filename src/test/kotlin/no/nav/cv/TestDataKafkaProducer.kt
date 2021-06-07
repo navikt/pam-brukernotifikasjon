@@ -1,5 +1,6 @@
 package no.nav.cv
 
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
 import no.nav.cv.notifikasjon.HendelseService
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -7,9 +8,7 @@ import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.*
-import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.containers.KafkaContainer
 import java.time.ZonedDateTime
@@ -35,7 +34,7 @@ class TestAKafkaApplication {
     val aktorId = "1234"
 
 
-    @MockBean
+    @MockkBean
     private lateinit var hendelseService: HendelseService
 
     @BeforeAll
@@ -106,6 +105,4 @@ class TestAKafkaApplication {
             """.trimIndent()
     }
 
-    // kotlin mockito hack
-    fun <T> any(): T = Mockito.any<T>()
 }

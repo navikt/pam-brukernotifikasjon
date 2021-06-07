@@ -22,14 +22,8 @@ class KafkaConfig {
     @Value("\${kafka.bootstrap.servers}")
     private val brokersUrl: String? = null
 
-    @Value("\${kafka.security.protocol}")
-    private val securityProtocol: String? = null
-
     @Value("\${kafka.sasl.jaas.config}")
     private val kafkaSaslJaasConfig: String? = null
-
-    @Value("\${kafka.sasl.mechanism}")
-    private val kafkaSaslMechanism: String? = null
 
     @Value("\${kafka.ssl.truststore.location}")
     private val truststoreLocation: String? = null
@@ -71,13 +65,17 @@ class KafkaConfig {
 
         val props = Properties()
 
-        props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon"
-        props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = securityProtocol
         props[CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG] = brokersUrl
-        props[SaslConfigs.SASL_MECHANISM] = kafkaSaslMechanism
+        props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon"
+        props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "PLAINTEXT"
+        props[SaslConfigs.SASL_MECHANISM] = "PLAIN"
         props[SaslConfigs.SASL_JAAS_CONFIG] = kafkaSaslJaasConfig
-        props[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = truststoreLocation
-        props[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = truststorePassword
+        System.getenv("NAV_TRUSTSTORE_PATH")?.let {
+            props[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = truststoreLocation
+            props[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = truststorePassword
+            props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_SSL"
+
+        }
         props[AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG] = kafkaSchemaRegistry
 
         return props

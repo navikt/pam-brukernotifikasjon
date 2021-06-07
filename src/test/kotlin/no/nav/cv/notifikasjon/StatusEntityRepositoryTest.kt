@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nav.cv.person.PersonIdent
 import no.nav.cv.person.PersonIdentRepository
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.stereotype.Repository
@@ -29,10 +29,10 @@ class StatusEntityRepositoryTest {
     @Autowired
     lateinit var statusRepository: StatusRepository
 
-    @MockBean
+    @MockkBean(relaxed = true)
     lateinit var personIdentRepositoryMock: PersonIdentRepository
 
-    @MockBean
+    @MockkBean(relaxed = true)
     lateinit var varselPublisherMock: VarselPublisher
 
     private val now = ZonedDateTime.now()

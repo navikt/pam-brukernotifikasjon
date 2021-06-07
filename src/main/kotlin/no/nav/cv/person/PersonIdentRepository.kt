@@ -16,7 +16,7 @@ interface PersonIdentRepository {
 }
 
 @Repository
-private class JpaPersonIdentRepository(
+private open class JpaPersonIdentRepository(
         @PersistenceContext private val entityManager: EntityManager
 ): PersonIdentRepository {
 
