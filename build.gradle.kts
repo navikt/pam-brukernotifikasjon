@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.0"
-    kotlin("plugin.spring") version "1.5.0"
     id("org.springframework.boot") version "2.5.0"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
+    kotlin("jvm") version "1.5.0"
+    kotlin("plugin.spring") version "1.5.0"
 }
 
-version = "0.1"
 group = "no.nav.cv"
+version = "0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -19,7 +19,6 @@ repositories {
 }
 
 object Version {
-    val kotlin = "1.5.0"
     val brukernotifikasjoner = "1.2021.01.18-11.12-b9c8c40b98d1"
     val avro = "1.9.2"
     val confluent = "5.3.0"
