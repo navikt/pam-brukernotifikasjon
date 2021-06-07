@@ -27,7 +27,7 @@ class VaultDatasourceConfiguration(
     @Bean
     fun flywayConfig(): FlywayConfigurationCustomizer {
         return FlywayConfigurationCustomizer {
-            it.initSql("SET ROLE pam-brukernotifikasjon-admin")
+            it.initSql("SET ROLE \"pam-brukernotifikasjon-admin\"")
                     .dataSource(HikariCPVaultUtil
                             .createHikariDataSourceWithVaultIntegration(hikariConfig(), vaultPath, username))
 
