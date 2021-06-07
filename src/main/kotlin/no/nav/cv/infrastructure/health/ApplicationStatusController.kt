@@ -2,8 +2,10 @@ package no.nav.cv.infrastructure.health
 
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 
-@Controller("internal")
+@Controller
+@RequestMapping("internal")
 class ApplicationStatusController {
 
     @GetMapping("isReady")

@@ -3,6 +3,7 @@ package no.nav.cv.person
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import no.nav.cv.infrastructure.kafka.Consumer
 import org.apache.avro.generic.GenericRecord
+import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -31,6 +32,7 @@ class PersonConfig {
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java.canonicalName
         props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-person-v1"
+        props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon-pdl-id-consumer"
 
         return Consumer(topic, KafkaConsumer<String, GenericRecord>(props), eventProcessor)
     }

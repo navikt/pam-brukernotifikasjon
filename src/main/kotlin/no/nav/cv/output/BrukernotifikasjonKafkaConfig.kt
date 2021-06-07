@@ -4,6 +4,7 @@ import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.cv.infrastructure.kafka.Consumer
+import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -27,6 +28,7 @@ class BrukernotifikasjonKafkaConfig {
     fun doneKafkaProducer(
             @Qualifier("defaultProducerProperties") props: Properties
     ) : KafkaProducer<Nokkel, Done> {
+        props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon-done-producer"
         return KafkaProducer<Nokkel, Done>(props)
     }
 
@@ -34,29 +36,10 @@ class BrukernotifikasjonKafkaConfig {
     fun oppgaveKafkaProducer(
             @Qualifier("defaultProducerProperties") props: Properties
     ) : KafkaProducer<Nokkel, Oppgave> {
+
+        props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon-oppgave-producer"
         return KafkaProducer<Nokkel, Oppgave>(props)
     }
-
-    @Bean("producerProperties")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    fun consumerProperties(
-            @Qualifier("defaultConsumerProperties") props: Properties,
-    ) : Properties {
-
-        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
-        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
-
-        props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
-        props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = false
-        props[ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG] = 500000
-        props[ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG] = 10000
-        props[ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG] = 3000
-
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-oppfolging-v1"
-
-        return props;
-    }
-
 
 
 }

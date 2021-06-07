@@ -66,7 +66,6 @@ class KafkaConfig {
         val props = Properties()
 
         props[CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG] = brokersUrl
-        props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon"
         props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "PLAINTEXT"
         props[SaslConfigs.SASL_MECHANISM] = "PLAIN"
         props[SaslConfigs.SASL_JAAS_CONFIG] = kafkaSaslJaasConfig
