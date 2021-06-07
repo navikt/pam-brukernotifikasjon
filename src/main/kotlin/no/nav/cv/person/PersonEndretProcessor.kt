@@ -54,6 +54,7 @@ class PersonDto(val record: GenericRecord) {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun GenericRecord.identifikatorer(): GenericArray<GenericRecord> =
             get("identifikatorer") as GenericArray<GenericRecord>
 }

@@ -17,4 +17,3 @@ flyway:
       connection-init-sqls:
         - 'SET ROLE "pam-brukernotifikasjon-admin"'
 
-data.

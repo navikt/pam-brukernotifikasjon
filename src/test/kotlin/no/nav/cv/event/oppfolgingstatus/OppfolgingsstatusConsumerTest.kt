@@ -1,6 +1,5 @@
 package no.nav.cv.event.oppfolgingstatus
 
-import junit.framework.Assert.assertEquals
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nav.cv.notifikasjon.StatusRepository
@@ -11,6 +10,7 @@ import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.ComponentScan

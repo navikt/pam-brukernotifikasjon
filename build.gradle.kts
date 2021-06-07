@@ -3,21 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.5.0"
     kotlin("plugin.spring") version "1.5.0"
-    id("org.springframework.boot") version "2.4.1"
+    id("org.springframework.boot") version "2.5.0"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
 }
 
 version = "0.1"
 group = "no.nav.cv"
 java.sourceCompatibility = JavaVersion.VERSION_11
-
-/*repositories {
-    mavenCentral()
-    maven { url "https://jcenter.bintray.com" }
-    maven { url "https://packages.confluent.io/maven/" }
-    maven { url "https://github-package-registry-mirror.gc.nav.no/cached/maven-release" }
-    maven { url 'https://jitpack.io' }
-}*/
 
 repositories {
     mavenCentral()
@@ -48,17 +40,8 @@ dependencies {
     // SNYK fixes
     implementation("org.dom4j:dom4j:2.1.3")
     implementation("org.postgresql:postgresql:42.2.13")
-    implementation("org.hibernate:hibernate-core:5.4.18.Final")
+    implementation("org.hibernate:hibernate-core")
 
-    //implementation(platform("io.micronaut:micronaut-bom:$micronautVersion"))
-    //implementation("io.micronaut.sql:micronaut-hibernate-jpa")
-    //implementation("io.micronaut.sql:micronaut-hibernate-jpa-spring")
-    //implementation("io.micronaut.sql:micronaut-jdbc-hikari")
-    //implementation("io.micronaut.kafka:micronaut-kafka:2.0.0")
-    //implementation("io.micronaut:micronaut-runtime")
-    //implementation("io.micronaut:micronaut-http-server-netty")
-    //implementation("io.micronaut:micronaut-http-client")
-    //implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("net.javacrumbs.shedlock:shedlock-spring:4.24.0")
 
     implementation( "org.flywaydb:flyway-core")
