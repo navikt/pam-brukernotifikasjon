@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.5.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.10"
     kotlin("plugin.spring") version "1.5.10"
 }
 
@@ -40,7 +41,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
     implementation("org.json:json:20190722")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
