@@ -24,7 +24,7 @@ class OppfolgingAvsluttetProcessor(
 
     fun receiveFinished(record: ConsumerRecord<String, String>) = record.value()
             .also { json -> log.debug("json: \"$json\"") }
-            .map { json -> Json.decodeFromString<OppfolgingAvsluttet>(json.toString()) }
-            .onEach { log.debug("OppfolgingAvsluttet record received for ${it.aktorId}.") }
-            .onEach { dto -> hendelseService.blittFulgtOpp(dto.aktorId, dto.sluttDato) }
+            .let { Json.decodeFromString<OppfolgingAvsluttet>(it) }
+            .also { log.debug("OppfolgingAvsluttet record received for ${it.aktorId}.") }
+            .also { hendelseService.blittFulgtOpp(it.aktorId, it.sluttDato) }
 }
