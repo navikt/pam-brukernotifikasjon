@@ -26,5 +26,5 @@ class OppfolgingAvsluttetProcessor(
             .also { json -> log.debug("json: \"$json\"") }
             .let { Json.decodeFromString<OppfolgingAvsluttet>(it) }
             .also { log.debug("OppfolgingAvsluttet record received for ${it.aktorId}.") }
-            .also { hendelseService.blittFulgtOpp(it.aktorId, it.sluttDato) }
+            .also { hendelseService.blittFulgtOpp(it.aktorId, it.sluttdato) }
 }

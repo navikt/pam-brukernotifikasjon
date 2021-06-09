@@ -21,7 +21,7 @@ data class OppfolgingAvsluttet (
     val aktorId: String,
 
     @Serializable(KZonedDateTimeSerializer::class)
-    val sluttDato: ZonedDateTime
+    val sluttdato: ZonedDateTime
 )
 
 object KZonedDateTimeSerializer : KSerializer<ZonedDateTime> {

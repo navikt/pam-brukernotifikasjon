@@ -20,7 +20,10 @@ class OppfolgingSerializationTest {
                 "oppfolgingStartet": "$dateString"
             }
         """.trimIndent()
-
+        startedJson
+                .also { json -> """"json: \"$json\"""" }
+                .let { Json.decodeFromString<OppfolgingStartet>(it) }
+                .also { """"OppfolgingStartet record received for ${it.aktorId}."""" }
         val opppfolgingStartet = Json.decodeFromString<OppfolgingStartet>(startedJson)
 
         Assertions.assertEquals("123", opppfolgingStartet.aktorId)
@@ -32,14 +35,14 @@ class OppfolgingSerializationTest {
         val avsluttetJson = """
             {
                 "aktorId": "123",
-                "sluttDato": "$dateString"
+                "sluttdato": "$dateString"
             }
         """.trimIndent()
 
         val oppfolgingAvsluttet = Json.decodeFromString<OppfolgingAvsluttet>(avsluttetJson)
 
         Assertions.assertEquals("123", oppfolgingAvsluttet.aktorId)
-        Assertions.assertEquals(date, oppfolgingAvsluttet.sluttDato)
+        Assertions.assertEquals(date, oppfolgingAvsluttet.sluttdato)
     }
 
 }
