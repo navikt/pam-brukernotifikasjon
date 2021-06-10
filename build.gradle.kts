@@ -30,6 +30,7 @@ dependencies {
     implementation("com.h2database:h2")
     implementation("com.github.navikt:brukernotifikasjon-schemas:${Version.brukernotifikasjoner}")
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
+    implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("javax.annotation:javax.annotation-api")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.12.0")
     implementation("net.javacrumbs.shedlock:shedlock-spring:4.24.0")

@@ -19,11 +19,6 @@ spring:
     initSql:
       - 'SET ROLE "pam-brukernotifikasjon-admin"'
 
-micronaut:
-  application:
-    name: brukernotifikasjon
-
-
 db:
   vault:
     path: ${DB_VAULT_PATH:`postgresql/preprod`}
@@ -33,7 +28,6 @@ datasources:
   default:
     jdbcUrl: ${JDBC_URL:`jdbc:postgresql://localhost:5432/pam-brukernotifikasjon`}
 
-
 kafka:
   bootstrap.servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   sasl:
@@ -41,35 +35,6 @@ kafka:
   ssl.truststore.location: ${NAV_TRUSTSTORE_PATH:}
   ssl.truststore.password: ${NAV_TRUSTSTORE_PASSWORD:}
   schema.registry.url: http://kafka-schema-registry.tpa:8081
-
-  producers:
-    default:
-      key:
-        serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      value:
-        serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-  consumers:
-    pam-brukernotifikasjon-cv-v4:
-      key:
-        deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value:
-        deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      specific:
-        avro:
-          reader: false
-    pam-brukernotifikasjon-oppfolging-v1:
-      key:
-        deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value:
-        deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    pam-brukernotifikasjon-person-v1:
-      key:
-        deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value:
-        deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      specific:
-        avro:
-          reader: false
   topics:
     consumers:
       cv_endret: ${KAFKA_CONSUMER_TOPIC_CV_ENDRET:`arbeid-pam-cv-endret-v4-q0`}
@@ -79,13 +44,9 @@ kafka:
     producers:
       ny_oppgave: ${KAFKA_PRODUCER_TOPIC_NY_OPPGAVE:`aapen-brukernotifikasjon-nyOppgave-v1`}
       done: ${KAFKA_PRODUCER_TOPIC_DONE:`aapen-brukernotifikasjon-done-v1`}
-  health:
-    enabled: false
 
 
 admin:
   enabled: ${ADMIN_ENABLED:`disabled`}
-
-
 
 output.melding.link: ${OUTPUT_MELDING_LINK:`https://arbeidsplassen.nav.no/cv`}
