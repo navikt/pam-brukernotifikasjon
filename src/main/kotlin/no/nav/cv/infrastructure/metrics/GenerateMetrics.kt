@@ -3,16 +3,16 @@ package no.nav.cv.infrastructure.metrics
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.cv.notifikasjon.StatusRepository
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Service
 import java.util.concurrent.atomic.AtomicLong
-import javax.inject.Singleton
 
-@Singleton
+@Service
 class GenerateMetrics(
     private val meterRegistry: MeterRegistry,
     private val statusRepository: StatusRepository
 ) {
 
-    val gauges = mutableMapOf<String, AtomicLong>()
+    val gauges = mutableMapOf<String, AtomicLong?>()
 
     private fun addOrUpdateGauge(name: String, value: Long) {
         gauges[name]?.set(value)

@@ -1,10 +1,6 @@
 package no.nav.cv
 
-import io.micronaut.test.annotation.MicronautTest
-import io.micronaut.test.annotation.MockBean
-import io.micronaut.test.support.TestPropertyProvider
-import io.mockk.every
-import io.mockk.mockk
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
 import no.nav.cv.notifikasjon.HendelseService
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -12,21 +8,18 @@ import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.*
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.containers.KafkaContainer
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 
-@MicronautTest(environments = ["kafka"])
+@SpringBootTest
+@ActiveProfiles("kafka")
 @Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TestAKafkaApplication : TestPropertyProvider {
-
-    @Inject
-    lateinit var hendelseService: HendelseService
+class TestAKafkaApplication {
 
     lateinit var oppfolgingsstatusProducer: Producer<String, String>
 
@@ -38,9 +31,11 @@ class TestAKafkaApplication : TestPropertyProvider {
         kafkaContainer.start()
     }
 
-    val adIndexerLatch = CountDownLatch(1)
     val aktorId = "1234"
 
+
+    @MockkBean
+    private lateinit var hendelseService: HendelseService
 
     @BeforeAll
     fun initKafka() {
@@ -48,6 +43,7 @@ class TestAKafkaApplication : TestPropertyProvider {
 
         oppfolgingsstatusProducer = KafkaProducer(props,
                 StringSerializer(), StringSerializer())
+
     }
 
     @AfterAll
@@ -69,7 +65,6 @@ class TestAKafkaApplication : TestPropertyProvider {
                     )
             )
             oppfolgingsstatusProducer.flush()
-            adIndexerLatch.await(60L, TimeUnit.SECONDS)
             verify { hendelseService.kommetUnderOppfolging(aktorId, any()) }
         }
 
@@ -86,27 +81,15 @@ class TestAKafkaApplication : TestPropertyProvider {
                     )
             )
             oppfolgingsstatusProducer.flush()
-            adIndexerLatch.await(60L, TimeUnit.SECONDS)
             verify { hendelseService.blittFulgtOpp(aktorId, any()) }
         }
 
 
-    override fun getProperties(): MutableMap<String, String> {
+    fun getProperties(): MutableMap<String, String> {
+        // TODO these need to get into springs application-context
         return hashMapOf(Pair("kafka.bootstrap.servers", kafkaContainer.bootstrapServers))
     }
 
-
-    @MockBean(HendelseService::class)
-    fun hendelseService(): HendelseService {
-        val hendelseService = mockk<HendelseService>(relaxed = true)
-        every { hendelseService.blittFulgtOpp(any(), any()) } answers {
-            adIndexerLatch.countDown()
-        }
-        every { hendelseService.kommetUnderOppfolging(any(), any()) } answers {
-            adIndexerLatch.countDown()
-        }
-        return hendelseService
-    }
 
     fun oppfolgingsMelding(aktorId: String, underOppfolging: Boolean, endret: ZonedDateTime, oppfolgingsDato: ZonedDateTime): String {
         return """
@@ -121,4 +104,5 @@ class TestAKafkaApplication : TestPropertyProvider {
                 }
             """.trimIndent()
     }
+
 }

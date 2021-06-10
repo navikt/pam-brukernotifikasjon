@@ -1,16 +1,17 @@
 package no.nav.cv.notifikasjon
 
-import io.micronaut.context.annotation.Value
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Post
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 
-@Controller("internal")
+@RestController
+@RequestMapping("internal/kafka/manuell")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: String,
-        private val statusRepository: StatusRepository,
         private val varselPublisher: VarselPublisher
 ) {
 
@@ -19,10 +20,13 @@ class NotifikasjonAdmin(
     }
 
 
-    @Post("kafka/manuell/varsel/{uuid}/{fnr}", produces = [ "text/plain" ])
-    fun varsle(uuid: UUID, fnr: String): String {
+    @GetMapping("varsel/{uuid}/{fnr}", produces = [ "text/plain" ])
+    fun varsle(
+            @PathVariable("uuid") uuid: UUID,
+            @PathVariable("fnr") fnr: String
+    ): String {
 
-        check(adminEnabled == "enabled")
+        if(adminEnabled != "enabled") throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
         log.info("NotifikasjonAdmin genererer varsel oppgave for uuid $uuid")
 
@@ -30,10 +34,13 @@ class NotifikasjonAdmin(
         return "OK"
     }
 
-    @Post("kafka/manuell/donemelding/{uuid}/{fnr}", produces = [ "text/plain" ])
-    fun done(uuid: UUID, fnr: String): String {
+    @GetMapping("donemelding/{uuid}/{fnr}", produces = [ "text/plain" ])
+    fun done(
+            @PathVariable("uuid") uuid: UUID,
+            @PathVariable("fnr") fnr: String
+    ): String {
 
-        check(adminEnabled == "enabled")
+        if(adminEnabled != "enabled") throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
         log.info("NotifikasjonAdmin genererer done melding for uuid $uuid")
 

@@ -16,9 +16,9 @@
   "oppfolging_feed": "https://veilarboppfolging-q0.nais.preprod.local",
   "security_token_service": "https://security-token-service.nais.preprod.local",
 
-  "ingress": "https://pam-brukernotifikasjon.dev.adeo.no",
+  "ingress": "https://pam-brukernotifikasjon.dev.intern.nav.no",
 
   "adminEnabled": "enabled",
 
-  "linkIMelding": "https://arbeidsplassen-q.nav.no/cv"
+  "linkIMelding": "https://arbeidsplassen.dev.nav.no/cv"
 }

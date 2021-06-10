@@ -1,21 +1,26 @@
 package no.nav.cv.infrastructure.metrics
 
 import io.micrometer.core.instrument.MeterRegistry
-import io.micronaut.test.annotation.MicronautTest
 import no.nav.cv.notifikasjon.Status
 import no.nav.cv.notifikasjon.StatusRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import java.time.ZonedDateTime
 
-@MicronautTest
-internal class GenerateMetricsTest(
-        private val statusRepository: StatusRepository,
-        private val generateMetrics: GenerateMetrics,
-        private val meterRegistry: MeterRegistry
-) {
+@SpringBootTest
+internal class GenerateMetricsTest {
 
 
+    @Autowired
+    private lateinit var statusRepository: StatusRepository
+
+    @Autowired
+    private lateinit var  generateMetrics: GenerateMetrics
+
+    @Autowired
+    private lateinit var  meterRegistry: MeterRegistry
 
     @Test
     fun `create some varslet status - ensure each is counted`() {

@@ -1,54 +1,47 @@
+server:
+  port: 9029
+  servlet:
+    context-path: /pam-brukernotifikasjon
+
+management:
+  endpoint:
+    prometheus:
+      enabled: true
+  endpoints:
+    web.exposure.include: prometheus
+
+spring:
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations:
+      - "classpath:databasemigrations"
+    initSql:
+      - 'SET ROLE "pam-brukernotifikasjon-admin"'
+
 micronaut:
   application:
     name: brukernotifikasjon
-  server:
-    port: 9029
-    context-path: /pam-brukernotifikasjon
-  metrics:
-    enabled: true
-    sensitive: false
-    binders:
-      jvm:
-        enabled: true
-    export:
-      prometheus:
-        enabled: true
-        descriptions: false
-io:
-  micronaut:
-    context:
-      condition: true
+
+
 db:
   vault:
     path: ${DB_VAULT_PATH:`postgresql/preprod`}
     username: ${DB_VAULT_USERNAME:`pam-brukernotifikasjon-admin`}
+
 datasources:
   default:
-    minimumIdle: 0
-    maximumPoolSize: 4
-    idleTimeout: 10001
-    maxLifetime: 30001
-    connectionTestQuery: "select 1"
     jdbcUrl: ${JDBC_URL:`jdbc:postgresql://localhost:5432/pam-brukernotifikasjon`}
-    driverClassName: 'org.postgresql.Driver'
-jpa:
-  default:
-    packages-to-scan:
-      - 'no.nav.cv.person'
-      - 'no.nav.cv.notifikasjon'
-    properties:
-      hibernate:
-        hbm2ddl:
-          auto: none
-        show_sql: false
-flyway:
-  datasources:
-    default:
-      locations: classpath:databasemigrations
-      initSql:
-        - 'SET ROLE "pam-brukernotifikasjon-admin"'
+
 
 kafka:
+  bootstrap.servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  sasl:
+    jaas.config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER:dummy} password=${KAFKA_SERVICE_PASSWORD:ymmud};'
+  ssl.truststore.location: ${NAV_TRUSTSTORE_PATH:}
+  ssl.truststore.password: ${NAV_TRUSTSTORE_PASSWORD:}
+  schema.registry.url: http://kafka-schema-registry.tpa:8081
+
   producers:
     default:
       key:
@@ -86,39 +79,13 @@ kafka:
     producers:
       ny_oppgave: ${KAFKA_PRODUCER_TOPIC_NY_OPPGAVE:`aapen-brukernotifikasjon-nyOppgave-v1`}
       done: ${KAFKA_PRODUCER_TOPIC_DONE:`aapen-brukernotifikasjon-done-v1`}
-  bootstrap:
-    servers: ${KAFKA_BOOTSTRAP_SERVERS:nodefault}
   health:
     enabled: false
-  security:
-    protocol: SASL_SSL
-  sasl:
-    jaas:
-      config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER} password=${KAFKA_SERVICE_PASSWORD};'
-    mechanism: PLAIN
-  ssl:
-    truststore:
-      location: ${NAV_TRUSTSTORE_PATH}
-      password: ${NAV_TRUSTSTORE_PASSWORD}
-  schema:
-    registry:
-      url: http://kafka-schema-registry.tpa:8081
-personIdent:
-  admin:
-    enabled: ${ADMIN_ENABLED:`disabled`}
-
-oppfolgingstatus:
-  sts:
-    host: ${SECURITY_TOKEN_SERVICE:`http://localhost:8901`}
-    serviceuser:
-      username: ${PAMCVAPI_USERNAME:`srvpam-cv-api`}
-      password: ${PAMCVAPI_PASSWORD:`dummy`}
-  feed:
-    host: ${OPPFOLGING_FEED:`http://localhost:8902`}
 
 
-shedlock:
-  defaults:
-    lock-at-most-for: 5m
+admin:
+  enabled: ${ADMIN_ENABLED:`disabled`}
+
+
 
 output.melding.link: ${OUTPUT_MELDING_LINK:`https://arbeidsplassen.nav.no/cv`}

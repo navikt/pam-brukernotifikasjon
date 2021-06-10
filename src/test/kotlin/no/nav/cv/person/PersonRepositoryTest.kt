@@ -1,16 +1,18 @@
 package no.nav.cv.person
 
-import io.micronaut.test.annotation.MicronautTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.FilterType
+import org.springframework.stereotype.Repository
 
-@MicronautTest
+@DataJpaTest(includeFilters = [ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [Repository::class])])
 class PersonRepositoryTest {
 
-    @Inject
+    @Autowired
     lateinit var personIdentRepository: PersonIdentRepository
 
 

@@ -1,29 +1,23 @@
 package no.nav.cv.person
 
-import io.micronaut.configuration.kafka.annotation.KafkaListener
-import io.micronaut.configuration.kafka.annotation.OffsetReset
-import io.micronaut.configuration.kafka.annotation.Topic
-import io.micronaut.context.annotation.Prototype
+import no.nav.cv.infrastructure.kafka.EventProcessor
 import org.apache.avro.generic.GenericArray
 import org.apache.avro.generic.GenericEnumSymbol
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
-@Prototype
-@KafkaListener(
-        groupId = "pam-brukernotifikasjon-person-v1",
-        offsetReset = OffsetReset.EARLIEST
-)
-class PersonConsumer(
+@Service
+class PersonEndretProcessor(
         private val personIdentRepository: PersonIdentRepository
-) {
+) : EventProcessor<String, GenericRecord> {
 
     companion object {
-        val log = LoggerFactory.getLogger(PersonConsumer::class.java)
+        val log = LoggerFactory.getLogger(PersonEndretProcessor::class.java)
     }
 
-    @Topic("\${kafka.topics.consumers.pdl_id}")
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {
@@ -31,6 +25,11 @@ class PersonConsumer(
         val identer = PersonDto(record.value())
                 .identer()
         personIdentRepository.oppdater(identer)
+    }
+
+
+    override suspend fun process(records: ConsumerRecords<String, GenericRecord>) {
+        records.forEach { receive(it) }
     }
 
 }
@@ -55,6 +54,7 @@ class PersonDto(val record: GenericRecord) {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun GenericRecord.identifikatorer(): GenericArray<GenericRecord> =
             get("identifikatorer") as GenericArray<GenericRecord>
 }

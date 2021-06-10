@@ -1,20 +1,20 @@
 package no.nav.cv.person
 
-import io.micronaut.scheduling.annotation.Scheduled
-import net.javacrumbs.shedlock.micronaut.SchedulerLock
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.cv.notifikasjon.StatusRepository
-import javax.inject.Singleton
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Service
 
 
-@Singleton
-open class FodselsnummerJobb(
+@Service
+class FodselsnummerJobb(
         private val statusRepository: StatusRepository,
         private val personIdentRepository: PersonIdentRepository
 ) {
 
     @SchedulerLock(name = "fodselsnummerjobb")
-    @Scheduled(fixedDelay = "15s")
-    open fun fyllInnFnr() {
+    @Scheduled(fixedDelay = 15000)
+    fun fyllInnFnr() {
         statusRepository.manglerFodselsnummer()
                 .forEach {
                     val fnr = personIdentRepository.finnIdenter(it.aktorId)

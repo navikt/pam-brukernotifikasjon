@@ -1,9 +1,9 @@
 package no.nav.cv.notifikasjon
 
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.time.Period
 import java.time.ZonedDateTime
-import javax.inject.Singleton
 
 private val cutoffPeriod = Period.ofDays(2)
 
@@ -20,7 +20,7 @@ interface HendelseService {
 }
 
 
-@Singleton
+@Service
 class Hendelser (
     private val repository: StatusRepository,
     private val varselPublisher: VarselPublisher,

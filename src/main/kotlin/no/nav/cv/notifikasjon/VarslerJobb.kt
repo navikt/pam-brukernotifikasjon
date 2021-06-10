@@ -1,13 +1,13 @@
 package no.nav.cv.notifikasjon
 
-import io.micronaut.scheduling.annotation.Scheduled
-import net.javacrumbs.shedlock.micronaut.SchedulerLock
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
-import javax.inject.Singleton
 
-@Singleton
-open class VarslerJobb(
+@Service
+class VarslerJobb(
         private val hendelseService: HendelseService,
         private val repository: StatusRepository
 ) {
@@ -17,8 +17,8 @@ open class VarslerJobb(
     }
 
     @SchedulerLock(name = "varslerjobb")
-    @Scheduled(fixedDelay = "15s")
-    open fun varsle() {
+    @Scheduled(fixedDelay = 15000)
+    fun varsle() {
         val skalVarsles = repository.skalVarsles()
         skalVarsles.forEach {
             log.debug("Varsler uuid ${it.uuid} med status ${it.status} og nåværende tidspunkt ${it.statusTidspunkt}")
