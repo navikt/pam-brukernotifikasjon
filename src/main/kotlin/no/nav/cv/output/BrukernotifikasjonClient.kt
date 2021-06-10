@@ -22,7 +22,7 @@ class BrukernotifikasjonClient(
     }
 
     fun done(nokkel: Nokkel, done: Done) {
-        doneKafkaProducer.send(ProducerRecord(oppgaveTopic, nokkel, done))
+        doneKafkaProducer.send(ProducerRecord(doneTopic, nokkel, done))
     }
 
 }
