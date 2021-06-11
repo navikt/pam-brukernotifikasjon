@@ -2,6 +2,7 @@ package no.nav.cv.infrastructure.kafka
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import io.micrometer.core.instrument.MeterRegistry
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -78,6 +79,21 @@ class KafkaConfig {
         props[AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG] = kafkaSchemaRegistry
 
         return props
+    }
+
+    @Bean
+    fun consumerStatus(
+            consumers: List<Consumer<out Any, out Any>>
+    ): ConsumerStatusHandler {
+        return ConsumerStatusHandler(consumers)
+    }
+
+    @Bean
+    fun consumerMetrics(
+            consumers: List<Consumer<out Any, out Any>>,
+            meterRegistry: MeterRegistry
+    ): ConsumerStatusMetrics {
+        return ConsumerStatusMetrics(consumers, meterRegistry)
     }
 
 }

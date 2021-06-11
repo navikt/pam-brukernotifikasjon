@@ -37,24 +37,5 @@ class PersonConfig {
         return Consumer(topic, KafkaConsumer<String, GenericRecord>(props), eventProcessor)
     }
 
-    @Bean
-    fun kafkaPersonConsumerStartupService(
-            @Qualifier("personConsumer") personConsumer: Consumer<String, GenericRecord>
-    ): KafkaPersonConsumerStartupService {
-        return KafkaPersonConsumerStartupService(listOf(personConsumer))
-    }
-
-
 }
 
-
-class KafkaPersonConsumerStartupService(
-        private val consumers: List<Consumer<String, GenericRecord>>
-) {
-
-    @EventListener(ApplicationReadyEvent::class)
-    fun startUp() {
-        consumers.forEach { it.startPolling() }
-    }
-
-}

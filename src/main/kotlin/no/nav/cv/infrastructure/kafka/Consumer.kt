@@ -49,6 +49,7 @@ class Consumer<K, V>(
     private suspend fun pollForAndRelayBatchOfEvents() = withContext(Dispatchers.IO) {
         try {
             val records = kafkaConsumer.poll(Duration.of(100, ChronoUnit.MILLIS))
+            if(topic.contains("oppfolgingAvsluttet")) throw IllegalStateException("Uaaaaæææ")
             if (records.containsEvents()) {
                 eventProcessor.process(records)
                 kafkaConsumer.commitSync()

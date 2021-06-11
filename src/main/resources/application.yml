@@ -38,8 +38,8 @@ kafka:
   topics:
     consumers:
       cv_endret: ${KAFKA_CONSUMER_TOPIC_CV_ENDRET:`arbeid-pam-cv-endret-v4-q0`}
-      oppfolging_startet: ${KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET:`no-default`}
-      oppfolging_avsluttet: ${KAFKA_CONSUMER_TOPIC_OPPFOLGING_AVSLUTTET:`no-default`}
+      oppfolging_startet: ${KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET:`aapen-arbeidsrettetOppfolging-oppfolgingStartet-v1-p`}
+      oppfolging_avsluttet: ${KAFKA_CONSUMER_TOPIC_OPPFOLGING_AVSLUTTET:`aapen-arbeidsrettetOppfolging-oppfolgingAvsluttet-v1-p`}
       pdl_id: ${KAFKA_CONSUMER_TOPIC_PDL_ID:`privat-person-pdl-aktor-v1`}
     producers:
       ny_oppgave: ${KAFKA_PRODUCER_TOPIC_NY_OPPGAVE:`aapen-brukernotifikasjon-nyOppgave-v1`}

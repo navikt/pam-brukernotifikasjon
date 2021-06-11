@@ -53,25 +53,4 @@ class OppfolgingstatusKafkaConfig {
 
     }
 
-    @Bean
-    fun kafkaConsumerStartupService(
-            @Qualifier("oppfolgingStartetConsumer") oppfolgingStartetConsumer: Consumer<String, String>,
-            @Qualifier("oppfolgingAvsluttetConsumer") oppfolgingAvsluttetConsumer: Consumer<String, String>,
-    ): KafkaConsumerStartupService {
-        return KafkaConsumerStartupService(listOf(oppfolgingStartetConsumer, oppfolgingAvsluttetConsumer))
-    }
-
-
-}
-
-
-class KafkaConsumerStartupService(
-        private val consumers: List<Consumer<String, String>>
-) {
-
-    @EventListener(ApplicationReadyEvent::class)
-    fun startUp() {
-        consumers.forEach { it.startPolling() }
-    }
-
 }

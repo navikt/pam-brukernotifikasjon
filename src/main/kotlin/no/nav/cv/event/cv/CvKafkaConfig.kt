@@ -40,25 +40,4 @@ class CvKafkaConfig {
         return Consumer(topic, KafkaConsumer<String, GenericRecord>(props), eventProcessor)
     }
 
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    fun kafkaCvConsumerStartupService(
-            @Qualifier("cvEndretConsumer") cvEndretConsumer: Consumer<String, GenericRecord>
-    ): KafkaCvConsumerStartupService {
-        return KafkaCvConsumerStartupService(listOf(cvEndretConsumer))
-    }
-
-
-}
-
-
-class KafkaCvConsumerStartupService(
-        private val consumers: List<Consumer<String, GenericRecord>>
-) {
-
-    @EventListener(ApplicationReadyEvent::class)
-    fun startUp() {
-        consumers.forEach { it.startPolling() }
-    }
-
 }
