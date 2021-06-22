@@ -14,7 +14,7 @@ import java.util.*
 
 private val systembruker = "srvpambrukernot"
 private val grupperingsId = "ARBEIDSPLASSEN"
-private val tekst = "Du må oppdatere CV-en og jobbprofilen på arbeidsplassen.no"
+private val tekst = "Du må oppdatere CV-en og jobbønskene dine på arbeidsplassen.no"
 private val sikkerhetsnivaa = 3
 
 private val log = LoggerFactory.getLogger(BrukernotifikasjonProducer::class.java)
