@@ -15,7 +15,7 @@ spec:
     path: /pam-brukernotifikasjon/internal/isReady
     initialDelay: 20
   replicas:
-    min: 2
+    min: 1
     max: 2
   cpuThresholdPercentage: 50
   resources:
@@ -25,14 +25,6 @@ spec:
     requests:
       cpu: 200m
       memory: 256Mi
-  vault:
-    enabled: true
-    paths:
-      - kvPath: {{ servicebruker_brukernotifikasjon }}
-        mountPath: /serviceuser/kafka/brukernotifikasjon/
-      # TODO husk å fjerne tilgang til denne for appen fra vault
-      # - kvPath: {{ servicebruker_cv }}
-      #  mountPath: /serviceuser/kafka/cv/
   webproxy: false
   prometheus:
     enabled: true
@@ -66,3 +58,13 @@ spec:
       value: {{ linkIMelding }}
   ingresses:
     - {{ ingress }}
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_11
+        tier: {{ cloudsql_db_tier }}
+        diskAutoresize: true
+        diskType: SSD
+        highAvailability: true
+        databases:
+          - name: pam-brukernotifikasjon
+            envVarPrefix: DB

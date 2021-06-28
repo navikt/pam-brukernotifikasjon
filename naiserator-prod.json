@@ -1,4 +1,6 @@
 {
+  "cloudsql_db_tier": "db-custom-1-6144",
+
   "servicebruker_brukernotifikasjon": "/serviceuser/data/prod/srvpambrukernot",
 
   "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v6",
