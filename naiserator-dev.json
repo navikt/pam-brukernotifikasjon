@@ -1,4 +1,6 @@
 {
+  "cloudsql_db_tier": "db-f1-micro",
+
   "servicebruker_brukernotifikasjon": "/serviceuser/data/dev/srvpambrukernot",
 
   "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v6",
