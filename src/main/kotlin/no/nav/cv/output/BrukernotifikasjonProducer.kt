@@ -43,7 +43,7 @@ class BrukernotifikasjonProducer(
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .build()
 
-        brukernotifikasjonClient.publish(nokkel, oppgave)
+        // TODO : Enable before prod in GCP brukernotifikasjonClient.publish(nokkel, oppgave)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
     }
 
@@ -59,7 +59,7 @@ class BrukernotifikasjonProducer(
                 .withGrupperingsId(grupperingsId)
                 .build()
 
-        brukernotifikasjonClient.done(nokkel, done)
+        // TODO : Enable before prod in GCP brukernotifikasjonClient.done(nokkel, done)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.fjernet").increment(1.0)
 
     }
