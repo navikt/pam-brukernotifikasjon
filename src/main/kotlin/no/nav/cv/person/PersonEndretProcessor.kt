@@ -21,7 +21,7 @@ class PersonEndretProcessor(
     fun receive(
             record: ConsumerRecord<String, GenericRecord>
     ) {
-        log.debug("PersonConsumer record recieved ${record.key()}")
+        //log.debug("PersonConsumer record recieved ${record.key()}")
         val identer = PersonDto(record.value())
                 .identer()
         personIdentRepository.oppdater(identer)
