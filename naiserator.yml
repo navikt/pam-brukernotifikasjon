@@ -29,13 +29,11 @@ spec:
   prometheus:
     enabled: true
     path: /pam-brukernotifikasjon/actuator/prometheus
+  envFrom:
+    - secret: pam-brukernotifikasjon-secret
   env:
     - name: JDBC_URL
       value: {{ jdbc_url }}
-    - name: DB_VAULT_PATH
-      value: {{ db_vault_path }}
-    - name: DB_VAULT_USERNAME
-      value: {{ db_vault_username }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
       value: {{ kafka_consumer_topic_cv_endret }}
     - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET
@@ -50,8 +48,6 @@ spec:
       value: {{ kafka_producer_topic_done }}
     - name: ADMIN_ENABLED
       value: {{ adminEnabled }}
-    - name: OPPFOLGING_FEED
-      value: {{ oppfolging_feed }}
     - name: SECURITY_TOKEN_SERVICE
       value: {{ security_token_service }}
     - name: OUTPUT_MELDING_LINK

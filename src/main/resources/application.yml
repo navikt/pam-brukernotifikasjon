@@ -19,11 +19,6 @@ spring:
     initSql:
       - 'SET ROLE "pam-brukernotifikasjon-admin"'
 
-db:
-  vault:
-    path: ${DB_VAULT_PATH:`postgresql/preprod`}
-    username: ${DB_VAULT_USERNAME:`pam-brukernotifikasjon-admin`}
-
 datasources:
   default:
     jdbcUrl: ${JDBC_URL:`jdbc:postgresql://localhost:5432/pam-brukernotifikasjon`}
