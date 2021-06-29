@@ -1,5 +1,6 @@
 {
   "cloudsql_db_tier": "db-custom-1-6144",
+  "kafka_schema_registry": "kafka-schema-registry.nais.adeo.no",
 
   "servicebruker_brukernotifikasjon": "/serviceuser/data/prod/srvpambrukernot",
 
