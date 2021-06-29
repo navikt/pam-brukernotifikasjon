@@ -26,7 +26,7 @@ class CvEndretProcessor (
         val cv = CvDto(record.value())
 
         hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
-        log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
+        //log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
     }
 
     override suspend fun process(records: ConsumerRecords<String, GenericRecord>) {
