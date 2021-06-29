@@ -11,6 +11,15 @@ management:
     web.exposure.include: prometheus
 
 spring:
+  datasource:
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:pam-brukernotifikasjon}
+    username: ${DB_USERNAME:pam-brukernotifikasjon}
+    password: ${DB_PASSWORD:pam-brukernotifikasjon}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 0
+      pool-name: default
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -18,10 +27,6 @@ spring:
       - "classpath:databasemigrations"
     initSql:
       - 'SET ROLE "pam-brukernotifikasjon-admin"'
-
-datasources:
-  default:
-    jdbcUrl: ${JDBC_URL:`jdbc:postgresql://localhost:5432/pam-brukernotifikasjon`}
 
 kafka:
   bootstrap.servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
