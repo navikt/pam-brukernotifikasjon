@@ -34,6 +34,8 @@ spec:
   env:
     - name: JDBC_URL
       value: {{ jdbc_url }}
+    - name: KAFKA_SCHEMA_REGISTRY
+      value: {{ kafka_schema_registry }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
       value: {{ kafka_consumer_topic_cv_endret }}
     - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET

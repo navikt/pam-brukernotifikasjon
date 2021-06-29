@@ -34,7 +34,7 @@ kafka:
     jaas.config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_SERVICE_USER:dummy} password=${KAFKA_SERVICE_PASSWORD:ymmud};'
   ssl.truststore.location: ${NAV_TRUSTSTORE_PATH:}
   ssl.truststore.password: ${NAV_TRUSTSTORE_PASSWORD:}
-  schema.registry.url: http://kafka-schema-registry.tpa:8081
+  schema.registry.url: https://${KAFKA_SCHEMA_REGISTRY:localhost:8081}
   topics:
     consumers:
       cv_endret: ${KAFKA_CONSUMER_TOPIC_CV_ENDRET:arbeid-pam-cv-endret-v4-q0}
