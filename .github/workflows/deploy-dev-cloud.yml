@@ -1,4 +1,4 @@
-name: build-deploy-dev
+name: build-deploy-dev-cloud
 on:
   push:
     paths-ignore:
