@@ -32,8 +32,6 @@ spec:
   envFrom:
     - secret: pam-brukernotifikasjon-secret
   env:
-    - name: JDBC_URL
-      value: {{ jdbc_url }}
     - name: KAFKA_SCHEMA_REGISTRY
       value: {{ kafka_schema_registry }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
