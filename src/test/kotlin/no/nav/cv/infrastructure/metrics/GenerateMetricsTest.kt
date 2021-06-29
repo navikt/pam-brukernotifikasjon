@@ -4,11 +4,13 @@ import io.micrometer.core.instrument.MeterRegistry
 import no.nav.cv.notifikasjon.Status
 import no.nav.cv.notifikasjon.StatusRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.ZonedDateTime
 
+@Disabled
 @SpringBootTest
 internal class GenerateMetricsTest {
 
