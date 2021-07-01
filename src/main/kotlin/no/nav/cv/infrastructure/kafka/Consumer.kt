@@ -35,7 +35,11 @@ class Consumer<K, V>(
     }
 
     fun startPolling() {
-        launch {
+        val handler = CoroutineExceptionHandler { _, exception ->
+            log.error("CoroutineExceptionHandler got $exception")
+        }
+
+        launch(handler) {
             kafkaConsumer.use { consumer ->
                 consumer.subscribe(listOf(topic))
 
