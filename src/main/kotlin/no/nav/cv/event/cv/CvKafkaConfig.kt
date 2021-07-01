@@ -34,7 +34,7 @@ class CvKafkaConfig {
 
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java.canonicalName
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-cv-v4-gcp"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-cv-v4"
         props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon-cv-endret-consumer"
 
         return Consumer(topic, KafkaConsumer<String, GenericRecord>(props), eventProcessor)

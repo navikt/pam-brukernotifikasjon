@@ -31,7 +31,7 @@ class PersonConfig {
 
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java.canonicalName
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-person-v1-gcp"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-person-v1"
         props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon-pdl-id-consumer"
 
         return Consumer(topic, KafkaConsumer<String, GenericRecord>(props), eventProcessor)
