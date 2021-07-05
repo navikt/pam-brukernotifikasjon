@@ -17,7 +17,7 @@ class VarslerJobb(
     }
 
     @SchedulerLock(name = "varslerjobb")
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     fun varsle() {
         val skalVarsles = repository.skalVarsles()
         skalVarsles.forEach {
