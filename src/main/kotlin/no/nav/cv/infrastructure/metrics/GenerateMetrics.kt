@@ -23,7 +23,7 @@ class GenerateMetrics(
         gauges[name] = meterRegistry.gauge(name, AtomicLong(value))
     }
 
-    @Scheduled(fixedDelay = 5*60*1000) // Every 5 minutes
+//    @Scheduled(fixedDelay = 5*60*1000) // Every 5 minutes
     fun generateMetrics() {
 
         val antallVarslet = statusRepository.antallAvStatus("varslet")
