@@ -6,6 +6,10 @@ metadata:
   labels:
     team: teampam
 spec:
+  accessPolicy:
+    outbound:
+      rules:
+        - application: pam-personoppslag
   image: {{ image }}
   port: 9029
   liveness:
