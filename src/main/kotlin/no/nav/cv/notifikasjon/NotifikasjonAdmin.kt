@@ -9,7 +9,7 @@ import java.util.*
 
 
 @RestController
-@RequestMapping("/internal/kafka/manuell")
+@RequestMapping("internal/kafka/manuell")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: String,
         private val varselPublisher: VarselPublisher
