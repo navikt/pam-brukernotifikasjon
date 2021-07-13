@@ -187,8 +187,6 @@ internal class StatusTest {
 
     @Test
     fun `bruker under oppfolging - varsle bruker - varsel publiseres nar det finnes fodselsnummer`() {
-        //every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
-
         val kommetUnderOppfolgingMedFnr = kommetUnderOppfolgingMedFnr()
         val forsoktVarsletSuksess = kommetUnderOppfolgingMedFnr.varsleBruker(varselPublisher)
 
@@ -289,8 +287,6 @@ internal class StatusTest {
 
     fun varsletStatus(): Status {
         val varselPublisher = mockk<VarselPublisher>(relaxed = true)
-//        val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
-//        every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
         return nyBruker().harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
                 .funnetFodselsnummer(aktorFnr)
                 .varsleBruker(varselPublisher)
