@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -9,6 +10,7 @@ import java.util.*
 
 
 @RestController
+@Unprotected
 @RequestMapping("internal/kafka/manuell")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: String,
