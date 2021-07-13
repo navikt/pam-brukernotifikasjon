@@ -26,6 +26,10 @@ spec:
       cpu: 200m
       memory: 256Mi
   webproxy: false
+  azure:
+    application:
+      enabled: true
+      tenant: {{ azure_ad_tenant }}
   prometheus:
     enabled: true
     path: /pam-brukernotifikasjon/actuator/prometheus
@@ -52,6 +56,10 @@ spec:
       value: {{ security_token_service }}
     - name: OUTPUT_MELDING_LINK
       value: {{ linkIMelding }}
+    - name: PERSONOPPSLAG_SCOPE
+      value: {{ personoppslag_scope }}
+    - name: PERSONOPPSLAG_BASE_URL
+      value: {{ personoppslag_base_url }}
   ingresses:
     - {{ ingress }}
   gcp:

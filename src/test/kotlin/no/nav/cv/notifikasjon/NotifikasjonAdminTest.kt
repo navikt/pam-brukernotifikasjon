@@ -5,9 +5,13 @@ import io.mockk.every
 import io.mockk.slot
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -16,8 +20,11 @@ import java.util.*
 private val uuid = UUID.randomUUID()
 private val fnr = "123dummy123"
 
+@ExtendWith(SpringExtension::class)
 @WebMvcTest(NotifikasjonAdmin::class)
+@AutoConfigureMockMvc(addFilters=false)
 @TestPropertySource(properties = ["admin.enabled:enabled"])
+@ContextConfiguration
 class NotifikasjonAdminTest {
 
     @Autowired

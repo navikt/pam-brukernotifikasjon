@@ -1,35 +1,42 @@
 package no.nav.cv.notifikasjon
 
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.cv.person.PersonIdent
-import no.nav.cv.person.PersonIdentRepository
-import no.nav.cv.person.PersonIdenter
-import org.junit.jupiter.api.Assertions
+import no.nav.cv.personident.PersonOppslag
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.runner.RunWith
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.junit4.SpringRunner
 import java.time.ZonedDateTime
 
+@ExtendWith(SpringExtension::class)
 internal class StatusTest {
     val aktor = "dummy"
     val aktorFnr = "dummy_fnr"
 
-    val personIdenterAktorId = PersonIdenter(listOf(
-            PersonIdent(aktor, PersonIdent.Type.AKTORID, true),
-            PersonIdent(aktorFnr, PersonIdent.Type.FOLKEREGISTER, true)
-    ))
+    @MockkBean(PersonOppslag::class)
+    private lateinit var personOppslag : PersonOppslag
+
+    @BeforeEach
+    fun setupPersonoppslag() {
+        every { personOppslag.hentAktorId(aktorFnr) } returns aktor
+        every { personOppslag.hentAktorId(aktor) } returns aktorFnr
+    }
+
 
     val varselPublisher = mockk<VarselPublisher>(relaxed = true)
-
-    val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
-
 
     private val now = ZonedDateTime.now()
     private val yesterday = ZonedDateTime.now().minusDays(1)
     private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
-    
+
+
     @Test
     fun `ny bruker`() {
         val ny = nyBruker()
@@ -180,7 +187,7 @@ internal class StatusTest {
 
     @Test
     fun `bruker under oppfolging - varsle bruker - varsel publiseres nar det finnes fodselsnummer`() {
-        every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
+        //every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
 
         val kommetUnderOppfolgingMedFnr = kommetUnderOppfolgingMedFnr()
         val forsoktVarsletSuksess = kommetUnderOppfolgingMedFnr.varsleBruker(varselPublisher)
@@ -282,8 +289,8 @@ internal class StatusTest {
 
     fun varsletStatus(): Status {
         val varselPublisher = mockk<VarselPublisher>(relaxed = true)
-        val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
-        every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
+//        val personIdentRepository = mockk <PersonIdentRepository>(relaxed = true)
+//        every { personIdentRepository.finnIdenter(aktor) } returns personIdenterAktorId
         return nyBruker().harKommetUnderOppfolging(twoDaysAgo, ABTest.skalVarsles)
                 .funnetFodselsnummer(aktorFnr)
                 .varsleBruker(varselPublisher)

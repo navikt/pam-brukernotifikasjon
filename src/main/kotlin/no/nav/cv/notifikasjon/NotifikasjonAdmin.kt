@@ -9,7 +9,7 @@ import java.util.*
 
 
 @RestController
-@RequestMapping("internal/kafka/manuell")
+@RequestMapping("/internal/kafka/manuell")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: String,
         private val varselPublisher: VarselPublisher
@@ -25,7 +25,7 @@ class NotifikasjonAdmin(
             @PathVariable("uuid") uuid: UUID,
             @PathVariable("fnr") fnr: String
     ): String {
-
+        log.warn("Call for NotifikasjonAdmin with adminEnabled: ${adminEnabled}")
         if(adminEnabled != "enabled") throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
         log.info("NotifikasjonAdmin genererer varsel oppgave for uuid $uuid")
@@ -39,6 +39,7 @@ class NotifikasjonAdmin(
             @PathVariable("uuid") uuid: UUID,
             @PathVariable("fnr") fnr: String
     ): String {
+        log.warn("Call for NotifikasjonAdmin with adminEnabled: ${adminEnabled}")
 
         if(adminEnabled != "enabled") throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 

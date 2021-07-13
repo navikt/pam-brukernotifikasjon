@@ -10,6 +10,19 @@ management:
   endpoints:
     web.exposure.include: prometheus
 
+no.nav.security.jwt:
+  client:
+    registration:
+      personoppslag:
+        token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID:dummy}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${PERSONOPPSLAG_SCOPE:some_scope}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID:dummy}
+          client-secret: ${AZURE_APP_CLIENT_SECRET:dummy}
+          client-auth-method: client_secret_basic
+
+
 spring:
   datasource:
     driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
@@ -50,3 +63,5 @@ admin:
   enabled: ${ADMIN_ENABLED:`disabled`}
 
 output.melding.link: ${OUTPUT_MELDING_LINK:`https://arbeidsplassen.nav.no/cv`}
+
+base.url.personoppslag: ${PERSONOPPSLAG_BASE_URL:http://dummyurl}

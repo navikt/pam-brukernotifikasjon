@@ -18,5 +18,9 @@
 
   "adminEnabled": "enabled",
 
-  "linkIMelding": "https://arbeidsplassen.dev.nav.no/cv"
+  "linkIMelding": "https://arbeidsplassen.dev.nav.no/cv",
+
+  "azure_ad_tenant": "trygdeetaten.no",
+  "personoppslag_scope": "api://dev-gcp.teampam.pam-personoppslag/.default",
+  "personoppslag_base_url": "https://pam-personoppslag.dev.intern.nav.no"
 }
