@@ -37,7 +37,6 @@ class ConsumerStatusHandler(
         }
     }
 
-    // TODO Attach to isAlive to restart? Or isReady to remove traffic?
     fun isUnhealthy() : Boolean {
         return unhealthy.any { it.value.get() > 10 }
                 .also { isUnhealthy -> if(isUnhealthy) log.error("Some consumers are unhealthy") }
