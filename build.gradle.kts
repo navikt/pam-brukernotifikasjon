@@ -23,6 +23,7 @@ object Version {
     val brukernotifikasjoner = "1.2021.01.18-11.12-b9c8c40b98d1"
     val avro = "1.9.2"
     val confluent = "5.3.0"
+    val token_support = "1.3.5"
 }
 
 dependencies {
@@ -49,6 +50,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    implementation("no.nav.security:token-validation-test-support:${Version.token_support}")
+    implementation("no.nav.security:token-validation-spring:${Version.token_support}")
+    implementation("no.nav.security:token-client-spring:${Version.token_support}")
+    implementation("no.nav.security:token-validation-core:${Version.token_support}")
+
+
     testImplementation("com.ninja-squad:springmockk:3.0.1")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
     testImplementation("io.mockk:mockk:1.9.3")
@@ -59,6 +68,8 @@ dependencies {
     }
     testImplementation("org.testcontainers:junit-jupiter:1.15.3")
     testImplementation("org.testcontainers:kafka:1.15.3")
+    testImplementation("org.mock-server:mockserver-netty:5.11.1")
+
 }
 
 tasks.withType<KotlinCompile> {

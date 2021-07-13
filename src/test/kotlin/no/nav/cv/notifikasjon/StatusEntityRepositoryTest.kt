@@ -2,35 +2,38 @@ package no.nav.cv.notifikasjon
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nav.cv.person.PersonIdent
-import no.nav.cv.person.PersonIdentRepository
-import no.nav.cv.person.PersonIdenter
+import no.nav.cv.personident.PersonOppslag
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.function.Executable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.stereotype.Repository
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.ZonedDateTime
 
 @DataJpaTest(includeFilters = [ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [Repository::class])])
+@ExtendWith(SpringExtension::class)
 class StatusEntityRepositoryTest {
 
     val aktorId = "dummy"
     val aktorId2 = "dummy2"
 
-    val personIdenterAktorId = PersonIdenter(listOf(
-            PersonIdent("dummy", PersonIdent.Type.AKTORID, true),
-            PersonIdent("dummy_fnr", PersonIdent.Type.FOLKEREGISTER, true)
-    ))
+
+    @MockkBean(PersonOppslag::class)
+    private lateinit var personOppslag : PersonOppslag
+
+    @BeforeEach
+    fun setupPersonoppslag() {
+        every { personOppslag.hentAktorId(aktorId) } returns "dummy_fnr"
+    }
 
     @Autowired
     lateinit var statusRepository: StatusRepository
-
-    @MockkBean(relaxed = true)
-    lateinit var personIdentRepositoryMock: PersonIdentRepository
 
     @MockkBean(relaxed = true)
     lateinit var varselPublisherMock: VarselPublisher
@@ -107,7 +110,7 @@ class StatusEntityRepositoryTest {
 
     @Test
     fun `skal kun hente siste varsel`() {
-        every { personIdentRepositoryMock.finnIdenter(aktorId) } returns personIdenterAktorId
+        //every { personIdentRepositoryMock.finnIdenter(aktorId) } returns personIdenterAktorId
 
         val new1 = Status.nyBruker(aktorId)
         val underOppfolging1 = new1.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)

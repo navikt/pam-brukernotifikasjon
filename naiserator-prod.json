@@ -19,5 +19,9 @@
 
   "adminEnabled": "disabled",
 
-  "linkIMelding": "https://arbeidsplassen.nav.no/cv"
+  "linkIMelding": "https://arbeidsplassen.nav.no/cv",
+
+  "azure_ad_tenant": "nav.no",
+  "personoppslag_scope": "api://prod-gcp.teampam.pam-personoppslag/.default",
+  "personoppslag_base_url": "https://pam-personoppslag.intern.nav.no"
 }
