@@ -7,16 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@Unprotected
 @RequestMapping("internal")
-class ApplicationStatusController(
-    private val consumerStatusHandler: ConsumerStatusHandler
-) {
+@Unprotected
+class ApplicationStatusController {
 
     @GetMapping("isReady")
     fun isReady() = "Ready for everything"
 
     @GetMapping("isAlive")
-    fun isAlive() = !consumerStatusHandler.isUnhealthy()
+    fun isAlive() = "OK"//!consumerStatusHandler.isUnhealthy()
 
 }
