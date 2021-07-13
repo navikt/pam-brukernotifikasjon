@@ -67,8 +67,11 @@ class NotifikasjonAdminTest {
 
 }
 
+@ExtendWith(SpringExtension::class)
 @WebMvcTest(NotifikasjonAdmin::class)
+@AutoConfigureMockMvc(addFilters=false)
 @TestPropertySource(properties = ["admin.enabled:disabled"])
+@ContextConfiguration
 class NotifikasjonAdminDisabledTest {
 
     @Autowired

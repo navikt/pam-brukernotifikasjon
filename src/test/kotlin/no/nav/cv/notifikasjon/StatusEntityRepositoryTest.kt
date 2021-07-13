@@ -110,8 +110,6 @@ class StatusEntityRepositoryTest {
 
     @Test
     fun `skal kun hente siste varsel`() {
-        //every { personIdentRepositoryMock.finnIdenter(aktorId) } returns personIdenterAktorId
-
         val new1 = Status.nyBruker(aktorId)
         val underOppfolging1 = new1.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
         val medFnr = underOppfolging1.funnetFodselsnummer("anything")
