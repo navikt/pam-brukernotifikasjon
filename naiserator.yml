@@ -37,7 +37,6 @@ spec:
   azure:
     application:
       enabled: true
-      tenant: {{ azure_ad_tenant }}
   prometheus:
     enabled: true
     path: /pam-brukernotifikasjon/actuator/prometheus
