@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.0"
+    id("org.springframework.boot") version "2.5.2"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.10"
     kotlin("plugin.serialization") version "1.5.10"
@@ -23,7 +23,7 @@ object Version {
     val brukernotifikasjoner = "1.2021.01.18-11.12-b9c8c40b98d1"
     val avro = "1.9.2"
     val confluent = "5.3.0"
-    val token_support = "1.3.5"
+    val token_support = "1.3.8"
 }
 
 dependencies {
@@ -49,14 +49,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    implementation("org.springframework.boot:spring-boot-starter-security")
+//    implementation("org.springframework.boot:spring-boot-starter-security")
 
-    implementation("no.nav.security:token-validation-test-support:${Version.token_support}")
+//    implementation("no.nav.security:token-validation-test-support:${Version.token_support}")
     implementation("no.nav.security:token-validation-spring:${Version.token_support}")
     implementation("no.nav.security:token-client-spring:${Version.token_support}")
-    implementation("no.nav.security:token-validation-core:${Version.token_support}")
-
+//    implementation("no.nav.security:token-validation-core:${Version.token_support}")
+    implementation("javax.inject:javax.inject:1")
 
     testImplementation("com.ninja-squad:springmockk:3.0.1")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
