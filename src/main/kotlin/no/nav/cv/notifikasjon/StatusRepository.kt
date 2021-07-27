@@ -8,6 +8,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 
 @Repository
@@ -28,6 +29,38 @@ class StatusRepository(
         entityManager.persist(StatusEntity.fromStatus(status))
     }
 
+    private val sisteGruppe = """
+        SELECT s.* 
+        FROM STATUS s
+        WHERE s.UUID = (
+            SELECT DISTINCT(s_inner.UUID)
+            FROM STATUS s_inner WHERE 
+            TIDSPUNKT = (
+                SELECT max(s_inner_inner.TIDSPUNKT) 
+                FROM STATUS s_inner_inner 
+                WHERE s_inner_inner.AKTOR_ID = :aktorId
+                )
+            AND s_inner.AKTOR_ID = :aktorId
+        );
+        
+    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+    // Finner gruppering av statuser med siste oppdatering for en person
+    @Transactional
+    open fun finnStatuser(aktorId: String): Statuser {
+        val resultat = entityManager.createNativeQuery(sisteGruppe, StatusEntity::class.java)
+            .setParameter("aktorId", aktorId)
+            .resultList
+            .map { it as StatusEntity }
+            .map { it.toStatus() }
+            .toList()
+
+        if (resultat.isEmpty()) {
+            return listOf(Status.nySession(aktorId)).statuser()
+        }
+
+        return resultat.statuser()
+    }
 
     private val sisteQuery =
             """
@@ -46,7 +79,7 @@ class StatusRepository(
         .map { it as StatusEntity }
         .map { it.toStatus() }
         .firstOrNull()
-        ?: Status.nyBruker(aktorId)
+        ?: Status.nySession(aktorId)
 
 
     private val skalVarsles =
@@ -146,7 +179,7 @@ private class StatusEntity() {
 
     fun toStatus() = Status(
             uuid = uuid,
-            aktorId = aktorId,
+            aktoerId = aktorId,
             fnr = fnr,
             status = status,
             statusTidspunkt = tidspunkt)
@@ -173,7 +206,7 @@ private class StatusEntity() {
             val entity = StatusEntity()
             entity.initStatus(
                     uuid = status.uuid,
-                    aktorId = status.aktorId,
+                    aktorId = status.aktoerId,
                     fnr = status.fnr,
                     status = status.status,
                     tidspunkt = status.statusTidspunkt

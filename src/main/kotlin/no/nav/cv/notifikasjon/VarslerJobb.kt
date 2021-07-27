@@ -4,7 +4,6 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.time.ZonedDateTime
 
 @Service
 class VarslerJobb(
@@ -22,7 +21,7 @@ class VarslerJobb(
         val skalVarsles = repository.skalVarsles()
         skalVarsles.forEach {
             log.debug("Varsler uuid ${it.uuid} med status ${it.status} og nåværende tidspunkt ${it.statusTidspunkt}")
-            hendelseService.varsleBruker(it.aktorId, ZonedDateTime.now())
+            hendelseService.varsleBruker(it.aktoerId)
         }
     }
 }
