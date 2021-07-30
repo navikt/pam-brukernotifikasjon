@@ -28,31 +28,6 @@ const val doneStatus = "done"
 
 private val startOfTime = ZonedDateTime.now().minusYears(40)
 
-/**
- * Representerer en gruppe med statuser som hører sammen
- */
-class Statuser(
-    private val statuser: List<Status>
-) {
-    init {
-        require(statuser.all { it.uuid == statuser[0].uuid })
-    }
-
-    fun nyesteStatus() = statuser.sortedByDescending { it.statusTidspunkt }.first()
-
-    fun cvOppdatertTidspunkt(): ZonedDateTime {
-        return statuser
-            .filter { it.status == cvOppdatertStatus }
-            .map { it.statusTidspunkt }
-            .maxByOrNull { it }
-            ?: startOfTime
-    }
-
-    val uuid = statuser[0].uuid
-}
-
-fun List<Status>.statuser() = Statuser(this)
-
 
 class Status(
     val uuid: UUID,
@@ -121,31 +96,33 @@ class Status(
         )
     }
 
-    fun nySession() : Status {
+    fun nySession(): Status {
         return nySession(
             aktorId = this.aktoerId,
             tidspunkt = this.statusTidspunkt.plusNanos(1000)
         )
     }
 
-    fun skalVarlsesManglerFnr(datoSisteOppfolging: ZonedDateTime) : Status {
+    fun skalVarlsesManglerFnr(datoSisteOppfolging: ZonedDateTime): Status {
         return skalVarlsesManglerFnr(
             this,
-            datoSisteOppfolging)
+            datoSisteOppfolging
+        )
     }
 
     fun skalVarsles(fodselsnummer: String): Status {
         return skalVarsles(this, fodselsnummer = fodselsnummer)
     }
 
-    fun varslet(tidspunkt: ZonedDateTime) : Status {
+    fun varslet(tidspunkt: ZonedDateTime): Status {
         return varslet(this, tidspunkt)
     }
 
-    fun forGammel(datoSisteOppfolging: ZonedDateTime) : Status {
+    fun forGammel(datoSisteOppfolging: ZonedDateTime): Status {
         return forGammel(
             forrigeStatus = this,
-            tidspunkt = datoSisteOppfolging)
+            tidspunkt = datoSisteOppfolging
+        )
     }
 
     fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime): Status {
@@ -156,10 +133,34 @@ class Status(
         return cvOppdatert(this, hendelsesTidspunkt)
     }
 
-
     override fun toString(): String {
         return "Status(uuid=$uuid, aktorId='$aktoerId', fnr='XXX', status='$status', statusTidspunkt=$statusTidspunkt)"
     }
 
-
 }
+
+/**
+ * Representerer en gruppe med statuser som hører sammen
+ */
+class Statuser(
+    private val statuser: List<Status>
+) {
+    init {
+        require(statuser.all { it.uuid == statuser[0].uuid })
+    }
+
+    fun nyesteStatus() = statuser.maxByOrNull { it.statusTidspunkt }
+        ?: throw Exception("No status in the list?")
+
+    fun cvOppdatertTidspunkt(): ZonedDateTime {
+        return statuser
+            .filter { it.status == cvOppdatertStatus }
+            .map { it.statusTidspunkt }
+            .maxByOrNull { it }
+            ?: startOfTime
+    }
+
+    val uuid = statuser[0].uuid
+}
+
+fun List<Status>.statuser() = Statuser(this)
