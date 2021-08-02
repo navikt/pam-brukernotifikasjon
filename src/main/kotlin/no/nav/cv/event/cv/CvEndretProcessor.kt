@@ -44,7 +44,7 @@ private class CvDto(val record: GenericRecord) {
     fun sistEndret() =
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis()), TimeZone.getDefault().toZoneId())
 
-    fun slettetCv() = record.get("slett_cv") != null
+    fun slettetCv() = record.get("meldingstype")?.toString()?.equals("SLETT") == true
 
     private fun sistEndretMillis() = record.sistEndret()
             ?: throw Exception("Record mangler sistEndret")
