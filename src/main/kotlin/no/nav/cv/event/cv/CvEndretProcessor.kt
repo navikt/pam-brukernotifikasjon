@@ -25,8 +25,10 @@ class CvEndretProcessor (
     ) {
         val cv = CvDto(record.value())
 
-        hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
-        //log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
+        if(!cv.slettetCv())
+            hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
+
+    //log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
     }
 
     override suspend fun process(records: ConsumerRecords<String, GenericRecord>) {
@@ -41,6 +43,8 @@ private class CvDto(val record: GenericRecord) {
 
     fun sistEndret() =
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis()), TimeZone.getDefault().toZoneId())
+
+    fun slettetCv() = record.get("slett_cv") != null
 
     private fun sistEndretMillis() = record.sistEndret()
             ?: throw Exception("Record mangler sistEndret")
