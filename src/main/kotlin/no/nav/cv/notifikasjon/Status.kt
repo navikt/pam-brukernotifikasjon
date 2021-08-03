@@ -81,7 +81,7 @@ class Status(
                 status = ikkeUnderOppfølgingStatus,
                 statusTidspunkt = tidspunkt)
 
-        fun cvOppdatert(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
+        fun endretCV(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
@@ -122,8 +122,8 @@ class Status(
         return ikkeUnderOppfolging(this, hendelsesTidspunkt)
     }
 
-    fun harSettCv(hendelsesTidspunkt: ZonedDateTime): Status {
-        return cvOppdatert(this, hendelsesTidspunkt)
+    fun endretCV(hendelsesTidspunkt: ZonedDateTime): Status {
+        return endretCV(this, hendelsesTidspunkt)
     }
 
     override fun toString(): String {

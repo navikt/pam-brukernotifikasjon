@@ -75,7 +75,7 @@ internal class StatusTestNy {
 
     @Test
     fun `ny bruker - har sett cv - status cvOppdatert`() {
-        hendelseService.harSettCv(aktoer, now)
+        hendelseService.endretCV(aktoer, now)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
 
@@ -97,7 +97,7 @@ internal class StatusTestNy {
     fun `for gammel – har sett cv – status cvOppdatert`() {
         val status = Status.nySession(aktoer).forGammel(agesAgo)
         statusRepository.lagre(status)
-        hendelseService.harSettCv(aktoer, yesterday)
+        hendelseService.endretCV(aktoer, yesterday)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
 
@@ -159,7 +159,7 @@ internal class StatusTestNy {
             .varslet(yesterday)
 
         statusRepository.lagre(status)
-        hendelseService.harSettCv(aktoer, now)
+        hendelseService.endretCV(aktoer, now)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
 
@@ -201,7 +201,7 @@ internal class StatusTestNy {
     fun `ikke under oppfoelging – har sett cv – status cvOppdatert`() {
         val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktoer), tidspunkt = twoDaysAgo)
         statusRepository.lagre(status)
-        hendelseService.harSettCv(aktoer, yesterday)
+        hendelseService.endretCV(aktoer, yesterday)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
 

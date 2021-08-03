@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.function.Executable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.stereotype.Repository
@@ -56,7 +55,7 @@ class StatusEntityRepositoryTest {
     fun `that fetch latest fetches last`() {
         val statusOld = Status.nySession(aktorId)
         val statusNewer = Status.varslet(statusOld, yesterday)
-        val statusNewest = Status.cvOppdatert(statusNewer, now)
+        val statusNewest = Status.endretCV(statusNewer, now)
         statusRepository.lagre(statusOld)
         statusRepository.lagre(statusNewer)
         statusRepository.lagre(statusNewest)

@@ -53,7 +53,7 @@ internal class StatusTest {
     @Test
     fun `ny bruker - sett cv - gir status cv oppdatert`() {
         val ny = nyBruker()
-        val settCv = ny.harSettCv(twoDaysAgo)
+        val settCv = ny.endretCV(twoDaysAgo)
 
         assertEquals(settCv.status, cvOppdatertStatus)
         assertEquals(settCv.statusTidspunkt, twoDaysAgo)
@@ -252,7 +252,7 @@ internal class StatusTest {
 
     fun ikkeUnderOppfolging() = nyBruker().ikkeUnderOppfølging(twoDaysAgo)
 
-    fun settCv() = varsletStatus().harSettCv(twoDaysAgo)
+    fun settCv() = varsletStatus().endretCV(twoDaysAgo)
 
     fun kommetUnderOppfolging(): Status = nyBruker().skalVarlsesManglerFnr(twoDaysAgo)
 

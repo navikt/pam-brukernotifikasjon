@@ -27,7 +27,7 @@ class CvEndretProcessor (
 
         if(!cv.slettetCv()) {
             log.info("Kafka CV msg for ${cv.aktorId()} is NOT a deletion msg")
-            hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
+            hendelseService.endretCV(cv.aktorId(), cv.sistEndret())
         } else {
             log.info("Kafka CV msg for ${cv.aktorId()} is a deletion msg, so skipping it")
         }

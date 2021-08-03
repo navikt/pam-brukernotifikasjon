@@ -15,7 +15,7 @@ interface HendelseService {
 
     fun varsleBruker(aktorId: String)
 
-    fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
+    fun endretCV(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
     fun funnetFodselsnummer(aktorId: String, fnr: String)
 }
@@ -113,13 +113,13 @@ class Hendelser (
 //    }
 
 
-    override fun harSettCv(aktorId: String, tidspunkt: ZonedDateTime) {
+    override fun endretCV(aktorId: String, tidspunkt: ZonedDateTime) {
         val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
 
         if(nyesteStatus.status == varsletStatus)
             varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
 
-        repository.lagre(nyesteStatus.harSettCv(tidspunkt))
+        repository.lagre(nyesteStatus.endretCV(tidspunkt))
     }
 
 //    override fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
