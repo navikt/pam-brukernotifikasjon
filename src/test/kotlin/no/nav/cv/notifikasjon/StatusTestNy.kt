@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.random.Random
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @ExtendWith(SpringExtension::class)
@@ -70,6 +72,7 @@ internal class StatusTestNy {
     fun `ny bruker - riktig aktoerId`() {
         val nyBruker = Status.nySession(aktoer)
 
+        assertEquals(nyBrukerStatus, nyBruker.status)
         assertEquals(aktoer, nyBruker.aktoerId)
     }
 
@@ -92,6 +95,27 @@ internal class StatusTestNy {
         assertEquals(forGammelStatus, lagretStatus.status)
         assertEquals(agesAgo, lagretStatus.statusTidspunkt)
     }
+
+    @Test
+    fun `ny bruker - har kommet under oppfoelging - status skalVarslesManglerFoedselsnummer`() {
+        hendelseService.harKommetUnderOppfolging(aktoer, yesterday)
+
+        val lagretStatus = statusRepository.finnSiste(aktoer)
+
+        assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
+        assertEquals(yesterday, lagretStatus.statusTidspunkt)
+    }
+
+    @Test
+    fun `ny bruker - ikke under oppfølging - gir status ikke under oppfølging`() {
+        hendelseService.ikkeUnderOppfolging(aktoer, now)
+
+        val lagretStatus = statusRepository.finnSiste(aktoer)
+
+        assertEquals(ikkeUnderOppfølgingStatus, lagretStatus.status)
+        assertEquals(now, lagretStatus.statusTidspunkt)
+    }
+
 
     @Test
     fun `for gammel – har sett cv – status cvOppdatert`() {
@@ -118,15 +142,7 @@ internal class StatusTestNy {
         assertEquals(yesterday, lagretStatus.statusTidspunkt)
     }
 
-    @Test
-    fun `ny bruker - har kommet under oppfoelging - status skalVarslesManglerFoedselsnummer`() {
-        hendelseService.harKommetUnderOppfolging(aktoer, yesterday)
 
-        val lagretStatus = statusRepository.finnSiste(aktoer)
-
-        assertEquals(skalVarslesManglerFnrStatus, lagretStatus.status)
-        assertEquals(yesterday, lagretStatus.statusTidspunkt)
-    }
 
     @Test
     fun `bruker under oppfoelging - fnr funnet - status skalVarsles`() {
@@ -168,7 +184,7 @@ internal class StatusTestNy {
     }
 
     @Test
-    fun `bruker varslet – melding fra pto – status ikkeUnderOppfoelging`() {
+    fun `bruker varslet – ikke under oppfølging – status ikkeUnderOppfoelging`() {
         val status = Status.nySession(aktoer)
             .skalVarlsesManglerFnr(twoDaysAgo)
             .skalVarsles(aktoerFnr)
