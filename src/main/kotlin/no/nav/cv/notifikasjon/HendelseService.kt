@@ -91,6 +91,8 @@ class Hendelser (
 
         // Bør vi sende denne uansett, i tilfelle vi skulle få en race condition mellom to statuser?
         val nesteStatus = when(nyesteStatus.status) {
+            nyBrukerStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
+
             skalVarslesManglerFnrStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
             skalVarslesStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
 
