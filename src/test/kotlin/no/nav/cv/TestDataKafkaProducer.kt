@@ -65,7 +65,7 @@ class TestAKafkaApplication {
                     )
             )
             oppfolgingsstatusProducer.flush()
-            verify { hendelseService.kommetUnderOppfolging(aktorId, any()) }
+            verify { hendelseService.harKommetUnderOppfolging(aktorId, any()) }
         }
 
     @Test
@@ -81,7 +81,7 @@ class TestAKafkaApplication {
                     )
             )
             oppfolgingsstatusProducer.flush()
-            verify { hendelseService.blittFulgtOpp(aktorId, any()) }
+            verify { hendelseService.ikkeUnderOppfolging(aktorId, any()) }
         }
 
 

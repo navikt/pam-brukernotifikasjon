@@ -44,7 +44,7 @@ class StatusEntityRepositoryTest {
 
     @Test
     fun `save and fetch`() {
-        val status = Status.nyBruker(aktorId)
+        val status = Status.nySession(aktorId)
         statusRepository.lagre(status)
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
@@ -53,9 +53,9 @@ class StatusEntityRepositoryTest {
 
     @Test
     fun `that fetch latest fetches last`() {
-        val statusOld = Status.nyBruker(aktorId)
-        val statusNewer = Status.varslet(statusOld, "fnr", yesterday)
-        val statusNewest = Status.done(statusNewer, now)
+        val statusOld = Status.nySession(aktorId)
+        val statusNewer = Status.varslet(statusOld, yesterday)
+        val statusNewest = Status.endretCV(statusNewer, now)
         statusRepository.lagre(statusOld)
         statusRepository.lagre(statusNewer)
         statusRepository.lagre(statusNewest)
@@ -69,8 +69,8 @@ class StatusEntityRepositoryTest {
 
     @Test
     fun `that latest fetches correct foedselsnummer`() {
-        val savedFirst = Status.nyBruker(aktorId)
-        val savedLast = Status.nyBruker(aktorId2)
+        val savedFirst = Status.nySession(aktorId)
+        val savedLast = Status.nySession(aktorId2)
 
         statusRepository.lagre(savedFirst)
         statusRepository.lagre(savedLast)
@@ -83,12 +83,12 @@ class StatusEntityRepositoryTest {
 
     @Test
     fun `at hentSkalVarsles returnerer alle som skal varsles`() {
-        val new1 = Status.nyBruker(aktorId)
-        val underOppfolging1 = new1.harKommetUnderOppfolging(now, ABTest.skalVarsles)
-        val medFnr1 = underOppfolging1.funnetFodselsnummer("4321")
-        val new2 = Status.nyBruker(aktorId2)
-        val underOppfolging2 = new2.harKommetUnderOppfolging(now, ABTest.skalVarsles)
-        val medFnr2 = underOppfolging2.funnetFodselsnummer("1234")
+        val new1 = Status.nySession(aktorId)
+        val underOppfolging1 = new1.skalVarlsesManglerFnr(now)
+        val medFnr1 = underOppfolging1.skalVarsles("4321")
+        val new2 = Status.nySession(aktorId2)
+        val underOppfolging2 = new2.skalVarlsesManglerFnr(now)
+        val medFnr2 = underOppfolging2.skalVarsles("1234")
 
         statusRepository.lagre(new1)
         statusRepository.lagre(new2)
@@ -101,39 +101,12 @@ class StatusEntityRepositoryTest {
 
         assertAll(
                 Executable { assertEquals(skalVarslesListe.size, 2)  },
-                Executable { assertTrue(skalVarslesListe.map {it.aktorId}.contains(aktorId)) },
-                Executable { assertTrue(skalVarslesListe.map {it.aktorId}.contains(aktorId2)) }
+                Executable { assertTrue(skalVarslesListe.map {it.aktoerId}.contains(aktorId)) },
+                Executable { assertTrue(skalVarslesListe.map {it.aktoerId}.contains(aktorId2)) }
         )
 
     }
 
 
-    @Test
-    fun `skal kun hente siste varsel`() {
-        val new1 = Status.nyBruker(aktorId)
-        val underOppfolging1 = new1.harKommetUnderOppfolging(yesterday, ABTest.skalVarsles)
-        val medFnr = underOppfolging1.funnetFodselsnummer("anything")
-        val erVarslet = medFnr.varsleBruker(
-                varselPublisherMock
-        )
-        val settCv = erVarslet.harSettCv(ZonedDateTime.now(), varselPublisherMock)
-
-        val nyOppfolging = settCv.harKommetUnderOppfolging(ZonedDateTime.now(), ABTest.skalVarsles)
-        val nyOppfolgingMedFnr = nyOppfolging.funnetFodselsnummer("anything")
-
-        statusRepository.lagre(new1)
-        statusRepository.lagre(underOppfolging1)
-        statusRepository.lagre(medFnr)
-        statusRepository.lagre(erVarslet)
-        statusRepository.lagre(settCv)
-
-        statusRepository.lagre(nyOppfolging)
-        statusRepository.lagre(nyOppfolgingMedFnr)
-
-
-        val skalVarslesListe = statusRepository.skalVarsles()
-
-        assertEquals(skalVarslesListe.size, 1)
-    }
 
 }

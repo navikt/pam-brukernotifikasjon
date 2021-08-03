@@ -6,17 +6,32 @@ import java.util.*
 
 const val ukjentFnr = "ukjent"
 
-const val nyBrukerStatus = "ukjent"
+const val nyBrukerStatus = "ukjent" // "nyBruker"
+
+const val skalVarslesManglerFnrStatus = "skalVarslesManglerFnr"
 const val skalVarslesStatus = "skalVarsles"
 const val varsletStatus = "varslet"
+
+const val forGammelStatus = "forGammel"
+const val cvOppdatertStatus = "cvOppdatert"
+const val ikkeUnderOppfølgingStatus = "ikkeUnderOppfølging"
+
 const val doneStatus = "done"
-const val abTestSkalIkkeVarsles = "abTestSkalIkkeVarsles"
+
+//const val ukjentFnr = "ukjent"
+//
+//const val nyBrukerStatus = "ukjent"
+//const val skalVarslesStatus = "skalVarsles"
+//const val varsletStatus = "varslet"
+//const val doneStatus = "done"
+//const val abTestSkalIkkeVarsles = "abTestSkalIkkeVarsles"
 
 private val startOfTime = ZonedDateTime.now().minusYears(40)
 
+
 class Status(
         val uuid: UUID,
-        val aktorId: String,
+        val aktoerId: String,
         val fnr: String = ukjentFnr,
         val status: String,
         val statusTidspunkt: ZonedDateTime
@@ -25,112 +40,122 @@ class Status(
     companion object {
         private val log = LoggerFactory.getLogger(Status::class.java)
 
-        fun nyBruker(aktorId: String) = Status(
+        fun nySession(aktorId: String, tidspunkt: ZonedDateTime = startOfTime) = Status(
                 uuid = UUID.randomUUID(),
-                aktorId = aktorId,
+                aktoerId = aktorId,
                 status = nyBrukerStatus,
-                statusTidspunkt = startOfTime)
+                statusTidspunkt = tidspunkt)
 
-        fun nyttVarsel(forrigeStatus: Status) = Status(
-                uuid = UUID.randomUUID(),
-                aktorId = forrigeStatus.aktorId,
-                status = nyBrukerStatus,
-                statusTidspunkt = forrigeStatus.statusTidspunkt.plusNanos(1000))
-
-        fun skalVarsles(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
+        fun skalVarlsesManglerFnr(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
-                fnr = forrigeStatus.fnr,
-                status = skalVarslesStatus,
+                aktoerId = forrigeStatus.aktoerId,
+                fnr = ukjentFnr, // vi tvinger frem nytt oppslag - i tilfelle fnr kan ha endret seg
+                status = skalVarslesManglerFnrStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun varslet(forrigeStatus: Status, fnr: String, statusTidspunkt: ZonedDateTime) = Status(
+        fun skalVarsles(forrigeStatus: Status, fodselsnummer: String) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
-                fnr = fnr,
+                aktoerId = forrigeStatus.aktoerId,
+                fnr = fodselsnummer,
+                status = skalVarslesStatus,
+                statusTidspunkt = ZonedDateTime.now())
+
+        fun varslet(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
+                uuid = forrigeStatus.uuid,
+                aktoerId = forrigeStatus.aktoerId,
+                fnr = forrigeStatus.fnr,
                 status = varsletStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun done(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
-                uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+        fun forGammel(forrigeStatus: Status, uuid: UUID = forrigeStatus.uuid, tidspunkt: ZonedDateTime) = Status(
+                uuid = uuid,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
-                status = doneStatus,
-                statusTidspunkt = statusTidspunkt)
+                status = forGammelStatus,
+                statusTidspunkt = tidspunkt)
 
-        fun funnetFodselsnummer(forrigeStatus: Status, fodselsnummer: String) = Status(
+        fun ikkeUnderOppfolging(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
-                fnr = fodselsnummer,
-                status = forrigeStatus.status,
-                statusTidspunkt = ZonedDateTime.now())
-
-        fun abTestSkalIkkeVarsles(forrigeStatus: Status) = Status(
-                uuid = forrigeStatus.uuid,
-                aktorId = forrigeStatus.aktorId,
+                aktoerId = forrigeStatus.aktoerId,
                 fnr = forrigeStatus.fnr,
-                status = abTestSkalIkkeVarsles,
-                statusTidspunkt = ZonedDateTime.now())
+                status = ikkeUnderOppfølgingStatus,
+                statusTidspunkt = tidspunkt)
+
+        fun endretCV(forrigeStatus: Status, tidspunkt: ZonedDateTime) = Status(
+                uuid = forrigeStatus.uuid,
+                aktoerId = forrigeStatus.aktoerId,
+                fnr = forrigeStatus.fnr,
+                status = cvOppdatertStatus,
+                statusTidspunkt = tidspunkt)
     }
 
-    fun isAfter(tidspunkt: ZonedDateTime): Boolean = statusTidspunkt.isAfter(tidspunkt)
-
-    fun erVarslet(): Boolean = status == varsletStatus
-
-    fun harKommetUnderOppfolging(hendelsesTidspunkt: ZonedDateTime, abTestSelector: ABTestSelector): Status {
-
-        val nyStatus = when(status) {
-            doneStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
-            skalVarslesStatus -> skalVarsles(nyttVarsel(this), hendelsesTidspunkt)
-
-            nyBrukerStatus -> if(abTestSelector.skalVarsles()) skalVarsles(this, hendelsesTidspunkt)
-                                else abTestSkalIkkeVarsles(this)
-            else -> this
-        }
-
-        log.debug("uuid $uuid har kommet under oppfølging $hendelsesTidspunkt. Status før: $status  Status nå: ${nyStatus.status}")
-        return nyStatus
+    fun nySession(): Status {
+        return nySession(
+            aktorId = this.aktoerId,
+            tidspunkt = this.statusTidspunkt.plusNanos(1000)
+        )
     }
 
-    fun funnetFodselsnummer(fodselsnummer: String): Status {
-        return funnetFodselsnummer(this, fodselsnummer = fodselsnummer)
+    fun skalVarlsesManglerFnr(datoSisteOppfolging: ZonedDateTime): Status {
+        return skalVarlsesManglerFnr(
+            this,
+            datoSisteOppfolging
+        )
     }
 
-    fun varsleBruker(
-            varselPublisher: VarselPublisher
-    ): Status {
-        if(status != skalVarslesStatus) {
-            log.debug("UUID ($uuid) er alt varslet og har status $status")
-            return this
-        }
-
-        varselPublisher.publish(uuid, fnr)
-        return varslet(this, fnr, ZonedDateTime.now())
+    fun skalVarsles(fodselsnummer: String): Status {
+        return skalVarsles(this, fodselsnummer = fodselsnummer)
     }
 
-    fun blittFulgtOpp(
-            hendelsesTidspunkt: ZonedDateTime,
-            varselPublisher: VarselPublisher
-    ): Status {
-        if(status == varsletStatus) {
-            varselPublisher.done(uuid, fnr)
-        }
-        return done(this, hendelsesTidspunkt)
+    fun varslet(tidspunkt: ZonedDateTime): Status {
+        return varslet(this, tidspunkt)
     }
-    fun harSettCv(
-            hendelsesTidspunkt: ZonedDateTime,
-            varselPublisher: VarselPublisher
-    ): Status {
-        if(status == varsletStatus) {
-            varselPublisher.done(uuid, fnr)
-        }
-        return done(this, hendelsesTidspunkt)
 
+    fun forGammel(datoSisteOppfolging: ZonedDateTime): Status {
+        return forGammel(
+            forrigeStatus = this,
+            tidspunkt = datoSisteOppfolging
+        )
+    }
+
+    fun ikkeUnderOppfølging(hendelsesTidspunkt: ZonedDateTime): Status {
+        return ikkeUnderOppfolging(this, hendelsesTidspunkt)
+    }
+
+    fun endretCV(hendelsesTidspunkt: ZonedDateTime): Status {
+        return endretCV(this, hendelsesTidspunkt)
     }
 
     override fun toString(): String {
-        return "Status(uuid=$uuid, aktorId='$aktorId', fnr='$fnr', status='$status', statusTidspunkt=$statusTidspunkt)"
+        return "Status(uuid=$uuid, aktorId='$aktoerId', fnr='XXX', status='$status', statusTidspunkt=$statusTidspunkt)"
     }
 
-
 }
+
+
+
+/**
+ * Representerer en gruppe med statuser som hører sammen
+ */
+class Statuser(
+    private val statuser: List<Status>
+) {
+    init {
+        require(statuser.all { it.uuid == statuser[0].uuid })
+    }
+
+    fun nyesteStatus() = statuser.maxByOrNull { it.statusTidspunkt }
+        ?: throw Exception("No status in the list?")
+
+    fun cvOppdatertTidspunkt(): ZonedDateTime {
+        return statuser
+            .filter { it.status == cvOppdatertStatus }
+            .map { it.statusTidspunkt }
+            .maxByOrNull { it }
+            ?: startOfTime
+    }
+
+    val uuid = statuser[0].uuid
+}
+
+fun List<Status>.statuser() = Statuser(this)

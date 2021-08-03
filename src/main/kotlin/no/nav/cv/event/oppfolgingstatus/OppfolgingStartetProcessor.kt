@@ -25,6 +25,6 @@ class OppfolgingStartetProcessor(
     fun receiveBegun(record: ConsumerRecord<String, String>) = record.value()
             .let { Json.decodeFromString<OppfolgingStartet>(it) }
             .also { log.debug("OppfolgingStartet record received for ${it.aktorId}.") }
-            .also { dto -> hendelseService.kommetUnderOppfolging(dto.aktorId, dto.oppfolgingStartet) }
+            .also { dto -> hendelseService.harKommetUnderOppfolging(dto.aktorId, dto.oppfolgingStartet) }
 
 }

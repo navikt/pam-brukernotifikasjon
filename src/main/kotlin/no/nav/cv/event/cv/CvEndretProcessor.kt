@@ -25,8 +25,12 @@ class CvEndretProcessor (
     ) {
         val cv = CvDto(record.value())
 
-        if(!cv.slettetCv())
-            hendelseService.harSettCv(cv.aktorId(), cv.sistEndret())
+        if(!cv.slettetCv()) {
+            log.info("Kafka CV msg for ${cv.aktorId()} is NOT a deletion msg")
+            hendelseService.endretCV(cv.aktorId(), cv.sistEndret())
+        } else {
+            log.info("Kafka CV msg for ${cv.aktorId()} is a deletion msg, so skipping it")
+        }
 
     //log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
     }

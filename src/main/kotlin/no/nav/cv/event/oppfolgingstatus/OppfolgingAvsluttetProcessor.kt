@@ -25,5 +25,5 @@ class OppfolgingAvsluttetProcessor(
     fun receiveFinished(record: ConsumerRecord<String, String>) = record.value()
             .let { Json.decodeFromString<OppfolgingAvsluttet>(it) }
             .also { log.debug("OppfolgingAvsluttet record received for ${it.aktorId}.") }
-            .also { hendelseService.blittFulgtOpp(it.aktorId, it.sluttdato) }
+            .also { hendelseService.ikkeUnderOppfolging(it.aktorId, it.sluttdato) }
 }
