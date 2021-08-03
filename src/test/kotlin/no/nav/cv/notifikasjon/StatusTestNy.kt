@@ -34,7 +34,7 @@ internal class StatusTestNy {
     private val now = ZonedDateTime.now()
     private val yesterday = ZonedDateTime.now().minusDays(1)
     private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
-    private val agesAgo = ZonedDateTime.of(1900, 1, 1, 0, 0, 0, 0, ZoneId.of("Europe/Oslo"))
+    private val agesAgo = ZonedDateTime.now().minusYears(40)
 
     @MockkBean(PersonOppslag::class)
     private lateinit var personOppslag: PersonOppslag
