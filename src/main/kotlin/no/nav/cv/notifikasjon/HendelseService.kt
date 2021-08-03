@@ -153,7 +153,7 @@ class Hendelser (
         require(nyesteStatus.fnr != ukjentFnr) { "Trenger fødselsnummer når det skal varsles. Gjelder status $statuser.uuid" }
 
         varselPublisher.publish(nyesteStatus.uuid, nyesteStatus.fnr)
-        repository.lagre(Status.varslet(nyesteStatus, ZonedDateTime.now()))
+        repository.lagre(nyesteStatus.varslet(ZonedDateTime.now()))
     }
 
 //    override fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
