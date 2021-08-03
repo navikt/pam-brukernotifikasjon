@@ -38,8 +38,18 @@ class Hendelser (
 
         if(datoSisteOppfolging.isBefore(cutoffTime)) {
             log.debug("Oppfølgingsperiode: ${datoSisteOppfolging} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
-            if(nyesteStatus.status == nyBrukerStatus)
-                repository.lagre(nyesteStatus.forGammel(datoSisteOppfolging))
+
+            val nesteStatus = when(nyesteStatus.status) {
+                nyBrukerStatus -> nyesteStatus.forGammel(datoSisteOppfolging)
+                ikkeUnderOppfølgingStatus -> nyesteStatus.nySession().forGammel(datoSisteOppfolging)
+                cvOppdatertStatus -> nyesteStatus.nySession().forGammel(datoSisteOppfolging)
+                forGammelStatus -> nyesteStatus.nySession().forGammel(datoSisteOppfolging)
+
+                else -> null
+            }
+
+            if(nesteStatus != null)
+                repository.lagre(nesteStatus)
 
             return
         }
