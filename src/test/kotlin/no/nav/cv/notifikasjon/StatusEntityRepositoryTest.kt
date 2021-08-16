@@ -45,7 +45,7 @@ class StatusEntityRepositoryTest {
     @Test
     fun `save and fetch`() {
         val status = Status.nySession(aktorId)
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
         assertEquals(status.uuid, fetchedStatus.uuid)
@@ -56,9 +56,9 @@ class StatusEntityRepositoryTest {
         val statusOld = Status.nySession(aktorId)
         val statusNewer = Status.varslet(statusOld, yesterday)
         val statusNewest = Status.endretCV(statusNewer, now)
-        statusRepository.lagre(statusOld)
-        statusRepository.lagre(statusNewer)
-        statusRepository.lagre(statusNewest)
+        statusRepository.lagreNyStatus(statusOld)
+        statusRepository.lagreNyStatus(statusNewer)
+        statusRepository.lagreNyStatus(statusNewest)
 
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
@@ -72,8 +72,8 @@ class StatusEntityRepositoryTest {
         val savedFirst = Status.nySession(aktorId)
         val savedLast = Status.nySession(aktorId2)
 
-        statusRepository.lagre(savedFirst)
-        statusRepository.lagre(savedLast)
+        statusRepository.lagreNyStatus(savedFirst)
+        statusRepository.lagreNyStatus(savedLast)
 
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
@@ -90,12 +90,12 @@ class StatusEntityRepositoryTest {
         val underOppfolging2 = new2.skalVarlsesManglerFnr(now)
         val medFnr2 = underOppfolging2.skalVarsles("1234")
 
-        statusRepository.lagre(new1)
-        statusRepository.lagre(new2)
-        statusRepository.lagre(underOppfolging1)
-        statusRepository.lagre(underOppfolging2)
-        statusRepository.lagre(medFnr1)
-        statusRepository.lagre(medFnr2)
+        statusRepository.lagreNyStatus(new1)
+        statusRepository.lagreNyStatus(new2)
+        statusRepository.lagreNyStatus(underOppfolging1)
+        statusRepository.lagreNyStatus(underOppfolging2)
+        statusRepository.lagreNyStatus(medFnr1)
+        statusRepository.lagreNyStatus(medFnr2)
 
         val skalVarslesListe = statusRepository.skalVarsles()
 

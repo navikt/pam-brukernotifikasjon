@@ -34,7 +34,7 @@ internal class GenerateMetricsTest {
                 forrigeStatus = skalVarslesStatus,
                 statusTidspunkt = ZonedDateTime.now())
 
-        statusRepository.lagre(varsletStatusA)
+        statusRepository.lagreNyStatus(varsletStatusA)
 
         val tmpA = statusRepository.finnSiste(aidA)
 

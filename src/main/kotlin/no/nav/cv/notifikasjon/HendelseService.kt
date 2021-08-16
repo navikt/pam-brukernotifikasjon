@@ -32,9 +32,7 @@ class Hendelser (
     override fun harKommetUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
         val cutoffTime = ZonedDateTime.now().minus(cutoffPeriod)
 
-        val statuser = repository.finnStatuser(aktorId)
-
-        val nyesteStatus = statuser.nyesteStatus()
+        val nyesteStatus = repository.finnSiste(aktorId)
 
         if(datoSisteOppfolging.isBefore(cutoffTime)) {
             log.debug("Oppfølgingsperiode: ${datoSisteOppfolging} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
@@ -49,7 +47,7 @@ class Hendelser (
             }
 
             if(nesteStatus != null)
-                repository.lagre(nesteStatus)
+                repository.lagreNyStatus(nesteStatus)
 
             return
         }
@@ -60,7 +58,7 @@ class Hendelser (
             ikkeUnderOppfølgingStatus -> nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
 
             cvOppdatertStatus -> {
-                if (statuser.cvOppdatertTidspunkt().isBefore(datoSisteOppfolging))
+                if (nyesteStatus.statusTidspunkt.isBefore(datoSisteOppfolging))
                     nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
                 else null
             }
@@ -69,7 +67,7 @@ class Hendelser (
         }
 
         if(nesteStatus != null)
-            repository.lagre(nesteStatus)
+            repository.lagreNyStatus(nesteStatus)
     }
 //
 //    override fun harKommetUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
@@ -87,7 +85,7 @@ class Hendelser (
 //    }
 
     override fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
-        val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
+        val nyesteStatus = repository.finnSiste(aktorId)
 
         // Bør vi sende denne uansett, i tilfelle vi skulle få en race condition mellom to statuser?
         val nesteStatus = when(nyesteStatus.status) {
@@ -105,7 +103,7 @@ class Hendelser (
         }
 
         if(nesteStatus != null)
-            repository.lagre(nesteStatus)
+            repository.lagreNyStatus(nesteStatus)
     }
 
 //    override fun ikkeUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
@@ -116,12 +114,12 @@ class Hendelser (
 
 
     override fun endretCV(aktorId: String, tidspunkt: ZonedDateTime) {
-        val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
+        val nyesteStatus = repository.finnSiste(aktorId)
 
         if(nyesteStatus.status == varsletStatus)
             varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
 
-        repository.lagre(nyesteStatus.endretCV(tidspunkt))
+        repository.lagreNyStatus(nyesteStatus.endretCV(tidspunkt))
     }
 
 //    override fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
@@ -139,23 +137,21 @@ class Hendelser (
 
 
     override fun funnetFodselsnummer(aktorId: String, fnr: String) {
-        val nyesteStatus = repository.finnStatuser(aktorId).nyesteStatus()
+        val nyesteStatus = repository.finnSiste(aktorId)
 
         if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status ${nyesteStatus.uuid}")
 
-        if(fnr != ukjentFnr) repository.lagre(nyesteStatus.skalVarsles(fnr))
+        if(fnr != ukjentFnr) repository.lagreNyStatus(nyesteStatus.skalVarsles(fnr))
     }
 
     override fun varsleBruker(aktorId: String) {
-        val statuser = repository.finnStatuser(aktorId)
+        val nyesteStatus = repository.finnSiste(aktorId)
 
-        val nyesteStatus = statuser.nyesteStatus()
-
-        require(nyesteStatus.status == skalVarslesStatus) { "Kan kun varsle når status er $skalVarslesStatus. Gjelder status $statuser.uuid" }
-        require(nyesteStatus.fnr != ukjentFnr) { "Trenger fødselsnummer når det skal varsles. Gjelder status $statuser.uuid" }
+        require(nyesteStatus.status == skalVarslesStatus) { "Kan kun varsle når status er $skalVarslesStatus. Gjelder status ${nyesteStatus.uuid}" }
+        require(nyesteStatus.fnr != ukjentFnr) { "Trenger fødselsnummer når det skal varsles. Gjelder status ${nyesteStatus.uuid}" }
 
         varselPublisher.publish(nyesteStatus.uuid, nyesteStatus.fnr)
-        repository.lagre(nyesteStatus.varslet(ZonedDateTime.now()))
+        repository.lagreNyStatus(nyesteStatus.varslet(ZonedDateTime.now()))
     }
 
 //    override fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime){

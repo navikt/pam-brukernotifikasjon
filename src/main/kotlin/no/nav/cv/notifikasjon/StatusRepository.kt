@@ -8,7 +8,6 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 import kotlin.streams.asSequence
-import kotlin.streams.toList
 
 
 @Repository
@@ -24,50 +23,30 @@ class StatusRepository(
 
 
     @Transactional
-    open fun lagre(status: Status) {
+    open fun lagreNyStatus(status: Status) {
+
+        settFerdig(status.aktoerId)
+
         log.debug("Lagrer uuid ${status.uuid} med status ${status.status} og tidspunkt ${status.statusTidspunkt}")
-        entityManager.persist(StatusEntity.fromStatus(status))
+        entityManager.persist(StatusEntity.fromStatus(status = status, ferdig = false))
     }
 
-    private val sisteGruppe = """
-        SELECT s.* 
-        FROM STATUS s
-        WHERE s.UUID = (
-            SELECT DISTINCT(s_inner.UUID)
-            FROM STATUS s_inner WHERE 
-            TIDSPUNKT = (
-                SELECT max(s_inner_inner.TIDSPUNKT) 
-                FROM STATUS s_inner_inner 
-                WHERE s_inner_inner.AKTOR_ID = :aktorId
-                )
-            AND s_inner.AKTOR_ID = :aktorId
-        );
-        
-    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+    private val settFerdigQuery =
+        """
+            UPDATE STATUS
+            SET FERDIG = true
+            WHERE AKTOR_ID = :aktorId
+        """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
-    // Finner gruppering av statuser med siste oppdatering for en person
     @Transactional
-    open fun finnStatuser(aktorId: String): Statuser {
-        val resultat = entityManager.createNativeQuery(sisteGruppe, StatusEntity::class.java)
-            .setParameter("aktorId", aktorId)
-            .resultList
-            .map { it as StatusEntity }
-            .map { it.toStatus() }
-            .toList()
-
-        if (resultat.isEmpty()) {
-            return listOf(Status.nySession(aktorId)).statuser()
-        }
-
-        return resultat.statuser()
-    }
+    fun settFerdig(aktorId: String) = entityManager.createNativeQuery(settFerdigQuery)
+        .setParameter("aktorId", aktorId)
+        .executeUpdate()
 
     private val sisteQuery =
             """
         SELECT * FROM STATUS s 
-        WHERE s.AKTOR_ID = :aktorId AND s.TIDSPUNKT = (
-            SELECT max(s2.TIDSPUNKT) FROM STATUS s2 WHERE s2.AKTOR_ID = :aktorId
-        )
+        WHERE s.AKTOR_ID = :aktorId AND s.FERDIG = false
         
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
@@ -177,6 +156,9 @@ private class StatusEntity() {
     @Column(name = "TIDSPUNKT", nullable = false)
     lateinit var tidspunkt: ZonedDateTime
 
+    @Column(name = "FERDIG", nullable = false)
+    var ferdig: Boolean = true // Kan ikke ha lateinit på primitive types
+
     fun toStatus() = Status(
             uuid = uuid,
             aktoerId = aktorId,
@@ -189,7 +171,8 @@ private class StatusEntity() {
             aktorId: String,
             fnr: String,
             status: String,
-            tidspunkt: ZonedDateTime
+            tidspunkt: ZonedDateTime,
+            ferdig: Boolean
     ) {
         //this.id = 0   // Gammel kode satt denne til 0, men da får jeg org.hibernate.PersistentObjectException
                         // Når jeg ikke setter den (den er da initialisert til null), fungerer det fint,
@@ -199,17 +182,19 @@ private class StatusEntity() {
         this.fnr = fnr
         this.status = status
         this.tidspunkt = tidspunkt
+        this.ferdig = ferdig
     }
 
     companion object {
-        fun fromStatus(status: Status) : StatusEntity {
+        fun fromStatus(status: Status, ferdig: Boolean) : StatusEntity {
             val entity = StatusEntity()
             entity.initStatus(
                     uuid = status.uuid,
                     aktorId = status.aktoerId,
                     fnr = status.fnr,
                     status = status.status,
-                    tidspunkt = status.statusTidspunkt
+                    tidspunkt = status.statusTidspunkt,
+                    ferdig = ferdig
             )
             return entity
         }
