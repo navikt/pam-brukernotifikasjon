@@ -25,8 +25,8 @@ class CvEndretProcessor (
     ) {
         val cv = CvDto(record.value())
 
-        if(!cv.slettetCv()) {
-            log.info("Kafka CV msg for ${cv.aktorId()} is NOT a deletion msg")
+        if(!cv.slettetCv() && cv.endretAvBruker()) {
+            log.info("Kafka CV msg for ${cv.aktorId()} is NOT a deletion msg and was initiated by user")
             hendelseService.endretCV(cv.aktorId(), cv.sistEndret())
         } else {
             log.info("Kafka CV msg for ${cv.aktorId()} is a deletion msg, so skipping it")
@@ -49,6 +49,8 @@ private class CvDto(val record: GenericRecord) {
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(sistEndretMillis()), TimeZone.getDefault().toZoneId())
 
     fun slettetCv() = record.get("meldingstype")?.toString()?.equals("SLETT") == true
+
+    fun endretAvBruker() = record.get("endret_av")?.toString()?.equals("PERSONBRUKER") == true
 
     private fun sistEndretMillis() = record.sistEndret()
             ?: throw Exception("Record mangler sistEndret")
