@@ -60,17 +60,14 @@ class StatusRepository(
         .firstOrNull()
         ?: Status.nySession(aktorId)
 
-
+    // Should this sort be descending?
     private val skalVarsles =
             """
         SELECT s.*
-        FROM STATUS s INNER JOIN 
-         (
-            SELECT max(s_inner.TIDSPUNKT) tidspunkt, s_inner.AKTOR_ID
-            FROM STATUS s_inner GROUP BY s_inner.AKTOR_ID
-        ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
+        FROM STATUS s
         WHERE s.STATUS = :status 
         AND s.foedselsnummer != :ukjentFnr
+        AND s.ferdig = false
         ORDER BY s.TIDSPUNKT
         LIMIT 10000
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
@@ -90,13 +87,10 @@ class StatusRepository(
     private val statusPerFodselsnummer =
             """
                 SELECT s.* 
-                FROM STATUS s INNER JOIN 
-                (
-                    SELECT max(s_inner.TIDSPUNKT) tidspunkt, s_inner.AKTOR_ID
-                    FROM STATUS s_inner GROUP BY s_inner.AKTOR_ID
-                ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
+                FROM STATUS s
                 WHERE s.STATUS = :status
                 AND s.foedselsnummer = :fodselsnummer
+                AND s.ferdig = false
                 ORDER BY s.TIDSPUNKT DESC               
                 LIMIT 1000
             """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
@@ -118,11 +112,8 @@ class StatusRepository(
             """
                 SELECT COUNT(*)
                 FROM STATUS s INNER JOIN 
-                 (
-                    SELECT max(s_inner.TIDSPUNKT) tidspunkt, s_inner.AKTOR_ID
-                    FROM STATUS s_inner GROUP BY s_inner.AKTOR_ID
-                ) as s2 on s2.TIDSPUNKT = s.TIDSPUNKT AND s2.AKTOR_ID = s.AKTOR_ID
-                WHERE s.STATUS = :status             
+                WHERE s.STATUS = :status 
+                AND s.ferdig = false
             """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
 
