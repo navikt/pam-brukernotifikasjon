@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.random.Random
 
@@ -120,7 +119,7 @@ internal class StatusTestNy {
     @Test
     fun `for gammel – har sett cv – status cvOppdatert`() {
         val status = Status.nySession(aktoer).forGammel(agesAgo)
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.endretCV(aktoer, yesterday)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
@@ -133,7 +132,7 @@ internal class StatusTestNy {
     @Test
     fun `for gammel – har kommet under oppfoelging – status skalVarslesManglerFoedselsnummer`() {
         val status = Status.nySession(aktoer).forGammel(agesAgo)
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.harKommetUnderOppfolging(aktoer, yesterday)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
@@ -147,7 +146,7 @@ internal class StatusTestNy {
     @Test
     fun `bruker under oppfoelging - fnr funnet - status skalVarsles`() {
         val status = Status.skalVarlsesManglerFnr(Status.nySession("dummy2"), now)
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.funnetFodselsnummer("dummy2", "dummy_fnr")
 
         val lagretStatus = statusRepository.finnSiste("dummy2")
@@ -158,7 +157,7 @@ internal class StatusTestNy {
     @Test
     fun `bruker under oppfoelging – varsle bruker – status varslet`() {
         val status = Status.nySession(aktoer).skalVarsles(aktoerFnr)
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.varsleBruker(aktoer)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
@@ -174,7 +173,7 @@ internal class StatusTestNy {
             .skalVarsles(aktoerFnr)
             .varslet(yesterday)
 
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.endretCV(aktoer, now)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
@@ -190,7 +189,7 @@ internal class StatusTestNy {
             .skalVarsles(aktoerFnr)
             .varslet(yesterday)
 
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.ikkeUnderOppfolging(aktoer, now)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
@@ -203,7 +202,7 @@ internal class StatusTestNy {
     fun `ikke under oppfoelging – har kommet under oppfoelging – status skalVarslesManglerFoedselsnummer`() {
         val status = Status.ikkeUnderOppfolging(statusRepository.finnSiste(aktoer), twoDaysAgo)
         val prevUUID = status.uuid
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.harKommetUnderOppfolging(aktoer, yesterday)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
@@ -216,7 +215,7 @@ internal class StatusTestNy {
     @Test
     fun `ikke under oppfoelging – har sett cv – status cvOppdatert`() {
         val status = Status.ikkeUnderOppfolging(forrigeStatus = statusRepository.finnSiste(aktoer), tidspunkt = twoDaysAgo)
-        statusRepository.lagre(status)
+        statusRepository.lagreNyStatus(status)
         hendelseService.endretCV(aktoer, yesterday)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
