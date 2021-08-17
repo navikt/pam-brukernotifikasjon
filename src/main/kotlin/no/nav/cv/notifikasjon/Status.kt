@@ -131,31 +131,3 @@ class Status(
     }
 
 }
-
-
-
-/**
- * Representerer en gruppe med statuser som hører sammen
- */
-class Statuser(
-    private val statuser: List<Status>
-) {
-    init {
-        require(statuser.all { it.uuid == statuser[0].uuid })
-    }
-
-    fun nyesteStatus() = statuser.maxByOrNull { it.statusTidspunkt }
-        ?: throw Exception("No status in the list?")
-
-    fun cvOppdatertTidspunkt(): ZonedDateTime {
-        return statuser
-            .filter { it.status == cvOppdatertStatus }
-            .map { it.statusTidspunkt }
-            .maxByOrNull { it }
-            ?: startOfTime
-    }
-
-    val uuid = statuser[0].uuid
-}
-
-fun List<Status>.statuser() = Statuser(this)
