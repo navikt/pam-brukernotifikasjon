@@ -68,7 +68,7 @@ class StatusRepository(
         WHERE s.STATUS = :status 
         AND s.foedselsnummer != :ukjentFnr
         AND s.ferdig = false
-        ORDER BY s.TIDSPUNKT
+        ORDER BY s.TIDSPUNKT DESC
         LIMIT 10000
     """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
