@@ -99,7 +99,7 @@ class StatusRepository(
     @Transactional(readOnly = true)
     open fun manglerFodselsnummer(): List<Status> {
         return entityManager.createNativeQuery(statusPerFodselsnummer, StatusEntity::class.java)
-            .setParameter("status", skalVarslesStatus)
+            .setParameter("status", skalVarslesManglerFnrStatus)
             .setParameter("fodselsnummer", ukjentFnr)
             .resultStream
             .asSequence()
