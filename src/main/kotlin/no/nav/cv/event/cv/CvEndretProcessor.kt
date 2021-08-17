@@ -50,7 +50,11 @@ private class CvDto(val record: GenericRecord) {
 
     fun slettetCv() = record.get("meldingstype")?.toString()?.equals("SLETT") == true
 
-    fun endretAvBruker() = record.get("endret_av")?.toString()?.equals("PERSONBRUKER") == true
+    /**
+     * This function will return true if the 'endret_av' value doesn't exist in the record and if the
+     * value exists and equals 'PERSONBRUKER' in order to keep changes backwards compatible.
+    */
+    fun endretAvBruker() = record.get("endret_av")?.toString()?.equals("PERSONBRUKER") != false
 
     private fun sistEndretMillis() = record.sistEndret()
             ?: throw Exception("Record mangler sistEndret")
