@@ -119,8 +119,10 @@ class Hendelser (
         if(nyesteStatus.status == varsletStatus)
             varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
 
-        if(nyesteStatus.status != cvOppdatertStatus || tidspunkt.isAfter(nyesteStatus.statusTidspunkt))
+        if(nyesteStatus.status != cvOppdatertStatus)
             repository.lagreNyStatus(nyesteStatus.endretCV(tidspunkt))
+        else
+            repository.oppdaterTidspunkt(aktorId, tidspunkt)
     }
 
 //    override fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {

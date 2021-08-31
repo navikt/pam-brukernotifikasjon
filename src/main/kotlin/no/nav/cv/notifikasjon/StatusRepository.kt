@@ -11,7 +11,7 @@ import kotlin.streams.asSequence
 
 
 @Repository
-class StatusRepository(
+open class StatusRepository(
     @PersistenceContext private val entityManager: EntityManager
 ) {
 
@@ -21,6 +21,24 @@ class StatusRepository(
         private val log = LoggerFactory.getLogger(StatusRepository::class.java)
     }
 
+    private val oppdaterTidspunktQuery =
+        """
+        UPDATE STATUS
+        SET tidspunkt = :tidspunkt
+        WHERE AKTOR_ID = :aktorID
+        AND ferdig = false
+        """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+
+
+    @Transactional
+    open fun oppdaterTidspunkt(aktoerId: String, tidspunkt: ZonedDateTime) {
+        log.debug("Oppdaterer tidspunkt for aktør $aktoerId tidspunkt $tidspunkt")
+        entityManager.createNativeQuery(oppdaterTidspunktQuery)
+            .setParameter("aktorId", aktoerId)
+            .setParameter("tidspunkt", tidspunkt)
+            .executeUpdate()
+    }
 
     @Transactional
     open fun lagreNyStatus(status: Status) {
