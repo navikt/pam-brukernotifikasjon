@@ -22,6 +22,7 @@ class FodselsnummerJobb(
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     fun fyllInnFnr() {
         statusRepository.manglerFodselsnummer()
+            .also { log.info("Running FødselsnummerJobb with ${it.size} tasks")}
             .forEach {
                 val fnr = personOppslag.hentFoedselsnummer(it.aktoerId)
 
