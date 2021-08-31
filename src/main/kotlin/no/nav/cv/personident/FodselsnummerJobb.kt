@@ -21,17 +21,21 @@ class FodselsnummerJobb(
     @SchedulerLock(name = "fodselsnummerjobb")
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     fun fyllInnFnr() {
-        statusRepository.manglerFodselsnummer()
-            .also { log.info("Running FødselsnummerJobb with ${it.size} tasks")}
-            .forEach {
-                val fnr = personOppslag.hentFoedselsnummer(it.aktoerId)
+        try {
+            statusRepository.manglerFodselsnummer()
+                .also { log.info("Running FødselsnummerJobb with ${it.size} tasks") }
+                .forEach {
+                    val fnr = personOppslag.hentFoedselsnummer(it.aktoerId)
 
-                log.info("Got personnummer for aktorid ${it.aktoerId}: ${fnr != null}")
-                fnr ?: return@forEach
+                    log.info("Got personnummer for aktorid ${it.aktoerId}: ${fnr != null}")
+                    fnr ?: return@forEach
 
-                hendelseService.funnetFodselsnummer(it.aktoerId, fnr)
-            }
+                    hendelseService.funnetFodselsnummer(it.aktoerId, fnr)
+                }
 
 
+        } catch (e: Exception) {
+            log.error("FødselsnummerJobb failed with ${e.message}", e)
+        }
     }
 }
