@@ -24,9 +24,9 @@ open class StatusRepository(
     private val oppdaterTidspunktQuery =
         """
         UPDATE STATUS
-        SET tidspunkt = :tidspunkt
-        WHERE AKTOR_ID = :aktorID
-        AND ferdig = false
+        SET TIDSPUNKT = :tidspunkt
+        WHERE AKTOR_ID = :aktorId
+        AND FERDIG = false
         """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
 
