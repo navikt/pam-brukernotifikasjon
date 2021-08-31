@@ -26,7 +26,7 @@ class ConsumerStatusHandler(
     fun checkForStoppedConsumers() {
         consumers.forEach {
             if(it.isStopped()) {
-                log.error("${it.topic} har stoppet - forsøker å restarte")
+                log.warn("${it.topic} har stoppet - forsøker å restarte")
                 unhealthy.getValue(it.topic).getAndAdd(1)
                 restart(it)
             }
