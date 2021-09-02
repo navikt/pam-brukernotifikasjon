@@ -1,0 +1,7 @@
+-- These indexes help with debugging
+
+CREATE INDEX IX_STATUS_UUID
+    ON STATUS (UUID);
+
+CREATE INDEX IX_STATUS_FERDIG
+    ON STATUS (FERDIG);
