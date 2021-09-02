@@ -14,12 +14,12 @@ spec:
   port: 9029
   liveness:
     path: /pam-brukernotifikasjon/internal/isAlive
-    initialDelay: 40
+    initialDelay: 300
     timeout: 1
     failureThreshold: 2
   readiness:
     path: /pam-brukernotifikasjon/internal/isReady
-    initialDelay: 40
+    initialDelay: 300
     timeout: 1
     failureThreshold: 2
   replicas:
