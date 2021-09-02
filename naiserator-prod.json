@@ -17,7 +17,7 @@
 
   "ingress": "https://pam-brukernotifikasjon.intern.nav.no",
 
-  "adminEnabled": "disabled",
+  "adminEnabled": "enabled",
 
   "linkIMelding": "https://arbeidsplassen.nav.no/cv",
 
