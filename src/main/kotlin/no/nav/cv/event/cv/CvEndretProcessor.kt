@@ -25,14 +25,19 @@ class CvEndretProcessor (
     ) {
         val cv = CvDto(record.value())
 
-        if(!cv.slettetCv() && cv.endretAvBruker()) {
-            log.info("Kafka CV msg for ${cv.aktorId()} is NOT a deletion msg and was initiated by user")
-            hendelseService.endretCV(cv.aktorId(), cv.sistEndret())
-        } else {
-            log.info("Kafka CV msg for ${cv.aktorId()} is a deletion msg, so skipping it")
+        if(!cv.endretAvBruker()) {
+            log.info("Kafka CV msg for ${cv.aktorId()} is not user initiated, so skipping it")
+            return
         }
 
-    //log.info("CV ${record.key()}, Sist endret: ${cv.sistEndret()}")
+        if(cv.slettetCv()) {
+            log.info("Kafka CV msg for ${cv.aktorId()} is a deletion msg, so skipping it")
+            return
+        }
+
+        log.info("Kafka CV msg for ${cv.aktorId()} is NOT a deletion msg and was initiated by user")
+        hendelseService.endretCV(cv.aktorId(), cv.sistEndret())
+
     }
 
     override suspend fun process(records: ConsumerRecords<String, GenericRecord>) {
