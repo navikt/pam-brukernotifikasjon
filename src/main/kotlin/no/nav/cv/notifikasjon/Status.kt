@@ -16,7 +16,7 @@ const val forGammelStatus = "forGammel"
 const val cvOppdatertStatus = "cvOppdatert"
 const val ikkeUnderOppfølgingStatus = "ikkeUnderOppfølging"
 
-const val doneStatus = "done"
+const val deprecatedDoneStatus = "done"
 
 //const val ukjentFnr = "ukjent"
 //

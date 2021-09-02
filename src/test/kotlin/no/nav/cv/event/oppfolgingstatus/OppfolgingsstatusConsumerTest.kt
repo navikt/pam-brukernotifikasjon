@@ -3,7 +3,7 @@ package no.nav.cv.event.oppfolgingstatus
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nav.cv.notifikasjon.StatusRepository
-import no.nav.cv.notifikasjon.doneStatus
+import no.nav.cv.notifikasjon.deprecatedDoneStatus
 import no.nav.cv.notifikasjon.nyBrukerStatus
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
@@ -88,7 +88,7 @@ internal class OppfolgingsstatusConsumerTest {
 
         val status = statusRepository.finnSiste(aktorId)
 
-        assertEquals(doneStatus, status.status)
+        assertEquals(deprecatedDoneStatus, status.status)
     }
 
 }

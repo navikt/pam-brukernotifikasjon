@@ -63,6 +63,12 @@ class Hendelser (
                 else null
             }
 
+            deprecatedDoneStatus -> {
+                if (nyesteStatus.statusTidspunkt.isBefore(datoSisteOppfolging))
+                    nyesteStatus.nySession().skalVarlsesManglerFnr(datoSisteOppfolging)
+                else null
+            }
+
             else -> null // ikke gjør noe hvis personen er i noen av de andre statusene
         }
 
