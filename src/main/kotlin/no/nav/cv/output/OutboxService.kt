@@ -33,8 +33,6 @@ class OutboxService(
             type = type
         )
 
-        log.info("Saving $newOutboxEntry to the database")
-
         outboxRepository.save(newOutboxEntry)
     }
 
