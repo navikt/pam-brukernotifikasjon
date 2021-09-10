@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import no.nav.cv.output.OutboxService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Period
@@ -13,8 +14,6 @@ interface HendelseService {
 
     fun ikkeUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
-    fun varsleBruker(aktorId: String)
-
     fun endretCV(aktorId: String, hendelsesTidspunkt: ZonedDateTime)
 
     fun funnetFodselsnummer(aktorId: String, fnr: String)
@@ -24,7 +23,7 @@ interface HendelseService {
 @Service
 class Hendelser (
     private val repository: StatusRepository,
-    private val varselPublisher: VarselPublisher,
+    private val outboxService: OutboxService,
 ) : HendelseService {
 
     private val log = LoggerFactory.getLogger(Hendelser::class.java)
@@ -75,20 +74,6 @@ class Hendelser (
         if(nesteStatus != null)
             repository.lagreNyStatus(nesteStatus)
     }
-//
-//    override fun harKommetUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
-//
-//        val cutoffTime = ZonedDateTime.now().minus(cutoffPeriod)
-//        if(hendelsesTidspunkt.isBefore(cutoffTime)) {
-//            log.debug("Oppfølgingsperiode: ${hendelsesTidspunkt} startert før cutoff-perioden ($cutoffPeriod). Ignorerer oppfølgingsstatus")
-//            return
-//        }
-//
-//        val status = repository.finnSiste(aktorId)
-//        val nesteStatus = status.harKommetUnderOppfolging(hendelsesTidspunkt, abTestSelector)
-//
-//        repository.lagre(nesteStatus)
-//    }
 
     override fun ikkeUnderOppfolging(aktorId: String, datoSisteOppfolging: ZonedDateTime) {
         val nyesteStatus = repository.finnSiste(aktorId)
@@ -98,10 +83,10 @@ class Hendelser (
             nyBrukerStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
 
             skalVarslesManglerFnrStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
-            skalVarslesStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
+            deprecatedSkalVarslesStatus -> nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
 
             varsletStatus -> {
-                varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
+                outboxService.schdeuleDone(nyesteStatus.uuid, nyesteStatus.aktoerId, nyesteStatus.fnr)
                 nyesteStatus.ikkeUnderOppfølging(datoSisteOppfolging)
             }
 
@@ -112,18 +97,11 @@ class Hendelser (
             repository.lagreNyStatus(nesteStatus)
     }
 
-//    override fun ikkeUnderOppfolging(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
-//        val status = repository.finnSiste(aktorId)
-//        val nesteStatus = status.blittFulgtOpp(hendelsesTidspunkt, varselPublisher)
-//        repository.lagre(nesteStatus)
-//    }
-
-
     override fun endretCV(aktorId: String, tidspunkt: ZonedDateTime) {
         val nyesteStatus = repository.finnSiste(aktorId)
 
         if(nyesteStatus.status == varsletStatus)
-            varselPublisher.done(nyesteStatus.uuid, nyesteStatus.fnr)
+            outboxService.schdeuleDone(nyesteStatus.uuid, nyesteStatus.aktoerId, nyesteStatus.fnr)
 
         if(nyesteStatus.status != cvOppdatertStatus)
             repository.lagreNyStatus(nyesteStatus.endretCV(tidspunkt))
@@ -131,46 +109,19 @@ class Hendelser (
             repository.oppdaterTidspunkt(aktorId, tidspunkt)
     }
 
-//    override fun harSettCv(aktorId: String, hendelsesTidspunkt: ZonedDateTime) {
-//
-//        val cutoffTime = ZonedDateTime.now().minus(cutoffPeriod)
-//        if(hendelsesTidspunkt.isBefore(cutoffTime)) {
-//            log.debug("CV endret (${hendelsesTidspunkt} før cutoff-perioden ($cutoffPeriod). Ignorerer endringer")
-//            return
-//        }
-//
-//        val status = repository.finnSiste(aktorId)
-//        val nesteStatus = status.harSettCv(hendelsesTidspunkt, varselPublisher)
-//        repository.lagre(nesteStatus)
-//    }
-
-
     override fun funnetFodselsnummer(aktorId: String, fnr: String) {
         val nyesteStatus = repository.finnSiste(aktorId)
 
         if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status ${nyesteStatus.uuid}")
 
-        if(fnr != ukjentFnr) repository.lagreNyStatus(nyesteStatus.skalVarsles(fnr))
+        // Try again if fnr is unknown
+        if(fnr == ukjentFnr)
+            return
+
+        val nyStatus = nyesteStatus.varslet(fnr, ZonedDateTime.now())
+
+        outboxService.schdeuleDone(nyesteStatus.uuid, nyesteStatus.aktoerId, nyesteStatus.fnr)
+        repository.lagreNyStatus(nyStatus)
     }
-
-    override fun varsleBruker(aktorId: String) {
-        val nyesteStatus = repository.finnSiste(aktorId)
-
-        require(nyesteStatus.status == skalVarslesStatus) { "Kan kun varsle når status er $skalVarslesStatus. Gjelder status ${nyesteStatus.uuid}" }
-        require(nyesteStatus.fnr != ukjentFnr) { "Trenger fødselsnummer når det skal varsles. Gjelder status ${nyesteStatus.uuid}" }
-
-        varselPublisher.publish(nyesteStatus.uuid, nyesteStatus.fnr)
-        repository.lagreNyStatus(nyesteStatus.varslet(ZonedDateTime.now()))
-    }
-
-//    override fun varsleBruker(aktorId: String, hendelsesTidspunkt: ZonedDateTime){
-//        val status = repository.finnSiste(aktorId)
-//        val nesteStatus = status.varsleBruker(varselPublisher)
-//        repository.lagre(nesteStatus)
-//    }
-
-
-
-
 }
 

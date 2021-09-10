@@ -78,30 +78,6 @@ open class StatusRepository(
         .firstOrNull()
         ?: Status.nySession(aktorId)
 
-    // Should this sort be descending?
-    private val skalVarsles =
-            """
-        SELECT s.*
-        FROM STATUS s
-        WHERE s.STATUS = :status 
-        AND s.foedselsnummer != :ukjentFnr
-        AND s.ferdig = false
-        ORDER BY s.TIDSPUNKT DESC
-        LIMIT 10000
-    """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
-
-    @Transactional(readOnly = true)
-    open fun skalVarsles(): List<Status> {
-        return entityManager.createNativeQuery(skalVarsles, StatusEntity::class.java)
-            .setParameter("status", skalVarslesStatus)
-            .setParameter("ukjentFnr", ukjentFnr)
-            .resultStream
-            .asSequence()
-            .map { it as StatusEntity }
-            .map { it.toStatus() }
-            .toList()
-    }
-
     private val statusPerFodselsnummer =
             """
                 SELECT s.* 

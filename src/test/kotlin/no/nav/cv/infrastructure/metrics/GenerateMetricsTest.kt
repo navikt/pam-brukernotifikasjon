@@ -29,9 +29,10 @@ internal class GenerateMetricsTest {
         val aidA = "123"
         val fnrA = "321"
 
-        val skalVarslesStatus = Status.nySession(aidA).skalVarsles(fnrA)
+        val skalVarslesStatus = Status.nySession(aidA).skalVarlsesManglerFnr(ZonedDateTime.now())
         val varsletStatusA = Status.varslet(
                 forrigeStatus = skalVarslesStatus,
+                foedselsnummer = fnrA,
                 statusTidspunkt = ZonedDateTime.now())
 
         statusRepository.lagreNyStatus(varsletStatusA)

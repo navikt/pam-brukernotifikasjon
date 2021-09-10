@@ -62,6 +62,6 @@ kafka:
 admin:
   enabled: ${ADMIN_ENABLED:`disabled`}
 
-output.melding.link: ${OUTPUT_MELDING_LINK:`https://arbeidsplassen.nav.no/cv`}
+output.melding.link: ${OUTPUT_MELDING_LINK:https://arbeidsplassen.nav.no/cv}
 
 base.url.personoppslag: ${PERSONOPPSLAG_BASE_URL:http://dummyurl}

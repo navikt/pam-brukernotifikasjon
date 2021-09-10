@@ -54,15 +54,19 @@ class StatusEntityRepositoryTest {
     @Test
     fun `that fetch latest fetches last`() {
         val statusOld = Status.nySession(aktorId)
-        val statusNewer = Status.varslet(statusOld, yesterday)
-        val statusNewest = Status.endretCV(statusNewer, now)
         statusRepository.lagreNyStatus(statusOld)
+
+        val statusNewer = statusOld.varslet("fnr", yesterday)
         statusRepository.lagreNyStatus(statusNewer)
+
+        val statusNewest = statusNewer.endretCV(now)
         statusRepository.lagreNyStatus(statusNewest)
 
         val fetchedStatus = statusRepository.finnSiste(aktorId)
 
         assertEquals(statusNewest.uuid, fetchedStatus.uuid)
+        assertEquals(statusNewest.aktoerId, fetchedStatus.aktoerId)
+        assertEquals(statusNewest.fnr, fetchedStatus.fnr)
         assertEquals(statusNewest.status, fetchedStatus.status)
         assertEquals(statusNewest.statusTidspunkt, fetchedStatus.statusTidspunkt)
     }
@@ -79,34 +83,6 @@ class StatusEntityRepositoryTest {
 
         assertEquals(savedFirst.uuid, fetchedStatus.uuid)
     }
-
-
-    @Test
-    fun `at hentSkalVarsles returnerer alle som skal varsles`() {
-        val new1 = Status.nySession(aktorId)
-        val underOppfolging1 = new1.skalVarlsesManglerFnr(now)
-        val medFnr1 = underOppfolging1.skalVarsles("4321")
-        val new2 = Status.nySession(aktorId2)
-        val underOppfolging2 = new2.skalVarlsesManglerFnr(now)
-        val medFnr2 = underOppfolging2.skalVarsles("1234")
-
-        statusRepository.lagreNyStatus(new1)
-        statusRepository.lagreNyStatus(new2)
-        statusRepository.lagreNyStatus(underOppfolging1)
-        statusRepository.lagreNyStatus(underOppfolging2)
-        statusRepository.lagreNyStatus(medFnr1)
-        statusRepository.lagreNyStatus(medFnr2)
-
-        val skalVarslesListe = statusRepository.skalVarsles()
-
-        assertAll(
-                Executable { assertEquals(skalVarslesListe.size, 2)  },
-                Executable { assertTrue(skalVarslesListe.map {it.aktoerId}.contains(aktorId)) },
-                Executable { assertTrue(skalVarslesListe.map {it.aktoerId}.contains(aktorId2)) }
-        )
-
-    }
-
 
 
 }

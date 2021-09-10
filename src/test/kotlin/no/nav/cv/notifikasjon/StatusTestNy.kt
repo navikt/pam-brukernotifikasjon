@@ -144,41 +144,28 @@ internal class StatusTestNy {
 
 
     @Test
-    fun `bruker under oppfoelging - fnr funnet - status skalVarsles`() {
+    fun `bruker under oppfoelging - fnr funnet - status varslet`() {
         val status = Status.skalVarlsesManglerFnr(Status.nySession("dummy2"), now)
         statusRepository.lagreNyStatus(status)
         hendelseService.funnetFodselsnummer("dummy2", "dummy_fnr")
 
         val lagretStatus = statusRepository.finnSiste("dummy2")
 
-        assertEquals(skalVarslesStatus, lagretStatus.status)
-    }
+        assertEquals(varsletStatus, lagretStatus.status)
 
-    @Test
-    fun `bruker under oppfoelging – varsle bruker – status varslet`() {
-        val status = Status.nySession(aktoer).skalVarsles(aktoerFnr)
-        statusRepository.lagreNyStatus(status)
-        hendelseService.varsleBruker(aktoer)
-
-        val lagretStatus = statusRepository.finnSiste(aktoer)
-
-        verify { varselPublisher.publish(any(), aktoerFnr) }
-        assertEquals (varsletStatus, lagretStatus.status)
     }
 
     @Test
     fun `bruker varslet – har sett cv – status cvOppdatert`() {
         val status = Status.nySession(aktoer)
             .skalVarlsesManglerFnr(twoDaysAgo)
-            .skalVarsles(aktoerFnr)
-            .varslet(yesterday)
+            .varslet(aktoerFnr, yesterday)
 
         statusRepository.lagreNyStatus(status)
         hendelseService.endretCV(aktoer, now)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
 
-        verify { varselPublisher.done(any(), aktoerFnr) }
         assertEquals (cvOppdatertStatus, lagretStatus.status)
     }
 
@@ -186,15 +173,13 @@ internal class StatusTestNy {
     fun `bruker varslet – ikke under oppfølging – status ikkeUnderOppfoelging`() {
         val status = Status.nySession(aktoer)
             .skalVarlsesManglerFnr(twoDaysAgo)
-            .skalVarsles(aktoerFnr)
-            .varslet(yesterday)
+            .varslet(aktoerFnr, yesterday)
 
         statusRepository.lagreNyStatus(status)
         hendelseService.ikkeUnderOppfolging(aktoer, now)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
 
-        verify { varselPublisher.done(any(), aktoerFnr) }
         assertEquals (ikkeUnderOppfølgingStatus, lagretStatus.status)
     }
 

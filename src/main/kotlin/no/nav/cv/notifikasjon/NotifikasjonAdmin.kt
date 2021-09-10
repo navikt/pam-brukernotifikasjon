@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import no.nav.cv.output.OutboxService
 import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -14,7 +15,7 @@ import java.util.*
 @RequestMapping("internal/kafka/manuell")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: String,
-        private val varselPublisher: VarselPublisher
+        private val outboxService: OutboxService
 ) {
 
     companion object {
@@ -32,7 +33,7 @@ class NotifikasjonAdmin(
 
         log.info("NotifikasjonAdmin genererer varsel oppgave for uuid $uuid")
 
-        varselPublisher.publish(uuid, fnr)
+        outboxService.schdeuleVarsel(uuid, "admin", fnr)
         return "OK"
     }
 
@@ -47,7 +48,7 @@ class NotifikasjonAdmin(
 
         log.info("NotifikasjonAdmin genererer done melding for uuid $uuid")
 
-        varselPublisher.done(uuid, fnr)
+        outboxService.schdeuleDone(uuid, "admin", fnr)
         return "OK"
     }
 

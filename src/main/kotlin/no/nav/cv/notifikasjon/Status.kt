@@ -9,7 +9,7 @@ const val ukjentFnr = "ukjent"
 const val nyBrukerStatus = "ukjent" // "nyBruker"
 
 const val skalVarslesManglerFnrStatus = "skalVarslesManglerFnr"
-const val skalVarslesStatus = "skalVarsles"
+const val deprecatedSkalVarslesStatus = "skalVarsles"
 const val varsletStatus = "varslet"
 
 const val forGammelStatus = "forGammel"
@@ -53,17 +53,10 @@ class Status(
                 status = skalVarslesManglerFnrStatus,
                 statusTidspunkt = statusTidspunkt)
 
-        fun skalVarsles(forrigeStatus: Status, fodselsnummer: String) = Status(
+        fun varslet(forrigeStatus: Status, foedselsnummer: String, statusTidspunkt: ZonedDateTime) = Status(
                 uuid = forrigeStatus.uuid,
                 aktoerId = forrigeStatus.aktoerId,
-                fnr = fodselsnummer,
-                status = skalVarslesStatus,
-                statusTidspunkt = ZonedDateTime.now())
-
-        fun varslet(forrigeStatus: Status, statusTidspunkt: ZonedDateTime) = Status(
-                uuid = forrigeStatus.uuid,
-                aktoerId = forrigeStatus.aktoerId,
-                fnr = forrigeStatus.fnr,
+                fnr = foedselsnummer,
                 status = varsletStatus,
                 statusTidspunkt = statusTidspunkt)
 
@@ -103,12 +96,8 @@ class Status(
         )
     }
 
-    fun skalVarsles(fodselsnummer: String): Status {
-        return skalVarsles(this, fodselsnummer = fodselsnummer)
-    }
-
-    fun varslet(tidspunkt: ZonedDateTime): Status {
-        return varslet(this, tidspunkt)
+    fun varslet(foedselsnummer: String, tidspunkt: ZonedDateTime): Status {
+        return varslet(this, foedselsnummer, tidspunkt)
     }
 
     fun forGammel(datoSisteOppfolging: ZonedDateTime): Status {

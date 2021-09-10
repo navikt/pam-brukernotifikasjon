@@ -27,12 +27,12 @@ class BrukernotifikasjonProducer(
 
 ) : VarselPublisher {
 
-    override fun publish(eventId: UUID, foedselsnummer: String) {
+    override fun publish(eventId: String, foedselsnummer: String) {
         log.info("Publiserer varsel med eventId $eventId")
 
         val nokkel = NokkelBuilder()
                 .withSystembruker(systembruker)
-                .withEventId(eventId.toString())
+                .withEventId(eventId)
                 .build()
         val oppgave = OppgaveBuilder()
                 .withTidspunkt(LocalDateTime.now())
@@ -47,11 +47,11 @@ class BrukernotifikasjonProducer(
         meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
     }
 
-    override fun done(eventId: UUID, foedselsnummer: String) {
+    override fun done(eventId: String, foedselsnummer: String) {
         log.info("Publiserer donemelding for eventId $eventId")
         val nokkel = NokkelBuilder()
                 .withSystembruker(systembruker)
-                .withEventId(eventId.toString())
+                .withEventId(eventId)
                 .build()
         val done = DoneBuilder()
                 .withTidspunkt(LocalDateTime.now())
