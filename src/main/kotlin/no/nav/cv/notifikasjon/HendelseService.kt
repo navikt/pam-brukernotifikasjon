@@ -110,18 +110,18 @@ class Hendelser (
     }
 
     override fun funnetFodselsnummer(aktorId: String, fnr: String) {
-        val nyesteStatus = repository.finnSiste(aktorId)
+        val currentStatus = repository.finnSiste(aktorId)
 
-        if(nyesteStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status ${nyesteStatus.uuid}")
+        if(currentStatus.status != skalVarslesManglerFnrStatus) throw IllegalStateException("Skal ikke kunne finne fødselsnummer når statusen er noe annet enn $skalVarslesManglerFnrStatus. Gjelder status ${currentStatus.uuid}")
 
         // Try again if fnr is unknown
         if(fnr == ukjentFnr)
             return
 
-        val nyStatus = nyesteStatus.varslet(fnr, ZonedDateTime.now())
+        val newStatus = currentStatus.varslet(fnr, ZonedDateTime.now())
 
-        outboxService.schdeuleDone(nyesteStatus.uuid, nyesteStatus.aktoerId, nyesteStatus.fnr)
-        repository.lagreNyStatus(nyStatus)
+        outboxService.schdeuleVarsel(newStatus.uuid, newStatus.aktoerId, newStatus.fnr)
+        repository.lagreNyStatus(newStatus)
     }
 }
 
