@@ -19,10 +19,11 @@ class OppfolgingStartetProcessor(
     }
 
     override suspend fun process(records: ConsumerRecords<String, String>) {
-        records.forEach { receiveBegun(it) }
+        log.warn("NOT processing OppfolgingStartetProcessor Disabled for now!")
+        //records.forEach { receiveBegun(it) }
     }
 
-    fun receiveBegun(record: ConsumerRecord<String, String>) = record.value()
+    private fun receiveBegun(record: ConsumerRecord<String, String>) = record.value()
             .let { Json.decodeFromString<OppfolgingStartet>(it) }
             .also { log.debug("OppfolgingStartet record received for ${it.aktorId}.") }
             .also { dto -> hendelseService.harKommetUnderOppfolging(dto.aktorId, dto.oppfolgingStartet) }
