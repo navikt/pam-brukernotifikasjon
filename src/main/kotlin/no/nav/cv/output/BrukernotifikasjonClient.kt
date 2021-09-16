@@ -18,7 +18,6 @@ class BrukernotifikasjonClient(
 ) {
 
     fun publish(nokkel: Nokkel, oppgave: Oppgave) {
-        throw Exception("Should not reach this point while production of new varsel is disabled")
         oppgaveKafkaProducer.send(ProducerRecord(oppgaveTopic, nokkel, oppgave))
     }
 

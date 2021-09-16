@@ -19,8 +19,7 @@ class OppfolgingStartetProcessor(
     }
 
     override suspend fun process(records: ConsumerRecords<String, String>) {
-        log.warn("NOT processing OppfolgingStartetProcessor Disabled for now!")
-        //records.forEach { receiveBegun(it) }
+        records.forEach { receiveBegun(it) }
     }
 
     private fun receiveBegun(record: ConsumerRecord<String, String>) = record.value()
