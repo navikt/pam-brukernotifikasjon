@@ -46,7 +46,7 @@ class OppfolgingstatusKafkaConfig {
 
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-oppfolging-avsluttet-v2"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-oppfolging-avsluttet-v3"
         props[CommonClientConfigs.CLIENT_ID_CONFIG] = "pam-brukernotifikasjon-oppfolging-avsluttet-consumer"
 
         return Consumer(topic, KafkaConsumer<String, String>(props), eventProcessor)
