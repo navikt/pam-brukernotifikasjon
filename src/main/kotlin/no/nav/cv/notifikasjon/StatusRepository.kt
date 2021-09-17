@@ -127,7 +127,7 @@ open class StatusRepository(
         """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     open fun antallFerdig(nesteStatus: String): Long
-            = (entityManager.createNativeQuery(antallAvStatusQuery)
+            = (entityManager.createNativeQuery(antallFerdigQuery)
                 .setParameter("varsletStatus", varsletStatus)
                 .setParameter("nesteStatus", nesteStatus)
                 .singleResult as BigInteger).toLong()
