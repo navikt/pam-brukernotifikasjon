@@ -19,7 +19,7 @@ class GenerateMetrics(
     @Scheduled(fixedDelay = 5*60*1000) // Every 5 minutes
     fun generateMetrics() {
 
-        val trackThese = listOf(varsletStatus, skalVarslesManglerFnrStatus, forGammelStatus, cvOppdatertStatus )
+        val trackThese = listOf(varsletStatus, skalVarslesManglerFnrStatus, forGammelStatus, cvOppdatertStatus, ikkeUnderOppfølgingStatus )
 
         trackThese.map { it to update(it) }
             .joinToString { (status, antall) -> "$status: $antall" }
