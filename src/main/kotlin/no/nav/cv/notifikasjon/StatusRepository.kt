@@ -105,7 +105,7 @@ open class StatusRepository(
     private val antallAvStatusQuery =
             """
                 SELECT COUNT(*)
-                FROM STATUS s INNER JOIN 
+                FROM STATUS s
                 WHERE s.STATUS = :status 
                 AND s.ferdig = false
             """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
@@ -115,6 +115,22 @@ open class StatusRepository(
         = (entityManager.createNativeQuery(antallAvStatusQuery)
             .setParameter("status", status)
             .singleResult as BigInteger).toLong()
+
+
+    private val antallFerdigQuery =
+        """
+           SELECT count(*)
+           FROM STATUS sVarslet, STATUS s2
+           WHERE sVarslet.status = :varsletStatus
+           AND s2.status = :nesteStatus
+           AND sVarslet.uuid = s2.uuid
+        """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+    open fun antallFerdig(nesteStatus: String): Long
+            = (entityManager.createNativeQuery(antallAvStatusQuery)
+                .setParameter("varsletStatus", varsletStatus)
+                .setParameter("nesteStatus", nesteStatus)
+                .singleResult as BigInteger).toLong()
 }
 
 @Entity
