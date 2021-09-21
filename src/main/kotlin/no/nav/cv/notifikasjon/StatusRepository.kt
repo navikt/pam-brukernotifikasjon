@@ -131,7 +131,33 @@ open class StatusRepository(
                 .setParameter("varsletStatus", varsletStatus)
                 .setParameter("nesteStatus", nesteStatus)
                 .singleResult as BigInteger).toLong()
+
+    private val conversionRateWeeklyQuery =
+        """
+            select 
+                extract('week' from sStart.tidspunkt) as week, 
+                sEnd.status as status, 
+                count(*) as count
+            from status sStart, status sEnd 
+            where sStart.uuid = sEnd.uuid 
+                AND sEnd.ferdig = false 
+                AND sStart.status = 'varslet' 
+            group by week, sEnd.status;
+        """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
+
+    open fun conversionRateWeekly()
+        = entityManager.createNativeQuery(conversionRateWeeklyQuery)
+        .resultStream
+        .asSequence()
+        .map { it as ConversionRateWeek }
+        .toList()
 }
+
+data class ConversionRateWeek(
+    val week: Long,
+    val status: String,
+    val count: Long
+)
 
 @Entity
 @Table(name = "STATUS")
