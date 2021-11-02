@@ -28,7 +28,7 @@ object Version {
 
 dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("com.h2database:h2")
+    implementation("com.h2database:h2:1.4.200")
     implementation("com.github.navikt:brukernotifikasjon-schemas:${Version.brukernotifikasjoner}")
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
     implementation("io.micrometer:micrometer-registry-prometheus")

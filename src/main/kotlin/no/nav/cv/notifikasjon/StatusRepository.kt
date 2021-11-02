@@ -1,5 +1,6 @@
 package no.nav.cv.notifikasjon
 
+import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -134,26 +135,57 @@ open class StatusRepository(
 
     private val conversionRateWeeklyQuery =
         """
-            select 
-                extract('week' from sStart.tidspunkt) as week, 
-                sEnd.status as status, 
+            select
+                trunc(random() * 100000000) as id,
+                extract(year from sStart.tidspunkt) as year,
+                extract(week from sStart.tidspunkt) as week,
+                sEnd.status as status,
                 count(*) as count
-            from status sStart, status sEnd 
-            where sStart.uuid = sEnd.uuid 
-                AND sEnd.ferdig = false 
-                AND sStart.status = 'varslet' 
-            group by week, sEnd.status;
+            from status sStart, status sEnd
+            where sStart.uuid = sEnd.uuid
+              AND sEnd.ferdig = false
+              AND sStart.status = 'varslet'
+            group by year, week, sEnd.status
         """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     open fun conversionRateWeekly()
-        = entityManager.createNativeQuery(conversionRateWeeklyQuery)
-        .resultStream
-        .asSequence()
-        .map { it as ConversionRateWeek }
-        .toList()
+        = entityManager.createNativeQuery(conversionRateWeeklyQuery, ConversionRateWeekEntity::class.java)
+        .resultList
+        .map { it as ConversionRateWeekEntity}
+        .map { it.toDto() }
+
 }
 
+@Entity
+private class ConversionRateWeekEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private var id: Int = 0
+
+    @Column(name = "YEAR")
+    private var year: Long = 0
+
+    @Column(name = "WEEK")
+    private var week: Long = 0
+
+    @Column(name = "STATUS")
+    lateinit var status: String
+
+    @Column(name = "COUNT")
+    private var count: Long = 0
+
+    fun toDto() = ConversionRateWeek(
+        year = year,
+        week = week,
+        status = status,
+        count = count
+    )
+}
+
+@Serializable
 data class ConversionRateWeek(
+    val year: Long,
     val week: Long,
     val status: String,
     val count: Long

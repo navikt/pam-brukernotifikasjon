@@ -30,13 +30,6 @@ class GenerateMetrics(
 
         val antallFerdigIkkeUnderOppfolging = statusRepository.antallFerdig(ikkeUnderOppfølgingStatus)
         addOrUpdateGauge("cv.brukernotifikasjon.ferdig.$ikkeUnderOppfølgingStatus", antallFerdigIkkeUnderOppfolging)
-
-        statusRepository.conversionRateWeekly()
-            .also { log.info("Conversion rate per week\n" +
-                it.joinToString { (week, status, count) ->
-                    "$week $status $count\n"
-                }
-            ) }
     }
 
     private fun update(status: String) : Long {
