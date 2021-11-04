@@ -62,6 +62,8 @@ kafka:
 admin:
   enabled: ${ADMIN_ENABLED:`disabled`}
 
+metrics.key.conversion_rate: ${METRIC_CONVERSIONRATE:noset}
+
 output.melding.link: ${OUTPUT_MELDING_LINK:https://arbeidsplassen.nav.no/cv}
 
 base.url.personoppslag: ${PERSONOPPSLAG_BASE_URL:http://dummyurl}
