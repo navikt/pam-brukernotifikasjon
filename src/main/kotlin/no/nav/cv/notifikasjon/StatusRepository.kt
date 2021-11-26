@@ -145,6 +145,7 @@ open class StatusRepository(
             where sStart.uuid = sEnd.uuid
               AND sEnd.status in ('varslet', 'cvOppdatert', 'ikkeUnderOppfølging')
               AND sStart.status = 'varslet'
+              AND sEnd.id = (select max(sId.id) from status sId where sId.uuid = sStart.uuid)
             group by year, week, sEnd.status
         """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
