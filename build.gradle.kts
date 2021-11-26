@@ -73,6 +73,12 @@ dependencies {
 
 }
 
+configurations {
+    all {
+        exclude(group = "com.vaadin.external.google", module = "android-json")
+    }
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")

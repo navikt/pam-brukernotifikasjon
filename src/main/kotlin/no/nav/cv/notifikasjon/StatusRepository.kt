@@ -143,7 +143,7 @@ open class StatusRepository(
                 count(*) as count
             from status sStart, status sEnd
             where sStart.uuid = sEnd.uuid
-              AND sEnd.ferdig = false
+              AND sEnd.status in ('varslet', 'cvOppdatert', 'ikkeUnderOppfølging')
               AND sStart.status = 'varslet'
             group by year, week, sEnd.status
         """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
