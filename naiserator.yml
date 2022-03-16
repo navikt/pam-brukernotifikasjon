@@ -45,8 +45,6 @@ spec:
   env:
     - name: KAFKA_SCHEMA_REGISTRY_ONPREM
       value: {{ kafka_schema_registry }}
-    - name: KAFKA_BOOTSTRAP_SERVERS
-      value: { { kafka_brokers } }
     - name: KAFKA_SECURITY_PROTOCOL
       value: {{ kafka_security_protocol }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET

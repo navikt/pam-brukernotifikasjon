@@ -1,4 +1,4 @@
-package no.nav.cv.infrastructure.kafka
+package no.nav.cv.infrastructure.kafka.producer
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.*
 import io.confluent.kafka.serializers.KafkaAvroSerializer

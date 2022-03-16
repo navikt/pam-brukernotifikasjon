@@ -1,4 +1,4 @@
-package no.nav.cv.infrastructure.kafka
+package no.nav.cv.infrastructure.kafka.producer
 
 import org.apache.kafka.clients.producer.Producer
 import org.springframework.beans.factory.annotation.Value

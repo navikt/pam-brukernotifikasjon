@@ -11,7 +11,6 @@
   "kafka_producer_topic_done":"aapen-brukernotifikasjon-done-v1",
 
   "kafka_security_protocol": "SASL_SSL",
-  "kafka_brokers": "10.183.160.26:8443,10.183.32.47:8443,10.183.32.48:8443",
   "kafka_schema_registry": "kafka-schema-registry.nais-q.adeo.no",
 
   "oppfolging_feed": "https://veilarboppfolging-q0.nais.preprod.local",

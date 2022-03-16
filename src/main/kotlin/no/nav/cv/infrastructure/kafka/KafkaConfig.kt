@@ -20,7 +20,7 @@ import java.util.*
 @Configuration
 class KafkaConfig {
 
-    @Value("\${kafka.bootstrap.servers}")
+    @Value("\${kafka.properties.bootstrap-servers}")
     private val brokersUrl: String? = null
 
     @Value("\${kafka.sasl.jaas.config}")
@@ -32,7 +32,7 @@ class KafkaConfig {
     @Value("\${kafka.ssl.truststore.password}")
     private val truststorePassword: String? = null
 
-    @Value("\${kafka.schema.registry.url}")
+    @Value("\${kafka.properties.schema.registry.url}")
     private val kafkaSchemaRegistry: String? = null
 
 
@@ -46,18 +46,6 @@ class KafkaConfig {
         props[ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG] = 500000
         props[ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG] = 10000
         props[ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG] = 3000
-
-        return props
-    }
-
-    @Bean("defaultProducerProperties")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    fun kafkaProducerProperties(): Properties {
-        val props = kafkaClusterProperties();
-
-        props[ProducerConfig.ACKS_CONFIG] = "all"
-        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.canonicalName
-        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.canonicalName
 
         return props
     }

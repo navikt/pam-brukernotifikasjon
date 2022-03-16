@@ -3,12 +3,10 @@ package no.nav.cv.output
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.brukernotifikasjon.schemas.input.OppgaveInput
-import no.nav.cv.infrastructure.kafka.KafkaAivenProducerService
-import no.nav.cv.infrastructure.kafka.KafkaAivenProducerService.KafkaProducerDefinition
-import org.apache.kafka.clients.producer.KafkaProducer
+import no.nav.cv.infrastructure.kafka.producer.KafkaAivenProducerService
+import no.nav.cv.infrastructure.kafka.producer.KafkaAivenProducerService.KafkaProducerDefinition
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
