@@ -1,6 +1,5 @@
 package no.nav.cv.infrastructure.kafka
 
-import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import org.springframework.scheduling.annotation.Scheduled

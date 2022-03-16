@@ -1,7 +1,9 @@
 package no.nav.cv.output
 
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.brukernotifikasjon.schemas.builders.*
+import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.cv.notifikasjon.VarselPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -9,7 +11,6 @@ import org.springframework.stereotype.Service
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.*
 
 private val systembruker = "srvpambrukernot"
 private val grupperingsId = "ARBEIDSPLASSEN"
@@ -61,6 +62,7 @@ class BrukernotifikasjonProducer(
 
         val done = DoneInputBuilder()
             .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
+            .build()
 
         brukernotifikasjonClient.done(nokkel, done)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.fjernet").increment(1.0)

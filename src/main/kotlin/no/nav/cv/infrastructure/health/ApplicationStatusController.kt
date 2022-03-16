@@ -1,7 +1,6 @@
 package no.nav.cv.infrastructure.health
 
 import no.nav.cv.infrastructure.kafka.ConsumerStatusHandler
-import no.nav.cv.notifikasjon.Hendelser
 import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
