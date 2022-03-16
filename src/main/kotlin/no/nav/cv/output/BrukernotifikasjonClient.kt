@@ -3,26 +3,55 @@ package no.nav.cv.output
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.brukernotifikasjon.schemas.input.OppgaveInput
+import no.nav.cv.infrastructure.kafka.KafkaAivenProducerService
+import no.nav.cv.infrastructure.kafka.KafkaAivenProducerService.KafkaProducerDefinition
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class BrukernotifikasjonClient(
-        @Qualifier("oppgaveKafkaProducer") private val oppgaveKafkaProducer: KafkaProducer<NokkelInput, OppgaveInput>,
-        @Qualifier("doneKafkaProducer") private val doneKafkaProducer: KafkaProducer<NokkelInput, DoneInput>,
-        @Value("\${kafka.topics.producers.ny_oppgave}") private val oppgaveTopic: String,
-        @Value("\${kafka.topics.producers.done}") private val doneTopic: String
+    private val kafkaAivenProducerService: KafkaAivenProducerService,
+    @Value("\${kafka.aiven.topics.producers.oppgave}") private val oppgaveTopic: String,
+    @Value("\${kafka.aiven.topics.producers.done}") private val doneTopic: String
 ) {
+    companion object {
+        private val log = LoggerFactory.getLogger(BrukernotifikasjonClient::class.java)
+        private const val OPPGAVE_CLIENT_ID = "pam-brukernotifikasjon-oppgave-producer"
+        private const val DONE_CLIENT_ID = "pam-brukernotifikasjon-done-producer"
+    }
 
-    fun publish(nokkel: NokkelInput, oppgave: OppgaveInput) {
-        oppgaveKafkaProducer.send(ProducerRecord(oppgaveTopic, nokkel, oppgave))
+    private val varselProducer: KafkaProducerDefinition<NokkelInput, OppgaveInput> by lazy {
+        oppgaveTopic.let {
+            log.info("Registrerer varsel-producer for topic: $it")
+            kafkaAivenProducerService.notificationProducer(
+                topicName = it, clientId = OPPGAVE_CLIENT_ID
+            )
+        }
+    }
+
+    private val doneProducer: KafkaProducerDefinition<NokkelInput, DoneInput> by lazy {
+        doneTopic.let {
+            log.info("Registrerer done-producer for topic: $it")
+            kafkaAivenProducerService.notificationProducer(
+                topicName = it, clientId = DONE_CLIENT_ID
+            )
+        }
+    }
+
+    fun varsel(nokkel: NokkelInput, oppgave: OppgaveInput) {
+        varselProducer.run {
+            producer.send(ProducerRecord(topicName, nokkel, oppgave))
+        }
     }
 
     fun done(nokkel: NokkelInput, done: DoneInput) {
-        doneKafkaProducer.send(ProducerRecord(doneTopic, nokkel, done))
+        doneProducer.run {
+            producer.send(ProducerRecord(topicName, nokkel, done))
+        }
     }
 
 }

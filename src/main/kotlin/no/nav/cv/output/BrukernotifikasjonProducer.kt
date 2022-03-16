@@ -46,7 +46,7 @@ class BrukernotifikasjonProducer(
             .build()
 
 
-        brukernotifikasjonClient.publish(nokkel, oppgave)
+        brukernotifikasjonClient.varsel(nokkel, oppgave)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
     }
 
@@ -57,7 +57,7 @@ class BrukernotifikasjonProducer(
             .withGrupperingsId(grupperingsId)
             .withFodselsnummer(foedselsnummer)
             .withNamespace("hei") // TODO - TEAMPAM?
-            .withAppnavn("du") // TODO - BRUKERNOTIFIKASJON?
+            .withAppnavn("du") // TODO - PAM-BRUKERNOTIFIKASJON?
             .build()
 
         val done = DoneInputBuilder()
