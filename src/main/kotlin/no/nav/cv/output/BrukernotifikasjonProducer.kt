@@ -1,15 +1,14 @@
 package no.nav.cv.output
 
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.brukernotifikasjon.schemas.builders.DoneBuilder
-import no.nav.brukernotifikasjon.schemas.builders.NokkelBuilder
-import no.nav.brukernotifikasjon.schemas.builders.OppgaveBuilder
+import no.nav.brukernotifikasjon.schemas.builders.*
 import no.nav.cv.notifikasjon.VarselPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URL
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 private val systembruker = "srvpambrukernot"
@@ -29,19 +28,22 @@ class BrukernotifikasjonProducer(
 
     override fun publish(eventId: String, foedselsnummer: String) {
         log.info("Publiserer varsel med eventId $eventId")
+        val nokkel = NokkelInputBuilder()
+            .withEventId(eventId)
+            .withGrupperingsId(grupperingsId)
+            .withFodselsnummer(foedselsnummer)
+            .withNamespace("hei") // TODO - TEAMPAM?
+            .withAppnavn("du") // TODO - BRUKERNOTIFIKASJON?
+            .build()
 
-        val nokkel = NokkelBuilder()
-                .withSystembruker(systembruker)
-                .withEventId(eventId)
-                .build()
-        val oppgave = OppgaveBuilder()
-                .withTidspunkt(LocalDateTime.now())
-                .withFodselsnummer(foedselsnummer)
-                .withGrupperingsId(grupperingsId)
-                .withTekst(tekst)
-                .withLink(URL(link))
-                .withSikkerhetsnivaa(sikkerhetsnivaa)
-                .build()
+        val oppgave = OppgaveInputBuilder()
+            .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
+            //.withSynligFremTil()
+            .withTekst(tekst)
+            .withLink(URL(link))
+            .withSikkerhetsnivaa(sikkerhetsnivaa)
+            .build()
+
 
         brukernotifikasjonClient.publish(nokkel, oppgave)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
@@ -49,15 +51,16 @@ class BrukernotifikasjonProducer(
 
     override fun done(eventId: String, foedselsnummer: String) {
         log.info("Publiserer donemelding for eventId $eventId")
-        val nokkel = NokkelBuilder()
-                .withSystembruker(systembruker)
-                .withEventId(eventId)
-                .build()
-        val done = DoneBuilder()
-                .withTidspunkt(LocalDateTime.now())
-                .withFodselsnummer(foedselsnummer)
-                .withGrupperingsId(grupperingsId)
-                .build()
+        val nokkel = NokkelInputBuilder()
+            .withEventId(eventId)
+            .withGrupperingsId(grupperingsId)
+            .withFodselsnummer(foedselsnummer)
+            .withNamespace("hei") // TODO - TEAMPAM?
+            .withAppnavn("du") // TODO - BRUKERNOTIFIKASJON?
+            .build()
+
+        val done = DoneInputBuilder()
+            .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
 
         brukernotifikasjonClient.done(nokkel, done)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.fjernet").increment(1.0)
