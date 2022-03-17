@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service
 @Service
 class BrukernotifikasjonClient(
     private val kafkaAivenProducerService: KafkaAivenProducerService,
-    @Value("\${kafka.aiven.topics.producers.oppgave}") private val oppgaveTopic: String,
-    @Value("\${kafka.aiven.topics.producers.done}") private val doneTopic: String
+    @Value("\${kafka.aiven.producers.topics.oppgave}") private val oppgaveTopic: String,
+    @Value("\${kafka.aiven.producers.topics.done}") private val doneTopic: String
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(BrukernotifikasjonClient::class.java)

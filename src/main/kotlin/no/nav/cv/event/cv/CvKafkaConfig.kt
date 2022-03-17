@@ -26,7 +26,7 @@ class CvKafkaConfig {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     fun cvEndretConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.topics.consumers.cv_endret}") topic: String,
+            @Value("\${kafka.consumers.topics.cv_endret}") topic: String,
             eventProcessor: CvEndretProcessor,
     ) : Consumer<String, GenericRecord> {
 

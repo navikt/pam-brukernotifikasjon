@@ -21,7 +21,7 @@ class OppfolgingstatusKafkaConfig {
     @Bean
     fun oppfolgingStartetConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.topics.consumers.oppfolging_startet}") topic: String,
+            @Value("\${kafka.consumers.topics.oppfolging_startet}") topic: String,
             eventProcessor: OppfolgingStartetProcessor,
     ) : Consumer<String, String> {
 
@@ -36,7 +36,7 @@ class OppfolgingstatusKafkaConfig {
     @Bean
     fun oppfolgingAvsluttetConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.topics.consumers.oppfolging_avsluttet}") topic: String,
+            @Value("\${kafka.consumers.topics.oppfolging_avsluttet}") topic: String,
             eventProcessor: OppfolgingAvsluttetProcessor,
     ) : Consumer<String, String> {
 
