@@ -33,8 +33,8 @@ class BrukernotifikasjonProducer(
             .withEventId(eventId)
             .withGrupperingsId(grupperingsId)
             .withFodselsnummer(foedselsnummer)
-            .withNamespace("hei") // TODO - TEAMPAM?
-            .withAppnavn("du") // TODO - BRUKERNOTIFIKASJON?
+            .withNamespace("teampam") // TODO - TEAMPAM?
+            .withAppnavn("brukernotifikasjon") // TODO - BRUKERNOTIFIKASJON?
             .build()
 
         val oppgave = OppgaveInputBuilder()
@@ -56,8 +56,8 @@ class BrukernotifikasjonProducer(
             .withEventId(eventId)
             .withGrupperingsId(grupperingsId)
             .withFodselsnummer(foedselsnummer)
-            .withNamespace("hei") // TODO - TEAMPAM?
-            .withAppnavn("du") // TODO - PAM-BRUKERNOTIFIKASJON?
+            .withNamespace("teampam") // TODO - TEAMPAM?
+            .withAppnavn("pam-brukernotifikasjon") // TODO - PAM-BRUKERNOTIFIKASJON?
             .build()
 
         val done = DoneInputBuilder()
