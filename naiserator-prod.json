@@ -13,6 +13,8 @@
   "kafka_security_protocol": "SASL_SSL",
   "kafka_schema_registry": "kafka-schema-registry.nais.adeo.no",
 
+  "kafka_pool": "nav-prod",
+
   "oppfolging_feed": "https://veilarboppfolging.nais.adeo.no",
   "security_token_service": "https://security-token-service.nais.adeo.no",
 

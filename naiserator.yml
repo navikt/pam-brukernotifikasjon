@@ -42,6 +42,8 @@ spec:
     path: /pam-brukernotifikasjon/actuator/prometheus
   envFrom:
     - secret: pam-brukernotifikasjon-secret
+  kafka:
+    pool: {{ kafka_pool }}
   env:
     - name: KAFKA_SCHEMA_REGISTRY_ONPREM
       value: {{ kafka_schema_registry }}
