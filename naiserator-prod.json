@@ -7,8 +7,8 @@
   "kafka_consumer_topic_oppfolging_avsluttet":"aapen-arbeidsrettetOppfolging-oppfolgingAvsluttet-v1-p",
   "kafka_consumer_topic_pdl_id":"privat-person-pdl-aktor-v1",
 
-  "kafka_producer_topic_oppgave":"aapen-brukernotifikasjon-oppgave-v1",
-  "kafka_producer_topic_done":"aapen-brukernotifikasjon-done-v1",
+  "kafka_producer_topic_oppgave":"min-side.aapen-brukernotifikasjon-oppgave-v1",
+  "kafka_producer_topic_done":"min-side.aapen-brukernotifikasjon-done-v1",
 
   "kafka_security_protocol": "SASL_SSL",
   "kafka_schema_registry": "kafka-schema-registry.nais.adeo.no",
