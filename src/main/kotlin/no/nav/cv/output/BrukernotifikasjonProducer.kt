@@ -34,7 +34,7 @@ class BrukernotifikasjonProducer(
             .withGrupperingsId(grupperingsId)
             .withFodselsnummer(foedselsnummer)
             .withNamespace("teampam") // TODO - TEAMPAM?
-            .withAppnavn("brukernotifikasjon") // TODO - BRUKERNOTIFIKASJON?
+            .withAppnavn("pam-brukernotifikasjon") // TODO - BRUKERNOTIFIKASJON?
             .build()
 
         val oppgave = OppgaveInputBuilder()
