@@ -61,7 +61,7 @@ kafka:
       protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
     schema:
       registry:
-        url: ${KAFKA_SCHEMA_REGISTRY_ONPREM:http://localhost:8081}
+        url: https://${KAFKA_SCHEMA_REGISTRY_ONPREM:http://localhost:8081}
   consumers:
     topics:
       cv_endret: ${KAFKA_CONSUMER_TOPIC_CV_ENDRET:arbeid-pam-cv-endret-v4-q0}
