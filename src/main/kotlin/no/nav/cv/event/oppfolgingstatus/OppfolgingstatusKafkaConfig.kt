@@ -8,12 +8,8 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.beans.factory.config.ConfigurableBeanFactory
-import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
-import org.springframework.context.event.EventListener
 import java.util.*
 
 @Configuration
@@ -25,7 +21,7 @@ class OppfolgingstatusKafkaConfig {
     @Bean
     fun oppfolgingStartetConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.topics.consumers.oppfolging_startet}") topic: String,
+            @Value("\${kafka.consumers.topics.oppfolging_startet}") topic: String,
             eventProcessor: OppfolgingStartetProcessor,
     ) : Consumer<String, String> {
 
@@ -40,7 +36,7 @@ class OppfolgingstatusKafkaConfig {
     @Bean
     fun oppfolgingAvsluttetConsumer(
             @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.topics.consumers.oppfolging_avsluttet}") topic: String,
+            @Value("\${kafka.consumers.topics.oppfolging_avsluttet}") topic: String,
             eventProcessor: OppfolgingAvsluttetProcessor,
     ) : Consumer<String, String> {
 

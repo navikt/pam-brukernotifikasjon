@@ -1,7 +1,5 @@
 {
   "cloudsql_db_tier": "db-custom-1-6144",
-  "kafka_schema_registry": "kafka-schema-registry.nais.adeo.no",
-
   "servicebruker_brukernotifikasjon": "/serviceuser/data/prod/srvpambrukernot",
 
   "kafka_consumer_topic_cv_endret":"arbeid-pam-cv-endret-v6",
@@ -9,8 +7,13 @@
   "kafka_consumer_topic_oppfolging_avsluttet":"aapen-arbeidsrettetOppfolging-oppfolgingAvsluttet-v1-p",
   "kafka_consumer_topic_pdl_id":"privat-person-pdl-aktor-v1",
 
-  "kafka_producer_topic_ny_oppgave":"aapen-brukernotifikasjon-nyOppgave-v1",
-  "kafka_producer_topic_done":"aapen-brukernotifikasjon-done-v1",
+  "kafka_producer_topic_oppgave":"min-side.aapen-brukernotifikasjon-oppgave-v1",
+  "kafka_producer_topic_done":"min-side.aapen-brukernotifikasjon-done-v1",
+
+  "kafka_security_protocol": "SASL_SSL",
+  "kafka_schema_registry": "kafka-schema-registry.nais.adeo.no",
+
+  "kafka_pool": "nav-prod",
 
   "oppfolging_feed": "https://veilarboppfolging.nais.adeo.no",
   "security_token_service": "https://security-token-service.nais.adeo.no",

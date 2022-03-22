@@ -1,16 +1,16 @@
 package no.nav.cv.output
 
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.brukernotifikasjon.schemas.builders.DoneBuilder
-import no.nav.brukernotifikasjon.schemas.builders.NokkelBuilder
-import no.nav.brukernotifikasjon.schemas.builders.OppgaveBuilder
+import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.cv.notifikasjon.VarselPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URL
 import java.time.LocalDateTime
-import java.util.*
+import java.time.ZoneOffset
 
 private val systembruker = "srvpambrukernot"
 private val grupperingsId = "ARBEIDSPLASSEN"
@@ -29,35 +29,40 @@ class BrukernotifikasjonProducer(
 
     override fun publish(eventId: String, foedselsnummer: String) {
         log.info("Publiserer varsel med eventId $eventId")
+        val nokkel = NokkelInputBuilder()
+            .withEventId(eventId)
+            .withGrupperingsId(grupperingsId)
+            .withFodselsnummer(foedselsnummer)
+            .withNamespace("teampam") // TODO - TEAMPAM?
+            .withAppnavn("pam-brukernotifikasjon") // TODO - BRUKERNOTIFIKASJON?
+            .build()
 
-        val nokkel = NokkelBuilder()
-                .withSystembruker(systembruker)
-                .withEventId(eventId)
-                .build()
-        val oppgave = OppgaveBuilder()
-                .withTidspunkt(LocalDateTime.now())
-                .withFodselsnummer(foedselsnummer)
-                .withGrupperingsId(grupperingsId)
-                .withTekst(tekst)
-                .withLink(URL(link))
-                .withSikkerhetsnivaa(sikkerhetsnivaa)
-                .build()
+        val oppgave = OppgaveInputBuilder()
+            .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
+            //.withSynligFremTil()
+            .withTekst(tekst)
+            .withLink(URL(link))
+            .withSikkerhetsnivaa(sikkerhetsnivaa)
+            .build()
 
-        brukernotifikasjonClient.publish(nokkel, oppgave)
+
+        brukernotifikasjonClient.varsel(nokkel, oppgave)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
     }
 
     override fun done(eventId: String, foedselsnummer: String) {
         log.info("Publiserer donemelding for eventId $eventId")
-        val nokkel = NokkelBuilder()
-                .withSystembruker(systembruker)
-                .withEventId(eventId)
-                .build()
-        val done = DoneBuilder()
-                .withTidspunkt(LocalDateTime.now())
-                .withFodselsnummer(foedselsnummer)
-                .withGrupperingsId(grupperingsId)
-                .build()
+        val nokkel = NokkelInputBuilder()
+            .withEventId(eventId)
+            .withGrupperingsId(grupperingsId)
+            .withFodselsnummer(foedselsnummer)
+            .withNamespace("teampam") // TODO - TEAMPAM?
+            .withAppnavn("pam-brukernotifikasjon") // TODO - PAM-BRUKERNOTIFIKASJON?
+            .build()
+
+        val done = DoneInputBuilder()
+            .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
+            .build()
 
         brukernotifikasjonClient.done(nokkel, done)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.fjernet").increment(1.0)

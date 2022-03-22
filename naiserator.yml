@@ -42,9 +42,13 @@ spec:
     path: /pam-brukernotifikasjon/actuator/prometheus
   envFrom:
     - secret: pam-brukernotifikasjon-secret
+  kafka:
+    pool: {{ kafka_pool }}
   env:
-    - name: KAFKA_SCHEMA_REGISTRY
+    - name: KAFKA_SCHEMA_REGISTRY_ONPREM
       value: {{ kafka_schema_registry }}
+    - name: KAFKA_SECURITY_PROTOCOL
+      value: {{ kafka_security_protocol }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
       value: {{ kafka_consumer_topic_cv_endret }}
     - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET
@@ -53,8 +57,8 @@ spec:
       value: {{ kafka_consumer_topic_oppfolging_avsluttet }}
     - name: KAFKA_CONSUMER_TOPIC_PDL_ID
       value: {{ kafka_consumer_topic_pdl_id }}
-    - name: KAFKA_PRODUCER_TOPIC_NY_OPPGAVE
-      value: {{ kafka_producer_topic_ny_oppgave }}
+    - name: KAFKA_PRODUCER_TOPIC_OPPGAVE
+      value: {{ kafka_producer_topic_oppgave }}
     - name: KAFKA_PRODUCER_TOPIC_DONE
       value: {{ kafka_producer_topic_done }}
     - name: ADMIN_ENABLED

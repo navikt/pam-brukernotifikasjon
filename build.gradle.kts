@@ -20,7 +20,7 @@ repositories {
 }
 
 object Version {
-    val brukernotifikasjoner = "1.2021.01.18-11.12-b9c8c40b98d1"
+    val brukernotifikasjoner = "2.5.1"
     val avro = "1.9.2"
     val confluent = "5.3.0"
     val token_support = "1.3.8"

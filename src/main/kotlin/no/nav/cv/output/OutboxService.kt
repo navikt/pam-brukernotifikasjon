@@ -1,6 +1,5 @@
 package no.nav.cv.output
 
-import no.nav.cv.notifikasjon.NotifikasjonAdmin
 import no.nav.cv.notifikasjon.VarselPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

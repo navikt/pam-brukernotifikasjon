@@ -2,9 +2,7 @@ package no.nav.cv.notifikasjon
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.slot
-import no.nav.cv.output.OutboxProcessor
 import no.nav.cv.output.OutboxService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
