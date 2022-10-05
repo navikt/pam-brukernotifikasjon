@@ -42,3 +42,4 @@ Finne event id:
 `select * from status where aktor_id = '<aktør id for forrige>';`
 
 
+
