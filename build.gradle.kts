@@ -1,16 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
-    kotlin("plugin.spring") version "1.5.10"
+    id("org.springframework.boot") version "2.7.4"
+    id("io.spring.dependency-management") version "1.0.14.RELEASE"
+    kotlin("jvm") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("plugin.spring") version "1.7.20"
+}
+
+ext {
+    set("snakeyaml.version", "1.32") // Spring 2.7.4 uses vulnerable version 1.30. Can possibly be removed on spring bump
 }
 
 group = "no.nav.cv"
 version = "0.1"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -21,9 +25,9 @@ repositories {
 
 object Version {
     val brukernotifikasjoner = "2.5.1"
-    val avro = "1.9.2"
+    val avro = "1.11.1"
     val confluent = "5.3.0"
-    val token_support = "1.3.8"
+    val token_support = "2.1.6"
 }
 
 dependencies {
@@ -33,30 +37,26 @@ dependencies {
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("javax.annotation:javax.annotation-api")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.12.0")
-    implementation("net.javacrumbs.shedlock:shedlock-spring:4.24.0")
-    implementation("net.logstash.logback:logstash-logback-encoder:6.2")
-    implementation("no.nav:vault-jdbc:1.3.7")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
+    implementation("no.nav:vault-jdbc:1.3.10")
     implementation("org.apache.avro:avro:${Version.avro}")
     implementation("org.flywaydb:flyway-core")
     implementation("org.hibernate:hibernate-core")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
-    implementation("org.json:json:20190722")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("org.json:json:20220924")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-//    implementation("org.springframework.boot:spring-boot-starter-security")
-
-//    implementation("no.nav.security:token-validation-test-support:${Version.token_support}")
     implementation("no.nav.security:token-validation-spring:${Version.token_support}")
     implementation("no.nav.security:token-client-spring:${Version.token_support}")
-//    implementation("no.nav.security:token-validation-core:${Version.token_support}")
     implementation("javax.inject:javax.inject:1")
 
     testImplementation("com.ninja-squad:springmockk:3.0.1")
@@ -69,7 +69,7 @@ dependencies {
     }
     testImplementation("org.testcontainers:junit-jupiter:1.15.3")
     testImplementation("org.testcontainers:kafka:1.15.3")
-    testImplementation("org.mock-server:mockserver-netty:5.11.1")
+    testImplementation("org.mock-server:mockserver-netty:5.14.0")
 
 }
 
@@ -82,10 +82,11 @@ configurations {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }

@@ -21,7 +21,6 @@ class OppfolgingSerializationTest {
             }
         """.trimIndent()
         startedJson
-                .also { json -> """"json: \"$json\"""" }
                 .let { Json.decodeFromString<OppfolgingStartet>(it) }
                 .also { """"OppfolgingStartet record received for ${it.aktorId}."""" }
         val opppfolgingStartet = Json.decodeFromString<OppfolgingStartet>(startedJson)
