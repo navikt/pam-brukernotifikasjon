@@ -61,16 +61,16 @@ dependencies {
     implementation("no.nav.security:token-client-spring:${Version.token_support}")
     implementation("javax.inject:javax.inject:1")
 
-    testImplementation("com.ninja-squad:springmockk:3.0.1")
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
-    testImplementation("io.mockk:mockk:1.9.3")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+    testImplementation("io.mockk:mockk:1.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         exclude(module = "mockito-core")
     }
-    testImplementation("org.testcontainers:junit-jupiter:1.15.3")
-    testImplementation("org.testcontainers:kafka:1.15.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.4")
+    testImplementation("org.testcontainers:kafka:1.17.4")
     testImplementation("org.mock-server:mockserver-netty:5.14.0")
 
 }
