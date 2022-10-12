@@ -90,7 +90,6 @@ internal class StatusTestNy {
         hendelseService.harKommetUnderOppfolging(aktoer, agesAgo)
 
         val lagretStatus = statusRepository.finnSiste(aktoer)
-        print(now)
 
         assertEquals(forGammelStatus, lagretStatus.status)
         assertEquals(agesAgo, lagretStatus.statusTidspunkt)
