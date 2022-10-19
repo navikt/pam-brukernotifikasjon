@@ -20,9 +20,9 @@ class OppfolgingstatusKafkaConfig {
 
     @Bean
     fun oppfolgingStartetConsumer(
-            @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.consumers.topics.oppfolging_startet}") topic: String,
-            eventProcessor: OppfolgingStartetProcessor,
+        @Qualifier("defaultConsumerPropertiesOnPrem") props: Properties,
+        @Value("\${kafka.consumers.topics.oppfolging_startet}") topic: String,
+        eventProcessor: OppfolgingStartetProcessor,
     ) : Consumer<String, String> {
 
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
@@ -35,9 +35,9 @@ class OppfolgingstatusKafkaConfig {
 
     @Bean
     fun oppfolgingAvsluttetConsumer(
-            @Qualifier("defaultConsumerProperties") props: Properties,
-            @Value("\${kafka.consumers.topics.oppfolging_avsluttet}") topic: String,
-            eventProcessor: OppfolgingAvsluttetProcessor,
+        @Qualifier("defaultConsumerPropertiesOnPrem") props: Properties,
+        @Value("\${kafka.consumers.topics.oppfolging_avsluttet}") topic: String,
+        eventProcessor: OppfolgingAvsluttetProcessor,
     ) : Consumer<String, String> {
 
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName

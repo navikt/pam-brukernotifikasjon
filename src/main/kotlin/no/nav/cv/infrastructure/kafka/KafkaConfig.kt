@@ -1,15 +1,11 @@
 package no.nav.cv.infrastructure.kafka
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroSerializer
 import io.micrometer.core.instrument.MeterRegistry
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Bean
@@ -35,11 +31,23 @@ class KafkaConfig {
     @Value("\${kafka.properties.schema.registry.url}")
     private val kafkaSchemaRegistry: String? = null
 
+    @Value("\${kafka.aiven.brokers}")
+    private val brokersUrlAiven: String? = null
 
-    @Bean("defaultConsumerProperties")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    fun kafkaConsumerProperties(): Properties {
-        val props = kafkaClusterProperties()
+    @Value("\${kafka.aiven.securityProtocol}")
+    private val securityProtocolAiven: String? = null
+
+    @Value("\${kafka.aiven.keystorePath}")
+    private val keystorePathAiven: String? = null
+
+    @Value("\${kafka.aiven.truststorePath}")
+    private val truststorePathAiven: String? = null
+
+    @Value("\${kafka.aiven.credstorePassword}")
+    private val credstorePasswordAiven: String? = null
+
+    private fun defaultConsumerProperties(): Properties {
+        val props = Properties()
 
         props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
         props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = false
@@ -50,9 +58,10 @@ class KafkaConfig {
         return props
     }
 
-    private fun kafkaClusterProperties(): Properties {
-
-        val props = Properties()
+    @Bean("defaultConsumerPropertiesOnPrem")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    fun defaultConsumerPropertiesOnPrem(): Properties {
+        val props = defaultConsumerProperties()
 
         props[CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG] = brokersUrl
         props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "PLAINTEXT"
@@ -62,9 +71,33 @@ class KafkaConfig {
             props[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = truststoreLocation
             props[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = truststorePassword
             props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_SSL"
-
         }
         props[AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG] = kafkaSchemaRegistry
+
+        return props
+    }
+
+    @Bean("defaultConsumerPropertiesAiven")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    fun defaultConsumerPropertiesAiven(): Properties {
+        val props = defaultConsumerProperties()
+
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = brokersUrlAiven
+        props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = securityProtocolAiven
+        props[SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG] = "JKS"
+        props[SslConfigs.SSL_KEY_PASSWORD_CONFIG] = credstorePasswordAiven
+        props[SslConfigs.SSL_KEYSTORE_TYPE_CONFIG] = "PKCS12"
+
+        System.getenv("KAFKA_KEYSTORE_PATH")?.let {
+            props[SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG] = keystorePathAiven
+            props[SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG] = credstorePasswordAiven
+        }
+
+        System.getenv("KAFKA_TRUSTSTORE_PATH")?.let {
+            props[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = truststorePathAiven
+            props[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = credstorePasswordAiven
+            props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SSL"
+        }
 
         return props
     }
@@ -83,5 +116,4 @@ class KafkaConfig {
     ): ConsumerStatusMetrics {
         return ConsumerStatusMetrics(consumers, meterRegistry)
     }
-
 }
