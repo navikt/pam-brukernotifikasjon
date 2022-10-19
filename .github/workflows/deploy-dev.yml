@@ -8,7 +8,6 @@ on:
       - "CODEOWNERS"
     branches:
       - master
-      - onprem-utfasing # TODO @v1adau(19.10.22) fjern
 jobs:
   call-workflow:
     uses: navikt/pam-deploy/.github/workflows/deploy-dev.yml@v2
