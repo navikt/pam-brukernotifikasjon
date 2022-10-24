@@ -54,12 +54,8 @@ spec:
       value: {{ kafka_security_protocol }}
     - name: KAFKA_CONSUMER_TOPIC_CV_ENDRET
       value: {{ kafka_consumer_topic_cv_endret }}
-    - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_STARTET
-      value: {{ kafka_consumer_topic_oppfolging_startet }}
-    - name: KAFKA_CONSUMER_TOPIC_OPPFOLGING_AVSLUTTET
-      value: {{ kafka_consumer_topic_oppfolging_avsluttet }}
-    - name: KAFKA_CONSUMER_TOPIC_PDL_ID
-      value: {{ kafka_consumer_topic_pdl_id }}
+    - name: KAFKA_CONSUMER_TOPIC_OPPFOLGINGSTATUS
+      value: {{ kafka_consumer_topic_oppfolgingstatus }}
     - name: KAFKA_PRODUCER_TOPIC_OPPGAVE
       value: {{ kafka_producer_topic_oppgave }}
     - name: KAFKA_PRODUCER_TOPIC_DONE

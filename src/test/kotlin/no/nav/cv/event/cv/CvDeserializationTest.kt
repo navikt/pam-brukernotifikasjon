@@ -22,8 +22,6 @@ class CvDeserializationTest {
         private val MELDINGSTYPE = CvMeldingstype.ENDRE
         private val UPDATED_BY = UpdatedByType.PERSONBRUKER
         private val UPDATED_AT = ZonedDateTime.of(2022, 10, 10, 12, 0, 0, 0, ZoneId.systemDefault())
-        private val TOPIC = "test-topic"
-        private val PARTITION = 0
 
         private val outboxServiceMock = mock(OutboxService::class.java)
         private val statusRepositoryMock = mock(StatusRepository::class.java)
@@ -72,7 +70,7 @@ class CvDeserializationTest {
 
 
     private fun record(offset: Long, aktorId: String, melding: String) =
-        ConsumerRecord(TOPIC, PARTITION, offset, aktorId, melding)
+        ConsumerRecord("test-topic", 0, offset, aktorId, melding)
 
     private fun cvJson(
         aktorId: String = AKTOR_ID,
