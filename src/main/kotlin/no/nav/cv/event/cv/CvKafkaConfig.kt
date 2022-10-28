@@ -22,6 +22,7 @@ class CvKafkaConfig {
         @Value("\${kafka.aiven.consumers.topics.cv_endret}") topic: String,
         eventProcessor: CvEndretProcessor,
     ): Consumer<String, String> {
+        props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "latest"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.canonicalName
         props[ConsumerConfig.GROUP_ID_CONFIG] = "pam-brukernotifikasjon-cv-v6"
