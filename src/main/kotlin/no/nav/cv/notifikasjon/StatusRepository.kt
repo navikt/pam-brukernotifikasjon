@@ -137,7 +137,7 @@ open class StatusRepository(
         """
             select
                 trunc(random() * 100000000) as id,
-                extract(year from sStart.tidspunkt) as year,
+                extract(year from sStart.tidspunkt) as "year",
                 extract(week from sStart.tidspunkt) as week,
                 sEnd.status as status,
                 count(*) as count
@@ -146,7 +146,7 @@ open class StatusRepository(
               AND sEnd.status in ('varslet', 'cvOppdatert', 'ikkeUnderOppfølging')
               AND sStart.status = 'varslet'
               AND sEnd.id = (select max(sId.id) from status sId where sId.uuid = sStart.uuid)
-            group by year, week, sEnd.status
+            group by "year", week, sEnd.status
         """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
 
     open fun conversionRateWeekly()

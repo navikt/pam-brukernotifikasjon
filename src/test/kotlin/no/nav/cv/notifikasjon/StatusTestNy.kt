@@ -30,10 +30,10 @@ internal class StatusTestNy {
     var aktoerFnr = "will be replaced"
     val usedIds = mutableListOf<String>()
 
-    private val now = ZonedDateTime.now()
-    private val yesterday = ZonedDateTime.now().minusDays(1)
-    private val twoDaysAgo = ZonedDateTime.now().minusDays(2)
-    private val agesAgo = ZonedDateTime.now().minusYears(40)
+    private val now = ZonedDateTime.now().withNano(0) // Set nanoseconds to deal with rounding errors in CI
+    private val yesterday = now.minusDays(1)
+    private val twoDaysAgo = now.minusDays(2)
+    private val agesAgo = now.minusYears(40)
 
     @MockkBean(PersonOppslag::class)
     private lateinit var personOppslag: PersonOppslag

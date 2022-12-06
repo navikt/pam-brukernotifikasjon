@@ -57,6 +57,7 @@ class OutboxService(
                     outboxEntry.foedselsnummer
                 )
                 OutboxEntry.OutboxEntryType.DONE -> varselPublisher.done(outboxEntry.uuid, outboxEntry.foedselsnummer)
+                else -> log.warn("OutboxEntryType ${outboxEntry.type} not recognized")
             }
 
             outboxEntry.failed = false

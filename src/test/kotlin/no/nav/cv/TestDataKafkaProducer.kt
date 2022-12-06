@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.containers.KafkaContainer
+import org.testcontainers.utility.DockerImageName
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,7 +25,7 @@ class TestAKafkaApplication {
     lateinit var oppfolgingsstatusProducer: Producer<String, String>
 
     companion object {
-        private val kafkaContainer: KafkaContainer = KafkaContainer()
+        private val kafkaContainer: KafkaContainer = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka").withTag("5.4.3"))
     }
 
     init {
@@ -43,7 +44,6 @@ class TestAKafkaApplication {
 
         oppfolgingsstatusProducer = KafkaProducer(props,
                 StringSerializer(), StringSerializer())
-
     }
 
     @AfterAll

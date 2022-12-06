@@ -19,14 +19,14 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          command: test
+          command: test --severity-threshold=high
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-java@v1
         with:
-          java-version: '11.x'
+          java-version: '17.x'
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
