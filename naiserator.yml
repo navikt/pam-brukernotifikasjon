@@ -12,7 +12,7 @@ spec:
         - application: pam-personoppslag
     inbound:
       rules:
-        - application: pam-brukernotifikasjoner-datastory
+        - application: pam-brukernotifikasjon-datastory
   image: {{ image }}
   port: 9029
   liveness:
