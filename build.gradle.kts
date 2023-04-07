@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.4"
+    id("org.springframework.boot") version "2.7.10"
     id("io.spring.dependency-management") version "1.0.14.RELEASE"
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
@@ -29,7 +29,7 @@ object Version {
     val brukernotifikasjoner = "2.5.1"
     val avro = "1.11.1"
     val confluent = "5.3.0"
-    val token_support = "2.1.6"
+    val token_support = "2.1.8"
 }
 
 dependencies {
@@ -70,7 +70,7 @@ dependencies {
     }
     testImplementation("org.testcontainers:junit-jupiter:1.17.4")
     testImplementation("org.testcontainers:kafka:1.17.4")
-    testImplementation("org.mock-server:mockserver-netty:5.14.0")
+    testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
