@@ -75,7 +75,9 @@ spec:
     - name: PERSONOPPSLAG_BASE_URL
       value: {{ personoppslag_base_url }}
   ingresses:
-    - {{ ingress }}
+  {{#each ingress as |url|}}
+     - {{url}}
+  {{/each}}
   gcp:
     sqlInstances:
       - type: POSTGRES_14
