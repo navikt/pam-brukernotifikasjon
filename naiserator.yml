@@ -32,7 +32,6 @@ spec:
   replicas:
     min: 1
     max: 1
-  cpuThresholdPercentage: 50
   resources:
     limits:
       cpu: 2000m
@@ -47,6 +46,11 @@ spec:
   prometheus:
     enabled: true
     path: /pam-brukernotifikasjon/actuator/prometheus
+  observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
   envFrom:
     - secret: pam-brukernotifikasjon-secret
   kafka:
