@@ -8,7 +8,7 @@ import no.nav.cv.notifikasjon.VarselPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.net.URL
+import java.net.URI
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -41,7 +41,7 @@ class BrukernotifikasjonProducer(
             .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
             //.withSynligFremTil()
             .withTekst(tekst)
-            .withLink(URL(link))
+            .withLink(URI(link).toURL())
             .withSikkerhetsnivaa(sikkerhetsnivaa)
             .build()
 
