@@ -11,7 +11,7 @@ plugins {
 
 ext {
     set("snakeyaml.version", "1.32") // Spring 2.7.4 uses vulnerable version 1.30. Can possibly be removed on spring bump
-    set("postgresql.version", "42.5.0") // Postgres 42.3.7 has SNYK-JAVA-ORGPOSTGRESQL-2970521 vulnerability. Can possibly be removed when spring is updated.
+    set("postgresql.version", "42.7.2") // Postgres 42.3.7 has SNYK-JAVA-ORGPOSTGRESQL-2970521 vulnerability. Can possibly be removed when spring is updated.
 }
 
 group = "no.nav.cv"
