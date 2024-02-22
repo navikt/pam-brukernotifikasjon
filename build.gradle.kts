@@ -2,16 +2,15 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.10"
-    id("io.spring.dependency-management") version "1.0.14.RELEASE"
+    id("org.springframework.boot") version "2.7.18"
+    id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
-    kotlin("plugin.spring") version "1.7.20"
+    kotlin("plugin.spring") version "1.9.21"
 }
 
 ext {
-    set("snakeyaml.version", "1.32") // Spring 2.7.4 uses vulnerable version 1.30. Can possibly be removed on spring bump
-    set("postgresql.version", "42.5.0") // Postgres 42.3.7 has SNYK-JAVA-ORGPOSTGRESQL-2970521 vulnerability. Can possibly be removed when spring is updated.
+    set("snakeyaml.version", "1.33") // Spring 2.7.18 uses vulnerable version 1.30. Can possibly be removed on spring bump
 }
 
 group = "no.nav.cv"
