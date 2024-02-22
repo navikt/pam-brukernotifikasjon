@@ -25,10 +25,10 @@ repositories {
 }
 
 object Version {
-    val brukernotifikasjoner = "2.5.1"
-    val avro = "1.11.1"
-    val confluent = "5.3.0"
-    val token_support = "2.1.8"
+    val brukernotifikasjoner = "2.5.2"
+    val avro = "1.11.3"
+    val confluent = "7.5.1"
+    val token_support = "2.1.9"
 }
 
 dependencies {
@@ -37,8 +37,8 @@ dependencies {
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("javax.annotation:javax.annotation-api")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0")
-    implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.46.0")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:4.46.0")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("org.apache.avro:avro:${Version.avro}")
     implementation("org.flywaydb:flyway-core")
@@ -48,7 +48,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
-    implementation("org.json:json:20220924")
+    implementation("org.json:json:20231013")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
