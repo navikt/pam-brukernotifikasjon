@@ -41,7 +41,6 @@ dependencies {
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0")
     implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
-    implementation("no.nav:vault-jdbc:1.3.10")
     implementation("org.apache.avro:avro:${Version.avro}")
     implementation("org.flywaydb:flyway-core")
     implementation("org.hibernate:hibernate-core")
@@ -62,7 +61,6 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
 
     testImplementation("com.ninja-squad:springmockk:3.1.1")
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
     testImplementation("io.mockk:mockk:1.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
