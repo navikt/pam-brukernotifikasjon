@@ -19,7 +19,7 @@ class FodselsnummerJobb(
     }
 
     @SchedulerLock(name = "fodselsnummerjobb")
-    @Scheduled(fixedDelay = 30 * 1000)
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
     fun fyllInnFnr() {
         try {
             statusRepository.manglerFodselsnummer()
