@@ -45,6 +45,7 @@ spring:
       hibernate:
         timezone:
           default_storage: NORMALIZE
+    open-in-view: true # Spesifiserer denne eksplisitt slik at det ikke gis en warning i loggene. Setter den til Springs default verdi.
 
 kafka:
   aiven:
