@@ -123,7 +123,7 @@ open class StatusRepository(
     open fun antallAvStatus(status: String): Long
         = (entityManager.createNativeQuery(antallAvStatusQuery)
             .setParameter("status", status)
-            .singleResult as BigInteger).toLong()
+            .singleResult as Long)
 
 
     private val antallFerdigQuery =
@@ -139,7 +139,7 @@ open class StatusRepository(
             = (entityManager.createNativeQuery(antallFerdigQuery)
                 .setParameter("varsletStatus", varsletStatus)
                 .setParameter("nesteStatus", nesteStatus)
-                .singleResult as BigInteger).toLong()
+                .singleResult as Long)
 
     private val conversionRateWeeklyQuery =
         """
