@@ -1,5 +1,6 @@
 package no.nav.cv.personident
 
+import jakarta.inject.Named
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -10,7 +11,6 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URI
 import java.util.function.Supplier
-import javax.inject.Named
 
 @Service
 class PersonOppslag (

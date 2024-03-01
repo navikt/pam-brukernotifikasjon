@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.18"
+    id("org.springframework.boot") version "3.1.8"
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
@@ -32,17 +32,20 @@ object Version {
 }
 
 dependencies {
+//    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator") // Mildertidig kun fo å fikse migrering av properties ved Spring oppgradering
+    compileOnly("jakarta.platform:jakarta.jakartaee-api:10.0.0")
+
     implementation("com.h2database:h2:2.1.214")
     implementation("com.github.navikt:brukernotifikasjon-schemas:${Version.brukernotifikasjoner}")
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
     implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("javax.annotation:javax.annotation-api")
+    implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.46.0")
     implementation("net.javacrumbs.shedlock:shedlock-spring:4.46.0")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("org.apache.avro:avro:${Version.avro}")
     implementation("org.flywaydb:flyway-core")
-    implementation("org.hibernate:hibernate-core")
+    implementation("org.hibernate.orm:hibernate-core")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -58,7 +61,6 @@ dependencies {
 
     implementation("no.nav.security:token-validation-spring:${Version.token_support}")
     implementation("no.nav.security:token-client-spring:${Version.token_support}")
-    implementation("javax.inject:javax.inject:1")
 
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("io.mockk:mockk:1.13.2")
@@ -66,10 +68,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+
     testImplementation("org.testcontainers:junit-jupiter:1.17.4")
     testImplementation("org.testcontainers:kafka:1.17.4")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+
 }
 
 configurations {
