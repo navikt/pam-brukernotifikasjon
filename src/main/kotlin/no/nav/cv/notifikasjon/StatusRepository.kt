@@ -222,6 +222,7 @@ private class StatusEntity() {
     @Column(name = "STATUS", nullable = false)
     lateinit var status: String
 
+    // TODO: Endre TIDSPUNKT fra å være timestamp til å være timestamptz, slik at vi faktisk får lagret tidssonen.
     @Column(name = "TIDSPUNKT", nullable = false)
     lateinit var tidspunkt: ZonedDateTime
 

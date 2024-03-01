@@ -40,6 +40,11 @@ spring:
       - "classpath:databasemigrations"
     initSql:
       - 'SET ROLE "pam-brukernotifikasjon-admin"'
+  jpa:
+    properties:
+      hibernate:
+        timezone:
+          default_storage: NORMALIZE
 
 kafka:
   aiven:
