@@ -28,7 +28,7 @@ object Version {
     val brukernotifikasjoner = "2.5.2"
     val avro = "1.11.3"
     val confluent = "7.5.1"
-    val token_support = "2.1.9"
+    val token_support = "3.2.0"
 }
 
 dependencies {
