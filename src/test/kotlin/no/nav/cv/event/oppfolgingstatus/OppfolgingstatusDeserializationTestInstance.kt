@@ -3,25 +3,23 @@ package no.nav.cv.event.oppfolgingstatus
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.cv.notifikasjon.*
+import no.nav.cv.SingletonPostgresTestInstance
+import no.nav.cv.notifikasjon.Hendelser
+import no.nav.cv.notifikasjon.StatusRepository
+import no.nav.cv.notifikasjon.ikkeUnderOppfølgingStatus
+import no.nav.cv.notifikasjon.skalVarslesManglerFnrStatus
 import no.nav.cv.output.OutboxService
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.FilterType
-import org.springframework.stereotype.Repository
 import java.time.ZonedDateTime
 
-@DataJpaTest(includeFilters = [ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [Repository::class])])
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class OppfolgingstatusDeserializationTest {
+class OppfolgingstatusDeserializationTestInstance : SingletonPostgresTestInstance() {
+
     @Autowired
     lateinit var statusRepository: StatusRepository
 

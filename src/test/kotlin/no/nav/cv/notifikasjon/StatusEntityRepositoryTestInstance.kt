@@ -2,26 +2,18 @@ package no.nav.cv.notifikasjon
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import no.nav.cv.SingletonPostgresTestInstance
 import no.nav.cv.personident.PersonOppslag
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.FilterType
-import org.springframework.stereotype.Repository
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.ZonedDateTime
 
-@DataJpaTest(includeFilters = [ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [Repository::class])])
-@ExtendWith(SpringExtension::class)
-class StatusEntityRepositoryTest {
+class StatusEntityRepositoryTestInstance : SingletonPostgresTestInstance() {
 
     val aktorId = "dummy"
     val aktorId2 = "dummy2"
-
 
     @MockkBean(PersonOppslag::class)
     private lateinit var personOppslag : PersonOppslag
@@ -82,6 +74,5 @@ class StatusEntityRepositoryTest {
 
         assertEquals(savedFirst.uuid, fetchedStatus.uuid)
     }
-
 
 }

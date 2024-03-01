@@ -35,7 +35,6 @@ dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator") // Mildertidig kun fo å fikse migrering av properties ved Spring oppgradering
     compileOnly("jakarta.platform:jakarta.jakartaee-api:10.0.0")
 
-    implementation("com.h2database:h2:2.1.214")
     implementation("com.github.navikt:brukernotifikasjon-schemas:${Version.brukernotifikasjoner}")
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -73,6 +72,11 @@ dependencies {
     testImplementation("org.testcontainers:kafka:1.17.4")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:testcontainers:1.19.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.6")
+    testImplementation("org.testcontainers:postgresql:1.19.6")
+    testImplementation("org.fusesource.jansi:jansi:1.18")
 
 }
 

@@ -1,18 +1,13 @@
 package no.nav.cv.notifikasjon
 
+import no.nav.cv.SingletonPostgresTestInstance
 import no.nav.cv.output.OutboxEntry
 import no.nav.cv.output.OutboxRepository
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -22,13 +17,9 @@ import java.util.*
 private val uuid = UUID.randomUUID().toString()
 private val fnr = "123dummy123"
 
-@SpringBootTest
-@ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(properties = ["admin.enabled:enabled"])
-@ContextConfiguration
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-class NotifikasjonAdminTest {
+class NotifikasjonAdminTestInstance : SingletonPostgresTestInstance() {
 
     @Autowired
     lateinit var outboxRepository: OutboxRepository
@@ -71,13 +62,9 @@ class NotifikasjonAdminTest {
 
 }
 
-@SpringBootTest
-@ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(properties = ["admin.enabled:disabled"])
-@ContextConfiguration
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-class NotifikasjonAdminDisabledTest {
+class NotifikasjonAdminDisabledTestInstance : SingletonPostgresTestInstance() {
 
     @Autowired
     private lateinit var mvc: MockMvc
