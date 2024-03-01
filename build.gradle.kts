@@ -32,7 +32,7 @@ object Version {
 }
 
 dependencies {
-//    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator") // Mildertidig kun fo å fikse migrering av properties ved Spring oppgradering
+    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator") // Mildertidig kun fo å fikse migrering av properties ved Spring oppgradering
     compileOnly("jakarta.platform:jakarta.jakartaee-api:10.0.0")
 
     implementation("com.h2database:h2:2.1.214")
