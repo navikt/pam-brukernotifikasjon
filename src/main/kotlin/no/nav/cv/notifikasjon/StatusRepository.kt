@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.PersistenceContext
+import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
@@ -205,7 +206,8 @@ private class StatusEntity() {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(generator = "STATUS_SEQ")
+    @GeneratedValue(generator = "STATUS_SEQ", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "STATUS_SEQ", sequenceName = "STATUS_SEQ", allocationSize = 1)
     private var id: Long? = null // Kan ikke ha lateinit på primitive types
 
     @Column(name = "UUID", nullable = false, unique = true)
