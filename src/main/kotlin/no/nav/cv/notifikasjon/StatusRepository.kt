@@ -211,7 +211,7 @@ private class StatusEntity() {
     private var id: Long? = null // Kan ikke ha lateinit på primitive types
 
     @Column(name = "UUID", nullable = false, unique = true)
-    lateinit var uuid: UUID
+    lateinit var uuid: String
 
     @Column(name = "AKTOR_ID", nullable = false)
     lateinit var aktorId: String
@@ -230,14 +230,14 @@ private class StatusEntity() {
     var ferdig: Boolean = true // Kan ikke ha lateinit på primitive types
 
     fun toStatus() = Status(
-            uuid = uuid,
+            uuid = UUID.fromString(uuid),
             aktoerId = aktorId,
             fnr = fnr,
             status = status,
             statusTidspunkt = tidspunkt)
 
     fun initStatus(
-            uuid: UUID,
+            uuid: String,
             aktorId: String,
             fnr: String,
             status: String,
@@ -259,7 +259,7 @@ private class StatusEntity() {
         fun fromStatus(status: Status, ferdig: Boolean) : StatusEntity {
             val entity = StatusEntity()
             entity.initStatus(
-                    uuid = status.uuid,
+                    uuid = status.uuid.toString(),
                     aktorId = status.aktoerId,
                     fnr = status.fnr,
                     status = status.status,
