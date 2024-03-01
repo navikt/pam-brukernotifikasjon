@@ -10,7 +10,7 @@ plugins {
 }
 
 ext {
-    set("snakeyaml.version", "1.33") // Spring 2.7.18 uses vulnerable version 1.30. Can possibly be removed on spring bump
+    set("snakeyaml.version", "2.2") // Spring 3.1.8 uses vulnerable version 1.33. Can possibly be removed on spring bump
 }
 
 group = "no.nav.cv"
