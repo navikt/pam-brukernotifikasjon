@@ -1,22 +1,19 @@
 package no.nav.cv.infrastructure.metrics
 
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.cv.notifikasjon.*
+import no.nav.cv.SingletonPostgresTestInstance
+import no.nav.cv.notifikasjon.Status
+import no.nav.cv.notifikasjon.StatusRepository
+import no.nav.cv.notifikasjon.cvOppdatertStatus
+import no.nav.cv.notifikasjon.ikkeUnderOppfølgingStatus
+import no.nav.cv.notifikasjon.varsletStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.annotation.DirtiesContext
 import java.time.ZonedDateTime
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@SpringBootTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-internal class GenerateMetricsTest {
-
+internal class GenerateMetricsTestInstance : SingletonPostgresTestInstance() {
 
     @Autowired
     private lateinit var statusRepository: StatusRepository
