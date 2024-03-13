@@ -1,5 +1,14 @@
 package no.nav.cv.notifikasjon
 
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EntityManager
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.PersistenceContext
+import jakarta.persistence.SequenceGenerator
+import jakarta.persistence.Table
 import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
@@ -7,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.math.BigInteger
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.*
 import kotlin.streams.asSequence
 
 
@@ -115,7 +123,7 @@ open class StatusRepository(
     open fun antallAvStatus(status: String): Long
         = (entityManager.createNativeQuery(antallAvStatusQuery)
             .setParameter("status", status)
-            .singleResult as BigInteger).toLong()
+            .singleResult as Long)
 
 
     private val antallFerdigQuery =
@@ -131,7 +139,7 @@ open class StatusRepository(
             = (entityManager.createNativeQuery(antallFerdigQuery)
                 .setParameter("varsletStatus", varsletStatus)
                 .setParameter("nesteStatus", nesteStatus)
-                .singleResult as BigInteger).toLong()
+                .singleResult as Long)
 
     private val conversionRateWeeklyQuery =
         """
@@ -198,11 +206,12 @@ private class StatusEntity() {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(generator = "STATUS_SEQ")
+    @GeneratedValue(generator = "STATUS_SEQ", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "STATUS_SEQ", sequenceName = "STATUS_SEQ", allocationSize = 1)
     private var id: Long? = null // Kan ikke ha lateinit på primitive types
 
     @Column(name = "UUID", nullable = false, unique = true)
-    lateinit var uuid: UUID
+    lateinit var uuid: String
 
     @Column(name = "AKTOR_ID", nullable = false)
     lateinit var aktorId: String
@@ -213,6 +222,7 @@ private class StatusEntity() {
     @Column(name = "STATUS", nullable = false)
     lateinit var status: String
 
+    // TODO: Endre TIDSPUNKT fra å være timestamp til å være timestamptz, slik at vi faktisk får lagret tidssonen.
     @Column(name = "TIDSPUNKT", nullable = false)
     lateinit var tidspunkt: ZonedDateTime
 
@@ -220,14 +230,14 @@ private class StatusEntity() {
     var ferdig: Boolean = true // Kan ikke ha lateinit på primitive types
 
     fun toStatus() = Status(
-            uuid = uuid,
+            uuid = UUID.fromString(uuid),
             aktoerId = aktorId,
             fnr = fnr,
             status = status,
             statusTidspunkt = tidspunkt)
 
     fun initStatus(
-            uuid: UUID,
+            uuid: String,
             aktorId: String,
             fnr: String,
             status: String,
@@ -249,7 +259,7 @@ private class StatusEntity() {
         fun fromStatus(status: Status, ferdig: Boolean) : StatusEntity {
             val entity = StatusEntity()
             entity.initStatus(
-                    uuid = status.uuid,
+                    uuid = status.uuid.toString(),
                     aktorId = status.aktoerId,
                     fnr = status.fnr,
                     status = status.status,

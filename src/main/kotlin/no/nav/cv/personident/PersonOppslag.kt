@@ -1,5 +1,6 @@
 package no.nav.cv.personident
 
+import jakarta.inject.Named
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -8,9 +9,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 import java.util.function.Supplier
-import javax.inject.Named
 
 @Service
 class PersonOppslag (
@@ -31,7 +31,7 @@ class PersonOppslag (
         ident: String
     ): PersonIdentResponseDto {
         val oppslagUrl = url + ident
-        val (responseCode, responseBody) = with(URL(oppslagUrl).openConnection() as HttpURLConnection) {
+        val (responseCode, responseBody) = with(URI(oppslagUrl).toURL().openConnection() as HttpURLConnection) {
             requestMethod = "GET"
             connectTimeout = 10000
             readTimeout = 10000

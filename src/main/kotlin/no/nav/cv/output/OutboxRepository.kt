@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.time.ZonedDateTime
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Repository
 interface OutboxRepository : JpaRepository<OutboxEntry?, Long?> {
@@ -22,7 +22,8 @@ interface OutboxRepository : JpaRepository<OutboxEntry?, Long?> {
 @Table(name = "OUTBOX")
 data class OutboxEntry(
     @Id
-    @GeneratedValue(generator = "OUTBOX_SEQ")
+    @GeneratedValue(generator = "OUTBOX_SEQ", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "OUTBOX_SEQ", sequenceName = "OUTBOX_SEQ", allocationSize = 1)
     val id: Long = 0,
     val uuid: String = "",
     val aktorId: String = "",

@@ -1,6 +1,6 @@
 package no.nav.cv.infrastructure.kafka.producer
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.*
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.*
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.producer.KafkaProducer
