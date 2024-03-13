@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class PamBrukernotifikasjonApplication
 
 fun main(args: Array<String>) {
+    println("Appen starter opp med ADMIN_ENABLED satt til: '${System.getenv("ADMIN_ENABLED")}'")
     runApplication<PamBrukernotifikasjonApplication>(*args)
 }
 
