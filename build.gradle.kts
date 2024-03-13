@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator") // Mildertidig kun fo å fikse migrering av properties ved Spring oppgradering
     compileOnly("jakarta.platform:jakarta.jakartaee-api:10.0.0")
 
-    implementation("com.h2database:h2:2.1.214")
+    implementation("com.h2database:h2:2.2.220")
     implementation("com.github.navikt:brukernotifikasjon-schemas:${Version.brukernotifikasjoner}")
     implementation("io.confluent:kafka-streams-avro-serde:${Version.confluent}")
     implementation("io.micrometer:micrometer-registry-prometheus")
