@@ -17,7 +17,7 @@ import java.util.*
 @Unprotected
 @RequestMapping("internal/kafka/manuell")
 class NotifikasjonAdmin(
-        @Value("\${admin.enabled}") private val adminEnabled: String,
+        @Value("\${admin.enabled}") private val adminEnabled: Boolean,
         private val outboxService: OutboxService
 ) {
 
@@ -32,7 +32,7 @@ class NotifikasjonAdmin(
             @PathVariable("fnr") fnr: String
     ): String {
         log.warn("Call for NotifikasjonAdmin with adminEnabled: ${adminEnabled}")
-        if(adminEnabled != "enabled") throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        if(!adminEnabled) throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
         log.info("NotifikasjonAdmin genererer varsel oppgave for uuid $uuid")
 
@@ -47,7 +47,7 @@ class NotifikasjonAdmin(
     ): String {
         log.warn("Call for NotifikasjonAdmin with adminEnabled: ${adminEnabled}")
 
-        if(adminEnabled != "enabled") throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        if(!adminEnabled) throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
         log.info("NotifikasjonAdmin genererer done melding for uuid $uuid")
 

@@ -18,7 +18,7 @@ private val uuid = UUID.randomUUID().toString()
 private val fnr = "123dummy123"
 
 @AutoConfigureMockMvc(addFilters = false)
-@TestPropertySource(properties = ["admin.enabled:enabled"])
+@TestPropertySource(properties = ["admin.enabled=true"])
 class NotifikasjonAdminTestInstance : SingletonPostgresTestInstance() {
 
     @Autowired
@@ -63,7 +63,7 @@ class NotifikasjonAdminTestInstance : SingletonPostgresTestInstance() {
 }
 
 @AutoConfigureMockMvc(addFilters = false)
-@TestPropertySource(properties = ["admin.enabled:disabled"])
+@TestPropertySource(properties = ["admin.enabled=false"])
 class NotifikasjonAdminDisabledTestInstance : SingletonPostgresTestInstance() {
 
     @Autowired
