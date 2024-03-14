@@ -18,8 +18,6 @@
 
   "ingress": ["https://pam-brukernotifikasjon.intern.nav.no"],
 
-  "adminEnabled": "disabled",
-
   "linkIMelding": "https://arbeidsplassen.nav.no/cv",
 
   "azure_ad_tenant": "nav.no",

@@ -18,8 +18,6 @@
 
   "ingress": ["https://pam-brukernotifikasjon.intern.dev.nav.no"],
 
-  "adminEnabled": "enabled",
-
   "linkIMelding": "https://arbeidsplassen.intern.dev.nav.no/cv",
 
   "azure_ad_tenant": "trygdeetaten.no",
