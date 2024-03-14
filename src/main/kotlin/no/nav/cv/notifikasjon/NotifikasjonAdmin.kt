@@ -25,6 +25,9 @@ class NotifikasjonAdmin(
         private val log = LoggerFactory.getLogger(NotifikasjonAdmin::class.java)
     }
 
+    init {
+        log.info("Startet med admin-modus satt til: ${adminEnabled}")
+    }
 
     @GetMapping("varsel/{uuid}/{fnr}", produces = [ "text/plain" ])
     fun varsle(
