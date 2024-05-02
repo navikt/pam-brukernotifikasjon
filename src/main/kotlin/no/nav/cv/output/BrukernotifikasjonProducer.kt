@@ -37,14 +37,14 @@ class BrukernotifikasjonProducer(
             .withAppnavn("pam-brukernotifikasjon") // TODO - BRUKERNOTIFIKASJON?
             .build()
 
+        val now = LocalDateTime.now(ZoneOffset.UTC)
         val oppgave = OppgaveInputBuilder()
-            .withTidspunkt(LocalDateTime.now(ZoneOffset.UTC))
-            //.withSynligFremTil()
+            .withTidspunkt(now)
+            .withSynligFremTil(now.plusDays(30))
             .withTekst(tekst)
             .withLink(URI(link).toURL())
             .withSikkerhetsnivaa(sikkerhetsnivaa)
             .build()
-
 
         brukernotifikasjonClient.varsel(nokkel, oppgave)
         meterRegistry.counter("cv.brukernotifikasjon.varsel.opprettet").increment(1.0)
