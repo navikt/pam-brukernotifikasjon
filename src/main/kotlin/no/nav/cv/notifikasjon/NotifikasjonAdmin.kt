@@ -18,7 +18,8 @@ import java.util.*
 @RequestMapping("internal/kafka/manuell")
 class NotifikasjonAdmin(
         @Value("\${admin.enabled}") private val adminEnabled: Boolean,
-        private val outboxService: OutboxService
+        private val outboxService: OutboxService,
+        private val adminService: AdminService,
 ) {
 
     companion object {
@@ -58,4 +59,15 @@ class NotifikasjonAdmin(
         return "OK"
     }
 
+
+    @GetMapping("lukk_alle", produces = [ "text/plain" ])
+    fun done(): String {
+        log.warn("Call for NotifikasjonAdmin with adminEnabled: ${adminEnabled}")
+        if(!adminEnabled) throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+
+        log.info("NotifikasjonAdmin genererer done melding alle aktive")
+
+        adminService.lukkAlleÅpneVarsler()
+        return "OK"
+    }
 }

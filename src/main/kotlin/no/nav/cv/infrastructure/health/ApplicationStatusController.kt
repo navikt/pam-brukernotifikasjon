@@ -21,12 +21,7 @@ class ApplicationStatusController(
 
     @GetMapping("/isAlive")
     fun isAlive(): ResponseEntity<String> {
-        return if(consumerStatusHandler.isUnhealthy()) {
-            log.error("isAlive check: Kafka consumers unhealthy")
-            ResponseEntity.internalServerError().build()
-        } else {
-            ResponseEntity.ok("OK")
-        }
+        return ResponseEntity.ok("OK")
     }
 
 }

@@ -87,6 +87,18 @@ open class StatusRepository(
         .firstOrNull()
         ?: Status.nySession(aktorId)
 
+    private val alleForAktørIdQuery = """
+        SELECT * FROM STATUS s 
+        WHERE s.AKTOR_ID = :aktorId
+    """.trimIndent()
+
+    @Transactional(readOnly = true)
+    open fun finnAlleForAktørId(aktorId: String): List<Status> {
+        return entityManager.createNativeQuery(alleForAktørIdQuery, StatusEntity::class.java)
+            .setParameter("aktorId", aktorId).resultStream.asSequence().map { it as StatusEntity }.map { it.toStatus() }
+            .toList()
+    }
+
     private val statusPerFodselsnummer =
             """
                 SELECT s.* 
@@ -97,7 +109,6 @@ open class StatusRepository(
                 ORDER BY s.TIDSPUNKT DESC               
                 LIMIT 1000
             """.replace(serieMedWhitespace, " ") // Erstatter alle serier med whitespace (feks newline) med en enkelt space
-
 
     @Transactional(readOnly = true)
     open fun manglerFodselsnummer(): List<Status> {
@@ -110,6 +121,19 @@ open class StatusRepository(
             .map { it.toStatus() }
             .toList()
     }
+
+    private val statusMedÅpneVarsler = """SELECT s.* FROM STATUS s WHERE s.status = 'varslet' AND s.ferdig = false""".trimIndent()
+
+    @Transactional(readOnly = true)
+    fun finnAlleMedÅpneVarsler(): List<Status> {
+        return entityManager.createNativeQuery(statusMedÅpneVarsler, StatusEntity::class.java)
+            .resultStream
+            .asSequence()
+            .map { it as StatusEntity }
+            .map { it.toStatus() }
+            .toList()
+    }
+
 
     private val antallAvStatusQuery =
             """
