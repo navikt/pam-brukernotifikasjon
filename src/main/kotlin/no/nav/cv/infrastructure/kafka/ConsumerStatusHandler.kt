@@ -19,10 +19,11 @@ class ConsumerStatusHandler(
             .map { it.topic to AtomicInteger(0) }
             .toMap()
 
-    @EventListener(ApplicationReadyEvent::class)
-    fun startUp() = consumers.forEach { it.startPolling() }
+    // Fjernet listener for å forberede sletting av alle sendte varsler (og app)
+    //@EventListener(ApplicationReadyEvent::class)
+    //fun startUp() = consumers.forEach { it.startPolling() }
 
-    @Scheduled(fixedRate = 60000)
+    //@Scheduled(fixedRate = 60000)
     fun checkForStoppedConsumers() {
         consumers.forEach {
             if(it.isStopped()) {

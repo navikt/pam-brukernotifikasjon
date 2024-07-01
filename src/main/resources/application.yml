@@ -67,7 +67,7 @@ kafka:
     schemaPassword: ${KAFKA_SCHEMA_REGISTRY_PASSWORD:none}
 
 admin:
-  enabled: ${ADMIN_ENABLED:false}
+  enabled: true # Siste som skal skje før applikasjonen blir stoppet for alltid er skjult bak denne toggelen.
 
 metrics.key.conversion_rate: ${METRIC_CONVERSIONRATE:noset}
 
