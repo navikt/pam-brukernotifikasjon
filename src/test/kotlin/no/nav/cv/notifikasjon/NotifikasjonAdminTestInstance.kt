@@ -86,7 +86,7 @@ class NotifikasjonAdminTestInstance : SingletonPostgresTestInstance() {
         assertEquals(3, alleForAktørId.size)
         assertEquals(uuid, siste.uuid)
         assertEquals(varsletStatus, siste.status)
-        assertEquals(tidspunkt.withFixedOffsetZone(), siste.statusTidspunkt.withFixedOffsetZone())
+        zonedDateTimeEquals(tidspunkt.withFixedOffsetZone(), siste.statusTidspunkt.withFixedOffsetZone())
         assertEquals(1, statusRepository.finnAlleMedÅpneVarsler().size)
 
         mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/lukk_alle")).andExpect(MockMvcResultMatchers.status().isOk)
@@ -105,6 +105,11 @@ class NotifikasjonAdminTestInstance : SingletonPostgresTestInstance() {
         assertEquals(OutboxEntry.OutboxEntryType.DONE, allEntries[0].type)
         assertEquals(uuid.toString(), allEntries[0].uuid)
         assertEquals(fnr, allEntries[0].foedselsnummer)
+    }
+
+    // Brukes pga tidssone og presisjonsforskjeller med databasen i GHA
+    private fun zonedDateTimeEquals(expected: ZonedDateTime, actual: ZonedDateTime?) {
+        assertEquals(expected.withNano(0).toInstant(), actual?.withNano(0)?.toInstant())
     }
 }
 
