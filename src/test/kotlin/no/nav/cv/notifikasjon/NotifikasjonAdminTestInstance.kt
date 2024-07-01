@@ -89,7 +89,7 @@ class NotifikasjonAdminTestInstance : SingletonPostgresTestInstance() {
         zonedDateTimeEquals(tidspunkt.withFixedOffsetZone(), siste.statusTidspunkt.withFixedOffsetZone())
         assertEquals(1, statusRepository.finnAlleMedÅpneVarsler().size)
 
-        mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/lukk_alle")).andExpect(MockMvcResultMatchers.status().isOk)
+        mvc.perform(MockMvcRequestBuilders.get("/internal/kafka/manuell/lukk-alle")).andExpect(MockMvcResultMatchers.status().isOk)
 
         val allEntries = outboxRepository.findAllUnprocessedMessages(ZonedDateTime.now().plusDays(1))
 

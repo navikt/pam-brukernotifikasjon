@@ -60,7 +60,7 @@ class NotifikasjonAdmin(
     }
 
 
-    @GetMapping("lukk_alle", produces = [ "text/plain" ])
+    @GetMapping("lukk-alle", produces = [ "text/plain" ])
     fun done(): String {
         log.warn("Call for NotifikasjonAdmin with adminEnabled: ${adminEnabled}")
         if(!adminEnabled) throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
