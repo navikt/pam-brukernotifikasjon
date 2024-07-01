@@ -10,21 +10,11 @@ class AdminService(
     private val statusRepository: StatusRepository,
     private val outboxService: OutboxService
 ) {
-    companion object {
-        private val log = LoggerFactory.getLogger(NotifikasjonAdmin::class.java)
-    }
+    fun hentÅpneVarsler() = statusRepository.finnAlleMedÅpneVarsler()
 
     @Transactional
-    fun lukkAlleÅpneVarsler() {
-        val åpneVarlser = statusRepository.finnAlleMedÅpneVarsler()
-
-        log.info("Fant ${åpneVarlser.size} åpne varlser")
-
-        åpneVarlser.forEach {
-            statusRepository.settFerdig(it.aktoerId)
-            outboxService.schdeuleDone(it.uuid, it.aktoerId, it.fnr)
-        }
-
-        log.info("Markerte ${åpneVarlser.size} statuser med varslet som ferdig og skedulerte DONE-melding")
+    fun lukkVarsel(varsel: Status) {
+        outboxService.schdeuleDone(varsel.uuid, varsel.aktoerId, varsel.fnr)
+        statusRepository.settFerdig(varsel.aktoerId)
     }
 }

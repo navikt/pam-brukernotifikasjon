@@ -66,8 +66,19 @@ class NotifikasjonAdmin(
         if(!adminEnabled) throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
         log.info("NotifikasjonAdmin genererer done melding alle aktive")
+        val varsler = adminService.hentÅpneVarsler()
 
-        adminService.lukkAlleÅpneVarsler()
+        log.info("Fant ${varsler.size} åpne varlser")
+
+        var i = 0
+        varsler.forEach {
+            adminService.lukkVarsel(it)
+            if (i % 100 == 0) log.info("Lukket $i av / ${varsler.size} varsler")
+            i++
+        }
+
+        log.info("Markerte ${varsler.size} statuser med varslet som ferdig og skedulerte DONE-melding")
+
         return "OK"
     }
 }
