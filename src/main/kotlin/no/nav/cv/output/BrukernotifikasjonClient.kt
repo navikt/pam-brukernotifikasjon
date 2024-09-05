@@ -42,13 +42,13 @@ class BrukernotifikasjonClient(
 
     fun varsel(nokkel: NokkelInput, oppgave: OppgaveInput) {
         varselProducer.run {
-            producer.send(ProducerRecord(topicName, nokkel, oppgave))
+            //producer.send(ProducerRecord(topicName, nokkel, oppgave))
         }
     }
 
     fun done(nokkel: NokkelInput, done: DoneInput) {
         doneProducer.run {
-            producer.send(ProducerRecord(topicName, nokkel, done))
+            //producer.send(ProducerRecord(topicName, nokkel, done))
         }
     }
 
