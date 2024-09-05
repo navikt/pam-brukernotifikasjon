@@ -1,3 +1,6 @@
+# ARKIVERT 05.09.2024
+Dette repoet er arkivert og vil ikke bli vedlikeholdt.
+
 # pam-brukernotifikasjon
 Applikasjon som holder publiserer brukernotifikasjoner knyttet til registrering av CV på Ditt NAV 
 

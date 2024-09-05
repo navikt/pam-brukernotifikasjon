@@ -84,6 +84,7 @@ spec:
         diskAutoresize: true
         diskType: SSD
         highAvailability: true
+        cascadingDelete: true
         databases:
           - name: pam-brukernotifikasjon
             envVarPrefix: DB
